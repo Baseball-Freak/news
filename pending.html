@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>準備中</title>
+  <script>
+    setTimeout(() => {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}.html`;
+      location.href = dateStr;
+    }, 3000); // 3秒後に遷移
+  </script>
 </head>
 <body>
   <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
