@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Redirecting...</title>
+  <title>記事表示</title>
   <style>
     body {
       font-family: sans-serif;
@@ -21,11 +21,11 @@
       cursor: pointer;
     }
     .prev {
-      background-color: #e74c3c; /* 赤 */
+      background-color: #e74c3c;
       color: white;
     }
     .next {
-      background-color: #2ecc71; /* 緑 */
+      background-color: #2ecc71;
       color: white;
     }
   </style>
@@ -44,32 +44,34 @@
       try {
         const response = await fetch(targetURL, { method: 'HEAD' });
         if (response.ok) {
-          location.href = targetURL;
+          window.location.href = targetURL;
         } else {
-          location.href = "pending.html";
+          window.location.href = "pending.html";
         }
       } catch {
-        location.href = "pending.html";
+        window.location.href = "pending.html";
       }
     };
 
-    const goToRelativeDay = (offset) => {
-      const base = new Date();
-      base.setDate(base.getDate() + offset);
-      const dateStr = formatDate(base);
-      redirectTo(dateStr);
+    const goToRelativeDay = (baseDateStr, offset) => {
+      const [yyyy, mm, dd] = baseDateStr.split('-').map(Number);
+      const baseDate = new Date(yyyy, mm - 1, dd);
+      baseDate.setDate(baseDate.getDate() + offset);
+      const newDateStr = formatDate(baseDate);
+      redirectTo(newDateStr);
     };
 
     window.onload = () => {
-      const todayStr = formatDate(new Date());
+      const today = new Date();
+      const todayStr = formatDate(today);
       redirectTo(todayStr);
     };
   </script>
 </head>
 <body>
   <div class="nav-buttons">
-    <button class="prev" onclick="goToRelativeDay(-1)">← Previous</button>
-    <button class="next" onclick="goToRelativeDay(1)">Next →</button>
+    <button class="prev" onclick="goToRelativeDay(formatDate(new Date()), -1)">← Previous</button>
+    <button class="next" onclick="goToRelativeDay(formatDate(new Date()), 1)">Next →</button>
   </div>
   <p>Redirecting to today's article...</p>
 </body>
