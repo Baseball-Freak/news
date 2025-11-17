@@ -5,7 +5,7 @@
   <style>
     body {
       font-family: sans-serif;
-      font-size: 0.85em;
+      font-size: 0.8em; /* フォントサイズを小さく */
       line-height: 1.4;
       padding: 2em;
       position: relative;
@@ -19,16 +19,34 @@
       gap: 0.5em;
     }
     .nav-buttons button {
-      width: 12mm;
-      height: 5mm;
-      font-size: 0.6em;
+      width: 80px; /* ボタンの幅を調整 */
+      height: 30px; /* ボタンの高さを調整 */
+      font-size: 0.7em; /* ボタンのフォントサイズを調整 */
       padding: 0;
       border: 1px solid #333;
-      border-radius: 2px;
-      background-color: transparent;
+      border-radius: 4px; /* 角を丸く */
+      background-color: #f0f0f0; /* 背景色を追加 */
       color: #333;
       cursor: pointer;
       text-align: center;
+      transition: background-color 0.2s, color 0.2s; /* ホバーエフェクト */
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em; /* 記事部分を左端から表示するために調整 */
+      margin-top: 3em; /* ボタンとの間にスペース */
+    }
+    h3.bar3 {
+      font-size: 1.1em; /* 見出しのフォントサイズを調整 */
+      margin-left: 1em; /* 見出しの位置を調整 */
+    }
+    ul {
+      padding-left: 1em; /* リストのインデントを調整 */
+    }
+    li.news-icon {
+      margin-bottom: 0.5em; /* リスト項目の間隔を調整 */
     }
   </style>
   <script>
