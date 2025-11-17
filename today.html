@@ -3,29 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title>Redirecting...</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 2em;
+    }
+    .nav-buttons {
+      margin-bottom: 1em;
+    }
+    .nav-buttons button {
+      font-size: 1em;
+      padding: 0.5em 1em;
+      margin: 0 1em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .prev {
+      background-color: #e74c3c; /* 赤 */
+      color: white;
+    }
+    .next {
+      background-color: #2ecc71; /* 緑 */
+      color: white;
+    }
+  </style>
   <script>
-    (async () => {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      const dateStr = `${yyyy}-${mm}-${dd}`;
-      const targetURL = `${dateStr}.html`;
+    const pad = (n) => String(n).padStart(2, '0');
 
+    const formatDate = (date) => {
+      const yyyy = date.getFullYear();
+      const mm = pad(date.getMonth() + 1);
+      const dd = pad(date.getDate());
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const redirectTo = async (dateStr) => {
+      const targetURL = `${dateStr}.html`;
       try {
         const response = await fetch(targetURL, { method: 'HEAD' });
         if (response.ok) {
           location.href = targetURL;
         } else {
-          location.href = "pending.html"; // 準備中ページへ
+          location.href = "pending.html";
         }
-      } catch (error) {
-        location.href = "pending.html"; // 通信エラー時も準備中へ
+      } catch {
+        location.href = "pending.html";
       }
-    })();
+    };
+
+    const goToRelativeDay = (offset) => {
+      const base = new Date();
+      base.setDate(base.getDate() + offset);
+      const dateStr = formatDate(base);
+      redirectTo(dateStr);
+    };
+
+    window.onload = () => {
+      const todayStr = formatDate(new Date());
+      redirectTo(todayStr);
+    };
   </script>
 </head>
 <body>
+  <div class="nav-buttons">
+    <button class="prev" onclick="goToRelativeDay(-1)">← Previous</button>
+    <button class="next" onclick="goToRelativeDay(1)">Next →</button>
+  </div>
   <p>Redirecting to today's article...</p>
 </body>
 </html>
