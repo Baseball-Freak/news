@@ -5,8 +5,9 @@
   <style>
     body {
       font-family: sans-serif;
+      font-size: 0.85em;
+      line-height: 1.4;
       padding: 2em;
-      line-height: 1.6;
       position: relative;
     }
     .nav-buttons {
@@ -14,21 +15,21 @@
       top: 1em;
       left: 1em;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 0.5em;
     }
     .nav-buttons button {
-      width: 15mm;
-      height: 15mm;
-      font-size: 0.7em;
+      width: 12mm;
+      height: 5mm;
+      font-size: 0.6em;
       padding: 0;
-      border: none;
-      border-radius: 4px;
+      border: 1px solid #333;
+      border-radius: 2px;
+      background-color: transparent;
+      color: #333;
       cursor: pointer;
       text-align: center;
     }
-    .prev { background-color: #e74c3c; color: white; }
-    .next { background-color: #2ecc71; color: white; }
   </style>
   <script>
     const pad = (n) => String(n).padStart(2, '0');
@@ -63,9 +64,10 @@
 </head>
 <body>
   <div class="nav-buttons">
-    <button class="prev" onclick="goToRelativeDay(-1)">←</button>
-    <button class="next" onclick="goToRelativeDay(1)">→</button>
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
   </div>
+
 
 
 <h3 class='bar3'><i class="fas fa-calendar-check"></i>11月17日</h3>
