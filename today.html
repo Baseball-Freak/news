@@ -2,77 +2,30 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>記事表示</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding-top: 2em;
-    }
-    .nav-buttons {
-      margin-bottom: 1em;
-    }
-    .nav-buttons button {
-      font-size: 1em;
-      padding: 0.5em 1em;
-      margin: 0 1em;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .prev {
-      background-color: #e74c3c;
-      color: white;
-    }
-    .next {
-      background-color: #2ecc71;
-      color: white;
-    }
-  </style>
+  <title>Redirecting...</title>
   <script>
-    const pad = (n) => String(n).padStart(2, '0');
-
-    const formatDate = (date) => {
-      const yyyy = date.getFullYear();
-      const mm = pad(date.getMonth() + 1);
-      const dd = pad(date.getDate());
-      return `${yyyy}-${mm}-${dd}`;
-    };
-
-    const redirectTo = async (dateStr) => {
+    (async () => {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}`;
       const targetURL = `${dateStr}.html`;
+
       try {
         const response = await fetch(targetURL, { method: 'HEAD' });
         if (response.ok) {
-          window.location.href = targetURL;
+          location.href = targetURL;
         } else {
-          window.location.href = "pending.html";
+          location.href = "pending.html"; // 記事が存在しない場合
         }
       } catch {
-        window.location.href = "pending.html";
+        location.href = "pending.html"; // 通信エラー時も
       }
-    };
-
-    const goToRelativeDay = (baseDateStr, offset) => {
-      const [yyyy, mm, dd] = baseDateStr.split('-').map(Number);
-      const baseDate = new Date(yyyy, mm - 1, dd);
-      baseDate.setDate(baseDate.getDate() + offset);
-      const newDateStr = formatDate(baseDate);
-      redirectTo(newDateStr);
-    };
-
-    window.onload = () => {
-      const today = new Date();
-      const todayStr = formatDate(today);
-      redirectTo(todayStr);
-    };
+    })();
   </script>
 </head>
 <body>
-  <div class="nav-buttons">
-    <button class="prev" onclick="goToRelativeDay(formatDate(new Date()), -1)">← Previous</button>
-    <button class="next" onclick="goToRelativeDay(formatDate(new Date()), 1)">Next →</button>
-  </div>
   <p>Redirecting to today's article...</p>
 </body>
 </html>
