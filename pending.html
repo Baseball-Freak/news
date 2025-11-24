@@ -3,18 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <title>準備中</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    /* メッセージ変更用 */
+    #status-msg { font-weight: bold; color: #333; }
+  </style>
   <script>
-    setTimeout(() => {
+    // 3秒待ってから処理開始
+    setTimeout(async () => {
+      const statusMsg = document.getElementById('status-msg');
+      
+      // 1. 今日の日付ファイル名を計算
       const today = new Date();
       const yyyy = today.getFullYear();
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
-      const dateStr = `${yyyy}-${mm}-${dd}.html`;
-      location.href = dateStr;
-    }, 3000); // 3秒後に遷移
+      const targetFile = `${yyyy}-${mm}-${dd}.html`;
+
+      try {
+        // 2. 移動前に、そのファイルが存在するかチェック！
+        const res = await fetch(targetFile, { method: 'HEAD' });
+
+        if (res.ok) {
+          // 存在する場合のみ移動
+          statusMsg.innerText = "最新記事へ移動します...";
+          location.href = targetFile;
+        } else {
+          // 存在しない場合（ループ防止）
+          // ここで止まるか、安全なトップページへ移動させる
+          statusMsg.innerText = "本日分の記事はまだ投稿されていません。";
+          statusMsg.style.color = "red";
+          
+          // 【オプション】もしトップページ(index.htmlやtoday.html)に戻したいなら下の行のコメントを外す
+          // location.href = "today.html"; 
+        }
+      } catch (e) {
+        // 通信エラーなどの場合
+        statusMsg.innerText = "エラーが発生しました。";
+      }
+    }, 3000); 
   </script>
 </head>
 <body>
-  <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+  <!-- IDを付与して、JavaScriptから文字を変えられるようにする -->
+  <p id="status-msg">本日分の記事はまだ準備中です。確認しています...</p>
+  
+  <p style="font-size:0.8em; margin-top:20px;">
+    <a href="today.html">トップへ戻る</a>
+  </p>
 </body>
 </html>
