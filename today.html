@@ -6,11 +6,13 @@
   <script>
     (async () => {
       const today = new Date();
-      const yyyy = today.getFullYear();
+      // YYYY (年) の取得は不要になりました
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
-      const dateStr = `${yyyy}-${mm}-${dd}`;
-      const targetURL = `${dateStr}.html`;
+      
+      // ターゲットファイル名が MM-DD.html 形式になります
+      const dateStr = `${mm}-${dd}`; 
+      const targetURL = `${dateStr}.html`; // 例: 12-02.html
 
       try {
         const response = await fetch(targetURL, { method: 'HEAD' });
@@ -29,3 +31,4 @@
   <p>Redirecting to today's article...</p>
 </body>
 </html>
+
