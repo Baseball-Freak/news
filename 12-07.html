@@ -1,1 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em; /* フォントサイズを小さく */
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px; /* ボタンの幅を調整 */
+      height: 30px; /* ボタンの高さを調整 */
+      font-size: 0.7em; /* ボタンのフォントサイズを調整 */
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px; /* 角を丸く */
+      background-color: #f0f0f0; /* 背景色を追加 */
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s; /* ホバーエフェクト */
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em; /* 記事部分を左端から表示するために調整 */
+      margin-top: 3em; /* ボタンとの間にスペース */
+    }
+    h3.bar3 {
+      font-size: 1.1em; /* 見出しのフォントサイズを調整 */
+      margin-left: 1em; /* 見出しの位置を調整 */
+    }
+    ul {
+      padding-left: 1em; /* リストのインデントを調整 */
+    }
+    li.news-icon {
+      margin-bottom: 0.5em; /* リスト項目の間隔を調整 */
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
 
+    const getCurrentDateFromURL = () => {
+      const match = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(`${yyyy}-${mm}-${dd}`);
+    };
+
+    const formatDate = (date) => {
+      const yyyy = date.getFullYear();
+      const mm = pad(date.getMonth() + 1);
+      const dd = pad(date.getDate());
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) return;
+      baseDate.setDate(baseDate.getDate() + offset);
+      const target = `${formatDate(baseDate)}.html`;
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        location.href = res.ok ? target : "pending.html";
+      } catch {
+        location.href = "pending.html";
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+
+
+<p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+<hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+<a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
+   rel="nofollow noopener noreferrer" 
+   target="_blank">
+  <img border="0" width="120" height="60" alt="" 
+       src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
+</a>
+<img border="0" width="1" height="1" 
+     src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
+
+<hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+
+<a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
+   rel="nofollow noopener noreferrer" 
+   target="_blank">
+  <img border="0" width="100" height="60" alt="" 
+       src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
+</a>
+<img border="0" width="1" height="1" 
+     src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
+
+<hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+
+<a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
+   rel="nofollow noopener noreferrer" 
+   target="_blank">
+  https://www.xserver.ne.jp/lp/service01/
+</a>
+<img border="0" width="1" height="1" 
+     src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
+
+<hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+  
+</div>
+</body>
+</html>
