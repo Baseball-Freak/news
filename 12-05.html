@@ -86,10 +86,10 @@
 
     /**
      * メインの移動処理関数
-     * async/await を使用してファイルの存在確認を行います
+     * 仕様通り、fetchを使用してファイルの存在確認を行います
      */
     const goToRelativeDay = async (offset) => {
-      // 常に「現在の年」を取得します（2025年なら2025）
+      // 常に「現在の年」を取得します（2025年なら2025、2026年なら2026）
       const currentYear = new Date().getFullYear();
       
       let baseDate;
@@ -132,8 +132,7 @@
           location.href = "pending.html";
         }
       } catch (error) {
-        // ネットワークエラーやCORSエラー（ローカルで開いた場合など）
-        // 仕様通り pending.html に飛ばします
+        // 通信エラー等が起きた場合も pending.html へ
         console.error("Error fetching target:", error);
         location.href = "pending.html";
       }
@@ -153,7 +152,7 @@
 
     <!-- 当日News入力　ここから -->
 
-  <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+ <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
 
@@ -188,7 +187,6 @@
          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
     <!-- 当日News入力　ここまで -->
 
   </div>
