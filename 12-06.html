@@ -1,16 +1,12 @@
 <!DOCTYPE html>
-
 <html lang="ja">
-
 <head>
-
   <meta charset="UTF-8">
-
+  <title>News Summary</title>
   <style>
-
     body {
       font-family: sans-serif;
-      font-size: 0.8em; /* フォントサイズを小さく */
+      font-size: 0.8em;
       line-height: 1.4;
       padding: 2em;
       position: relative;
@@ -26,17 +22,17 @@
     }
 
     .nav-buttons button {
-      width: 80px; /* ボタンの幅を調整 */
-      height: 30px; /* ボタンの高さを調整 */
-      font-size: 0.7em; /* ボタンのフォントサイズを調整 */
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
       padding: 0;
       border: 1px solid #333;
-      border-radius: 4px; /* 角を丸く */
-      background-color: #f0f0f0; /* 背景色を追加 */
+      border-radius: 4px;
+      background-color: #f0f0f0;
       color: #333;
       cursor: pointer;
       text-align: center;
-      transition: background-color 0.2s, color 0.2s; /* ホバーエフェクト */
+      transition: background-color 0.2s, color 0.2s;
     }
 
     .nav-buttons button:hover {
@@ -44,53 +40,87 @@
     }
 
     .box1 {
-      margin-left: -1em; /* 記事部分を左端から表示するために調整 */
-      margin-top: 3em; /* ボタンとの間にスペース */
+      margin-left: -1em;
+      margin-top: 3em;
     }
 
     h3.bar3 {
-      font-size: 1.1em; /* 見出しのフォントサイズを調整 */
-      margin-left: 1em; /* 見出しの位置を調整 */
+      font-size: 1.1em;
+      margin-left: 1em;
     }
 
     ul {
-      padding-left: 1em; /* リストのインデントを調整 */
+      padding-left: 1em;
     }
 
     li.news-icon {
-      margin-bottom: 0.5em; /* リスト項目の間隔を調整 */
+      margin-bottom: 0.5em;
     }
-
   </style>
 
   <script>
+    // ゼロ埋め関数（例: 5 -> "05"）
     const pad = (n) => String(n).padStart(2, '0');
 
-    const getCurrentDateFromURL = () => {
-      const match = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
-      if (!match) return null;
-      const [_, yyyy, mm, dd] = match;
-      return new Date(`${yyyy}-${mm}-${dd}`);
-    };
-
-    const formatDate = (date) => {
-      const yyyy = date.getFullYear();
+    // 日付を "MM-DD" 形式の文字列にする関数
+    const formatDateMMDD = (date) => {
       const mm = pad(date.getMonth() + 1);
       const dd = pad(date.getDate());
-      return `${yyyy}-${mm}-${dd}`;
+      return `${mm}-${dd}`;
     };
 
-    const goToRelativeDay = async (offset) => {
-      const baseDate = getCurrentDateFromURL();
-      if (!baseDate) return;
-      baseDate.setDate(baseDate.getDate() + offset);
-      const target = `${formatDate(baseDate)}.html`;
-      try {
-        const res = await fetch(target, { method: 'HEAD' });
-        location.href = res.ok ? target : "pending.html";
-      } catch {
-        location.href = "pending.html";
+    /**
+     * ページ内の見出しから日付（月・日）を取得する補助関数
+     * 例: <h3>...12月04日</h3> から 12 と 4 を取得
+     */
+    const getDateFromHeading = () => {
+      const heading = document.querySelector('h3.bar3');
+      if (heading) {
+        const match = heading.textContent.match(/(\d{1,2})月(\d{1,2})日/);
+        if (match) {
+          return { mm: parseInt(match[1]), dd: parseInt(match[2]) };
+        }
       }
+      return null;
+    };
+
+    // ボタンが押された時の処理
+    const goToRelativeDay = (offset) => {
+      
+      // ★ここを修正しました：常に「現在の年」を取得します
+      // 今が2025年なら2025、2026年なら2026が入ります
+      const currentYear = new Date().getFullYear();
+      
+      let baseDate;
+
+      // 1. ファイル名 (mm-dd.html) から日付を取得する
+      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      if (urlMatch) {
+        const [_, mm, dd] = urlMatch;
+        // 「現在の年」＋「ファイル名の月日」で日付データを作る
+        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
+      } else {
+        // 2. ファイル名から取れない場合（index.html等）、見出しの日付を使う
+        const headingDate = getDateFromHeading();
+        if (headingDate) {
+           baseDate = new Date(currentYear, headingDate.mm - 1, headingDate.dd);
+        } else {
+           // 3. それでもダメなら「今日」の日付にする
+           console.log("日付が特定できないため、今日の日付を基準にします。");
+           baseDate = new Date(); 
+        }
+      }
+
+      // 日付をずらす（前日 or 翌日）
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      // 移動先のファイル名を作成 (mm-dd.html形式)
+      // 例：12-31の次は、年が明けても 01-01.html になるので問題なく動きます
+      const target = `${formatDateMMDD(baseDate)}.html`;
+
+      // ページ移動
+      location.href = target;
     };
   </script>
 
@@ -106,8 +136,7 @@
   <div class="box1">
 
     <!-- 当日News入力　ここから -->
-
-    <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+ <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
 
@@ -142,11 +171,11 @@
          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+  
 
     <!-- 当日News入力　ここまで -->
 
   </div>
 
 </body>
-
 </html>
