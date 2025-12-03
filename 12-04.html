@@ -62,39 +62,64 @@
     // ゼロ埋め関数（例: 5 -> "05"）
     const pad = (n) => String(n).padStart(2, '0');
 
-    // 日付を YYYY-MM-DD 形式の文字列にする関数
-    const formatDate = (date) => {
-      const yyyy = date.getFullYear();
+    // 日付を "MM-DD" 形式の文字列にする関数
+    const formatDateMMDD = (date) => {
       const mm = pad(date.getMonth() + 1);
       const dd = pad(date.getDate());
-      return `${yyyy}-${mm}-${dd}`;
+      return `${mm}-${dd}`;
+    };
+
+    /**
+     * ページ内の見出しから日付（月・日）を取得する補助関数
+     * 例: <h3>...12月04日</h3> から 12 と 4 を取得
+     */
+    const getDateFromHeading = () => {
+      const heading = document.querySelector('h3.bar3');
+      if (heading) {
+        const match = heading.textContent.match(/(\d{1,2})月(\d{1,2})日/);
+        if (match) {
+          return { mm: parseInt(match[1]), dd: parseInt(match[2]) };
+        }
+      }
+      return null;
     };
 
     // ボタンが押された時の処理
     const goToRelativeDay = (offset) => {
+      
+      // ★ここを修正しました：常に「現在の年」を取得します
+      // 今が2025年なら2025、2026年なら2026が入ります
+      const currentYear = new Date().getFullYear();
+      
       let baseDate;
 
-      // 1. まずファイル名から日付取得を試みる (例: 2025-12-04.html)
-      const match = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
-
-      if (match) {
-        const [_, yyyy, mm, dd] = match;
-        baseDate = new Date(`${yyyy}-${mm}-${dd}`);
+      // 1. ファイル名 (mm-dd.html) から日付を取得する
+      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      if (urlMatch) {
+        const [_, mm, dd] = urlMatch;
+        // 「現在の年」＋「ファイル名の月日」で日付データを作る
+        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
       } else {
-        // 2. ファイル名から取れない場合、記事の日付「2025年12月04日」を基準にする
-        // これにより、ファイル名が index.html などでも動作します
-        console.log("ファイル名が日付形式ではないため、基準日を2025-12-04とします。");
-        baseDate = new Date('2025-12-04');
+        // 2. ファイル名から取れない場合（index.html等）、見出しの日付を使う
+        const headingDate = getDateFromHeading();
+        if (headingDate) {
+           baseDate = new Date(currentYear, headingDate.mm - 1, headingDate.dd);
+        } else {
+           // 3. それでもダメなら「今日」の日付にする
+           console.log("日付が特定できないため、今日の日付を基準にします。");
+           baseDate = new Date(); 
+        }
       }
 
-      // 日付をずらす（-1なら前日、+1なら翌日）
+      // 日付をずらす（前日 or 翌日）
       baseDate.setDate(baseDate.getDate() + offset);
 
-      // 移動先のファイル名を作成
-      const target = `${formatDate(baseDate)}.html`;
+      // 移動先のファイル名を作成 (mm-dd.html形式)
+      // 例：12-31の次は、年が明けても 01-01.html になるので問題なく動きます
+      const target = `${formatDateMMDD(baseDate)}.html`;
 
-      // ページ移動を実行
-      // 以前のコードにあった fetch（存在確認）はローカル環境で動かない原因になるため削除し、直接移動させます
+      // ページ移動
       location.href = target;
     };
   </script>
@@ -104,7 +129,6 @@
 <body>
 
   <div class="nav-buttons">
-    <!-- 引数を -1 (前日) と 1 (翌日) に設定 -->
     <button onclick="goToRelativeDay(-1)">Previous</button>
     <button onclick="goToRelativeDay(1)">Next</button>
   </div>
@@ -113,41 +137,49 @@
 
     <!-- 当日News入力　ここから -->
 
-   <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+   <h3 class='bar3'><i class="fas fa-calendar-check"></i>12月04日</h3>
+   <ul class="nb-list">
+    <li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/04/0019775868.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・末包　和田一浩氏に弟子入り　電話で直談判「３０本塁打＆１００打点」へ　２５００万増で更改</a></li>
+    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1430903/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス・柳町達外野手が年俸1億円突破New</a></li>
+    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1430876/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークスのドラ2右腕・稲川「新人王」狙う　年俸12...New</a></li>
+    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1430875/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークスが〝超逸材〟のモレノ獲得へ　キューバ人内野...New</a></li>
+    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1430874/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス山川が現状維持4億5000万円で契約更改New</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51135.html" target="_blank" rel="nofollow">【スポーツ報知】夫は日本ハムと西武でプレー…黒タイツ美脚「ママ綺麗すぎる」「かわいい」美スタイルに反響！森咲智美がディズニーへ</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51275.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】９本塁打の紅林弘太郎が７勝の宮城大弥に初勝利「何か買って」トークショーでおねだり</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51292.html" target="_blank" rel="nofollow">【スポーツ報知】来季から背番号「３」日本ハム・郡司裕也　長嶋茂雄賞への期待は「重く受け止めています」</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51262.html" target="_blank" rel="nofollow">【スポーツ報知】伊藤大海、日本ハム６年目最高額更新　たこつぼ漁師の父へプレゼント「真空機を買いました」</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51263.html" target="_blank" rel="nofollow">【スポーツ報知】ヤクルト・ドラ６石井巧、新入団発表会で異例の“試食会”…実家は６００年続く米農家</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51228.html" target="_blank" rel="nofollow">【スポーツ報知】【広島】戦力外の松山竜平がオイシックスに選手兼打撃コーチで入団「コーチ業は初めて。正直楽しみ」</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51260.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・田中千晴、「将大さんが先発で瑛斗さんがカバーして…」“３兄弟リレー”誓う</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51259.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・萩尾匡也「『遠慮せずにいきます』とＬＩＮＥさせてもらいました」ＦＡ加入の外野ライバルに挑戦状</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51258.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・佐々木俊輔、外野の帝京魂バトル制して“ジョージ出場”だ…６学年上高校先輩加入に発奮</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51257.html" target="_blank" rel="nofollow">【スポーツ報知】「若い子にはチャンス」巨人・吉川尚輝、岡本のメジャー挑戦も前向き「全員でカバーして」</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51256.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・丸佳浩、３軍に厳しい視点「見て感じたことを伝えた」契約更改の席で球団に直言</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51255.html" target="_blank" rel="nofollow">【スポーツ報知】なるか巨人初の快挙　丸佳浩が狙う大記録　１年で３部門まとめて「一日でも早く達成できれば」</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51254.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・中山礼都、今季ブレイクもフェニックスＬに参加した２つの理由…担当記者が見た</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51253.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・中山礼都、“なかやまきんに君”化計画「鍛えまくって」世代ナンバー１目指す…有望株そろう０２年度生まれ</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51264.html" target="_blank" rel="nofollow">【スポーツ報知】ＤｅＮＡ新守護神候補は大谷翔平キラー　３打席対戦し完璧に抑えたホセ・ルイーズ</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51110.html" target="_blank" rel="nofollow">【スポーツ報知】「お互い、がんサバイバー頑張ろう」引退した原口文仁氏　闘病の石橋貴明とガッツポーズ「勇気が湧きます！」</a></li>
+    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251203-OHT1T51231.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ＮＰＢ史上最多日本人１７人の１億円プレーヤー誕生も　及川雅貴が７０００万円増の年俸１億円</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202511290000033.html" target="_blank" rel="nofollow">【日刊スポーツ】【契約更改2025全文･オリックス吉田輝星】高校時代はこうだったかも／2800万円</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001293.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】現状維持の山川穂高「圧倒的連覇、圧倒的成績」管理栄養士つけ強靱ボディー作成中</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001005.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】ソフトバンクを自由契約の有原航平を獲得調査「まだ言えることではない」球団幹部</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030000941.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】隅田知一郎1.6億円更改「大きいピラミッド作る」オフは武内ら後輩５投手と自主トレ予定</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030000939.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】平沢大河、昨年12月に結婚していた「移籍のタイミングくらいですね」悔しさは来年晴らす</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030000950.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】郡司裕也が倍増1.1億円　背番号３に変わる来季へ「あわよくばOPS850目指したい」</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030000951.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】達孝太が４倍の4200万円「プレッシャーですけど愉しんで」来季開幕３戦目の先発内定</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030000948.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】２年連続“完走”の五十幡亮汰「引っ越しの足しに…」1600万円増の4000万円</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001329.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】伊勢大夢、引退したら「打撃投手雇ってくれないかな」メジャー挑戦の後輩・村上宗隆へ</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512040000011.html" target="_blank" rel="nofollow">【日刊スポーツ】前DeNAの左腕ケイ　ホワイトソックスと２年約18億円で契約　３年ぶりメジャー復帰</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202512030001016.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】51→７　中野拓夢は変える　イチローは変えなかった　どちらもいいのだ</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001207.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今朝丸裕喜“先生”遠投に小学生も口あんぐり「あんなに沸いてくれるとは思わなかった」</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001215.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】津田淳哉“先生”「小学生の頃にこういうことがあればよかったな」</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001216.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】嶋村麟士朗は小学生に元気もらう「本当にタイガースファンが多いんやな」</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001217.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】工藤泰成“先生”が小学生を前に剛速球披露「子どもたちも素直なんでいいリアクション」</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001218.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】福島圭音“先生”が小学生たちへ熱いメッセージ「夢が原動力になる」</a></li>
+    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512030001238.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】早川太貴「シーズン中、なかなかない」小学生とキャッチボールで交流</a></li>
+   </ul>
 
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
-      <img border="0" width="120" height="60" alt="" 
-           src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
-      <img border="0" width="100" height="60" alt="" 
-           src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
-      https://www.xserver.ne.jp/lp/service01/
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
     <!-- 当日News入力　ここまで -->
 
   </div>
