@@ -84,43 +84,59 @@
       return null;
     };
 
-    // ボタンが押された時の処理
-    const goToRelativeDay = (offset) => {
-      
-      // ★ここを修正しました：常に「現在の年」を取得します
-      // 今が2025年なら2025、2026年なら2026が入ります
+    /**
+     * メインの移動処理関数
+     * async/await を使用してファイルの存在確認を行います
+     */
+    const goToRelativeDay = async (offset) => {
+      // 常に「現在の年」を取得します（2025年なら2025）
       const currentYear = new Date().getFullYear();
       
       let baseDate;
 
-      // 1. ファイル名 (mm-dd.html) から日付を取得する
+      // 1. URL（ファイル名）から日付を取得 (mm-dd.html)
+      // これにより、12-04.htmlを開いていれば「12月4日」が基準になります
       const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
       
       if (urlMatch) {
         const [_, mm, dd] = urlMatch;
-        // 「現在の年」＋「ファイル名の月日」で日付データを作る
         baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
       } else {
-        // 2. ファイル名から取れない場合（index.html等）、見出しの日付を使う
+        // ファイル名が mm-dd.html でない場合、見出しの日付を使う
         const headingDate = getDateFromHeading();
         if (headingDate) {
            baseDate = new Date(currentYear, headingDate.mm - 1, headingDate.dd);
         } else {
-           // 3. それでもダメなら「今日」の日付にする
-           console.log("日付が特定できないため、今日の日付を基準にします。");
+           // 特定できない場合は今日の日付
            baseDate = new Date(); 
         }
       }
 
-      // 日付をずらす（前日 or 翌日）
+      // 2 & 3. 基準日から +1日 または -1日 する
       baseDate.setDate(baseDate.getDate() + offset);
 
-      // 移動先のファイル名を作成 (mm-dd.html形式)
-      // 例：12-31の次は、年が明けても 01-01.html になるので問題なく動きます
+      // 移動先のファイル名を作成 (例: 12-05.html)
       const target = `${formatDateMMDD(baseDate)}.html`;
 
-      // ページ移動
-      location.href = target;
+      // 4. ファイルが存在するか確認して移動、なければ pending.html へ
+      try {
+        // HEADリクエストでファイルの存在だけ確認する
+        const response = await fetch(target, { method: 'HEAD' });
+        
+        if (response.ok) {
+          // ファイルがあれば移動
+          location.href = target;
+        } else {
+          // ファイルが見つからない(404)場合
+          console.warn("Target file not found:", target);
+          location.href = "pending.html";
+        }
+      } catch (error) {
+        // ネットワークエラーやCORSエラー（ローカルで開いた場合など）
+        // 仕様通り pending.html に飛ばします
+        console.error("Error fetching target:", error);
+        location.href = "pending.html";
+      }
     };
   </script>
 
