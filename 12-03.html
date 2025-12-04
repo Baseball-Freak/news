@@ -71,14 +71,23 @@
 
     /**
      * ページ内の見出しから日付（月・日）を取得する補助関数
-     * 例: <h3>...12月04日</h3> から 12 と 4 を取得
+     * 対応形式: "12月04日" および "2026/01/10"
      */
     const getDateFromHeading = () => {
       const heading = document.querySelector('h3.bar3');
       if (heading) {
-        const match = heading.textContent.match(/(\d{1,2})月(\d{1,2})日/);
+        const text = heading.textContent;
+        
+        // パターン1: "12月04日" 形式
+        let match = text.match(/(\d{1,2})月(\d{1,2})日/);
         if (match) {
           return { mm: parseInt(match[1]), dd: parseInt(match[2]) };
+        }
+
+        // パターン2: "2026/01/10" 形式 (今回ご提示のHTMLに対応)
+        match = text.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+        if (match) {
+          return { mm: parseInt(match[2]), dd: parseInt(match[3]) };
         }
       }
       return null;
@@ -86,16 +95,14 @@
 
     /**
      * メインの移動処理関数
-     * 仕様通り、fetchを使用してファイルの存在確認を行います
      */
     const goToRelativeDay = async (offset) => {
-      // 常に「現在の年」を取得します（2025年なら2025、2026年なら2026）
+      // 常に「現在の年」を取得します
       const currentYear = new Date().getFullYear();
       
       let baseDate;
 
       // 1. URL（ファイル名）から日付を取得 (mm-dd.html)
-      // これにより、12-04.htmlを開いていれば「12月4日」が基準になります
       const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
       
       if (urlMatch) {
@@ -118,7 +125,7 @@
       // 移動先のファイル名を作成 (例: 12-05.html)
       const target = `${formatDateMMDD(baseDate)}.html`;
 
-      // 4. ファイルが存在するか確認して移動、なければ pending.html へ
+      // 4. ファイルが存在するか確認して移動、なければ today.html へ
       try {
         // HEADリクエストでファイルの存在だけ確認する
         const response = await fetch(target, { method: 'HEAD' });
@@ -127,14 +134,14 @@
           // ファイルがあれば移動
           location.href = target;
         } else {
-          // ファイルが見つからない(404)場合
+          // ファイルが見つからない(404)場合 -> today.html へ変更
           console.warn("Target file not found:", target);
-          location.href = "pending.html";
+          location.href = "today.html";
         }
       } catch (error) {
-        // 通信エラー等が起きた場合も pending.html へ
+        // 通信エラー等が起きた場合 -> today.html へ変更
         console.error("Error fetching target:", error);
-        location.href = "pending.html";
+        location.href = "today.html";
       }
     };
   </script>
@@ -152,7 +159,7 @@
 
     <!-- 当日News入力　ここから -->
 
-<h3 class='bar3'><i class="fas fa-calendar-check"></i>12月03日</h3>
+    <h3 class='bar3'><i class="fas fa-calendar-check"></i>12月03日</h3>
 <ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/03/0019772181.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・野間　代打卒業で外野定位置奪い返す！　動作解析施設「上達屋」で股関節まわりの強化着手　１２年目もう一度「勝負」</a></li>
 <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1430458/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークスのドラフト2位稲川、夢は大きく「沢村賞」　...New</a></li>
 <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1430425/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークスがDeNA自由契約のケイ獲得に本腰New</a></li>
@@ -193,6 +200,7 @@
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251203-G4KTGHAWWJI5VHEONXEL457MGE/" target="_blank" rel="nofollow">【サンスポ】巨人・井上＆山瀬のファンミーティング、アパホテル＆リゾート＜東京ベイ潮見＞で11日開催　トークショーや直筆サイン入りグッズが当たる抽選会も</a></li>
 <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/03/kiji/20251202s00001173261000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク　デュプランティエ&ケイをダブル獲りで先発陣を強化へ</a></li>
 </ul>
+
 
     <!-- 当日News入力　ここまで -->
 
