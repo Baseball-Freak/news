@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>News Summary</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+
+    ul {
+      padding-left: 1em;
+    }
+
+    li.news-icon {
+      margin-bottom: 0.5em;
+    }
+  </style>
+
+  <script>
+    // ゼロ埋め関数（例: 5 -> "05"）
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // 日付を "MM-DD" 形式の文字列にする関数
+    const formatDateMMDD = (date) => {
+      const mm = pad(date.getMonth() + 1);
+      const dd = pad(date.getDate());
+      return `${mm}-${dd}`;
+    };
+
+    /**
+     * ページ内の見出しから日付（月・日）を取得する補助関数
+     * 対応形式: "12月04日" および "2026/01/10"
+     */
+    const getDateFromHeading = () => {
+      const heading = document.querySelector('h3.bar3');
+      if (heading) {
+        const text = heading.textContent;
+        
+        // パターン1: "12月04日" 形式
+        let match = text.match(/(\d{1,2})月(\d{1,2})日/);
+        if (match) {
+          return { mm: parseInt(match[1]), dd: parseInt(match[2]) };
+        }
+
+        // パターン2: "2026/01/10" 形式 (今回ご提示のHTMLに対応)
+        match = text.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+        if (match) {
+          return { mm: parseInt(match[2]), dd: parseInt(match[3]) };
+        }
+      }
+      return null;
+    };
+
+    /**
+     * メインの移動処理関数
+     */
+    const goToRelativeDay = async (offset) => {
+      // 常に「現在の年」を取得します
+      const currentYear = new Date().getFullYear();
+      
+      let baseDate;
+
+      // 1. URL（ファイル名）から日付を取得 (mm-dd.html)
+      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      if (urlMatch) {
+        const [_, mm, dd] = urlMatch;
+        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
+      } else {
+        // ファイル名が mm-dd.html でない場合、見出しの日付を使う
+        const headingDate = getDateFromHeading();
+        if (headingDate) {
+           baseDate = new Date(currentYear, headingDate.mm - 1, headingDate.dd);
+        } else {
+           // 特定できない場合は今日の日付
+           baseDate = new Date(); 
+        }
+      }
+
+      // 2 & 3. 基準日から +1日 または -1日 する
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      // 移動先のファイル名を作成 (例: 12-05.html)
+      const target = `${formatDateMMDD(baseDate)}.html`;
+
+      // 4. ファイルが存在するか確認して移動、なければ today.html へ
+      try {
+        // HEADリクエストでファイルの存在だけ確認する
+        const response = await fetch(target, { method: 'HEAD' });
+        
+        if (response.ok) {
+          // ファイルがあれば移動
+          location.href = target;
+        } else {
+          // ファイルが見つからない(404)場合 -> today.html へ変更
+          console.warn("Target file not found:", target);
+          location.href = "today.html";
+        }
+      } catch (error) {
+        // 通信エラー等が起きた場合 -> today.html へ変更
+        console.error("Error fetching target:", error);
+        location.href = "today.html";
+      }
+    };
+  </script>
+
+</head>
+
+<body>
+
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+
+  <div class="box1">
+
+    <!-- 当日News入力　ここから -->
+
+    <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/01/10</h3>
+    <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+    <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
+       rel="nofollow noopener noreferrer" 
+       target="_blank">
+      <img border="0" width="120" height="60" alt="" 
+           src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
+    </a>
+    <img border="0" width="1" height="1" 
+         src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
+       rel="nofollow noopener noreferrer" 
+       target="_blank">
+      <img border="0" width="100" height="60" alt="" 
+           src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
+    </a>
+    <img border="0" width="1" height="1" 
+         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
+       rel="nofollow noopener noreferrer" 
+       target="_blank">
+      https://www.xserver.ne.jp/lp/service01/
+    </a>
+    <img border="0" width="1" height="1" 
+         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+    <!-- 当日News入力　ここまで -->
+
+  </div>
+
+</body>
+</html>
