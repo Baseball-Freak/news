@@ -12,34 +12,27 @@
       position: relative;
     }
 
+    /* .nav-buttons のスタイルを、時刻表示用に調整 */
     .nav-buttons {
       position: absolute;
       top: 1em;
       left: 1em;
-      display: flex;
+      /* flex設定は時刻表示には不要ですが、位置調整のため維持 */
+      display: flex; 
       flex-direction: row;
       gap: 0.5em;
-    }
-
-    .nav-buttons button {
-      width: 80px;
-      height: 30px;
-      font-size: 0.7em;
-      padding: 0;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background-color: #f0f0f0;
+      
+      /* 時刻表示のスタイル */
+      font-size: 1.1em; /* ボタンよりも少し大きく */
+      font-weight: bold;
       color: #333;
-      cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s, color 0.2s;
     }
-
-    .nav-buttons button:hover {
-      background-color: #ddd;
-    }
+    
+    /* 以前のボタン関連のスタイルは削除または無視 */
+    /* .nav-buttons button, .nav-buttons button:hover のスタイルは不要 */
 
     .box1 {
+      /* nav-buttonsの高さに合わせて box1 のマージンを調整 */
       margin-left: -1em;
       margin-top: 3em;
     }
@@ -62,6 +55,47 @@
     // ゼロ埋め関数（例: 5 -> "05"）
     const pad = (n) => String(n).padStart(2, '0');
 
+    // 曜日を日本語で取得する関数
+    const getJapaneseDayOfWeek = (dayIndex) => {
+      const days = ["日", "月", "火", "水", "木", "金", "土"];
+      return days[dayIndex];
+    };
+    
+    // 現在時刻を指定されたフォーマットで取得し、表示を更新する関数
+    const updateCurrentDateTime = () => {
+        const now = new Date();
+        
+        const yyyy = now.getFullYear();
+        const mm = pad(now.getMonth() + 1);
+        const dd = pad(now.getDate());
+        const dayOfWeek = getJapaneseDayOfWeek(now.getDay()); // 0=日, 1=月...
+        
+        const hh = pad(now.getHours());
+        const mi = pad(now.getMinutes());
+        
+        // 例: 2025/12/06(土) 08:26
+        const formattedDateTime = `${yyyy}/${mm}/${dd}(${dayOfWeek}) ${hh}:${mi}`;
+        
+        const datetimeElement = document.getElementById('current-datetime');
+        if (datetimeElement) {
+            datetimeElement.textContent = formattedDateTime;
+        }
+    };
+
+
+    // ページのロード時に時刻表示を初期化し、毎分更新する（任意）
+    window.onload = () => {
+        // 初回表示
+        updateCurrentDateTime();
+        
+        // 毎分更新する場合（オプション）
+        // 厳密な毎分更新ではなく、1分間隔のタイマーとして実装します
+        // setInterval(updateCurrentDateTime, 60000); 
+    };
+
+    // --- 既存の未使用の関数はコメントアウトまたは削除します ---
+    
+    /*
     // 日付を "MM-DD" 形式の文字列にする関数
     const formatDateMMDD = (date) => {
       const mm = pad(date.getMonth() + 1);
@@ -69,10 +103,7 @@
       return `${mm}-${dd}`;
     };
 
-    /**
-     * ページ内の見出しから日付（月・日）を取得する補助関数
-     * 例: <h3>...12月04日</h3> から 12 と 4 を取得
-     */
+    // ページ内の見出しから日付（月・日）を取得する補助関数
     const getDateFromHeading = () => {
       const heading = document.querySelector('h3.bar3');
       if (heading) {
@@ -84,59 +115,11 @@
       return null;
     };
 
-    /**
-     * メインの移動処理関数
-     * 仕様通り、fetchを使用してファイルの存在確認を行います
-     */
+    // メインの移動処理関数 (削除されたボタン用のため、現在は不要)
     const goToRelativeDay = async (offset) => {
-      // 常に「現在の年」を取得します（2025年なら2025、2026年なら2026）
-      const currentYear = new Date().getFullYear();
-      
-      let baseDate;
-
-      // 1. URL（ファイル名）から日付を取得 (mm-dd.html)
-      // これにより、12-04.htmlを開いていれば「12月4日」が基準になります
-      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
-      
-      if (urlMatch) {
-        const [_, mm, dd] = urlMatch;
-        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
-      } else {
-        // ファイル名が mm-dd.html でない場合、見出しの日付を使う
-        const headingDate = getDateFromHeading();
-        if (headingDate) {
-           baseDate = new Date(currentYear, headingDate.mm - 1, headingDate.dd);
-        } else {
-           // 特定できない場合は今日の日付
-           baseDate = new Date(); 
-        }
-      }
-
-      // 2 & 3. 基準日から +1日 または -1日 する
-      baseDate.setDate(baseDate.getDate() + offset);
-
-      // 移動先のファイル名を作成 (例: 12-05.html)
-      const target = `${formatDateMMDD(baseDate)}.html`;
-
-      // 4. ファイルが存在するか確認して移動、なければ pending.html へ
-      try {
-        // HEADリクエストでファイルの存在だけ確認する
-        const response = await fetch(target, { method: 'HEAD' });
-        
-        if (response.ok) {
-          // ファイルがあれば移動
-          location.href = target;
-        } else {
-          // ファイルが見つからない(404)場合
-          console.warn("Target file not found:", target);
-          location.href = "pending.html";
-        }
-      } catch (error) {
-        // 通信エラー等が起きた場合も pending.html へ
-        console.error("Error fetching target:", error);
-        location.href = "pending.html";
-      }
+      // 削除されたため、機能は不要
     };
+    */
   </script>
 
 </head>
@@ -144,54 +127,48 @@
 <body>
 
   <div class="nav-buttons">
-    <button onclick="goToRelativeDay(-1)">Previous</button>
-    <button onclick="goToRelativeDay(1)">Next</button>
+    <div id="current-datetime">日付と時刻を読み込み中...</div>
   </div>
 
   <div class="box1">
 
-    <!-- 当日News入力　ここから -->
 
-
-
- <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+    <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
 
     <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
+      rel="nofollow noopener noreferrer" 
+      target="_blank">
       <img border="0" width="120" height="60" alt="" 
-           src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
+          src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
     </a>
     <img border="0" width="1" height="1" 
-         src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
+          src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
 
     <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
+      rel="nofollow noopener noreferrer" 
+      target="_blank">
       <img border="0" width="100" height="60" alt="" 
-           src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
+          src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
     </a>
     <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
+          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
 
     <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
+      rel="nofollow noopener noreferrer" 
+      target="_blank">
       https://www.xserver.ne.jp/lp/service01/
     </a>
     <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
+          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-    <!-- 当日News入力　ここまで -->
-
-  </div>
+    </div>
 
 </body>
 </html>
