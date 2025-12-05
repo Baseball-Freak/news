@@ -1,1 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>News Summary</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
 
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+
+    ul {
+      padding-left: 1em;
+    }
+
+    li.news-icon {
+      margin-bottom: 0.5em;
+    }
+  </style>
+
+  <script>
+    // ゼロ埋め関数（例: 5 -> "05"）
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // 日付を "MM-DD" 形式の文字列にする関数
+    const formatDateMMDD = (date) => {
+      const mm = pad(date.getMonth() + 1);
+      const dd = pad(date.getDate());
+      return `${mm}-${dd}`;
+    };
+
+    /**
+     * ページ内の見出しから yyyy/mm/dd 形式の日付文字列を抽出する補助関数
+     * 例: <h3 class='bar3'>...2026/01/01</h3> から "2026/01/01" を取得
+     */
+    const getDateStringFromHeading = () => {
+      const heading = document.querySelector('h3.bar3');
+      if (heading) {
+        // yyyy/mm/dd 形式の日付を抽出
+        const match = heading.textContent.match(/(\d{4}\/\d{1,2}\/\d{1,2})/);
+        if (match) {
+          // 抽出した日付文字列（例: "2026/01/01"）を返す
+          return match[1];
+        }
+      }
+      return null;
+    };
+
+    /**
+     * ページのロード時にファイル名とヘッダーの日付を検証し、不一致または記載なしの場合は blank.html に移動する。
+     */
+    window.onload = () => {
+      // 1. URL（ファイル名）から月日を取得 (mm-dd.html)
+      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+
+      // URL形式が mm-dd.html でない場合は、検証対象外として処理を終了（または index.html など他のページとみなし移動させない）
+      // ただし、要件は「-mm-dd.htmlに移動後」の検証なので、URLがこの形式でない場合は一旦スキップせずにそのまま検証を進める。
+      // 今回は mm-dd.html の場合のみ検証を実行するロジックに変更し、それ以外のURL（例: index.html）では何もしないようにします。
+      if (!urlMatch) {
+         // URLが mm-dd.html 形式でない場合、検証を行わず処理を終了
+         return;
+      }
+
+      // ファイル名から抽出した月日 (例: "01" と "01")
+      const fileMM = urlMatch[1];
+      const fileDD = urlMatch[2];
+      
+      // ファイル名が示す日付（例: "2025/01/01"）
+      // 年は現在の年を使用しますが、実際には月日だけで比較します
+      const fileMMDD = `${fileMM}/${fileDD}`; // "mm/dd" 形式 (ゼロ埋め済み)
+
+
+      // 2. h3タグから日付文字列を取得 (例: "2026/01/01")
+      const headingDateString = getDateStringFromHeading();
+
+      // h3タグに yyyy/mm/dd 形式の日付の記載がない場合
+      if (!headingDateString) {
+        // console.warn("h3タグに日付の記載がありません。blank.html に移動します。");
+        location.href = "blank.html";
+        return;
+      }
+
+      // 3. h3タグの日付から月日部分を抽出、ゼロ埋めしてファイル名と比較
+      const headingParts = headingDateString.split('/');
+      
+      // 日付文字列が yyyy/m/d 形式でない場合（3つの部分に分かれない場合）
+      if (headingParts.length !== 3) {
+          // console.warn("h3タグの日付形式がおかしいです。blank.html に移動します。");
+          location.href = "blank.html";
+          return;
+      }
+      
+      // h3タグから抽出した月日を 'mm/dd' 形式で比較用にフォーマット
+      const hM = pad(parseInt(headingParts[1]));
+      const hD = pad(parseInt(headingParts[2]));
+      const headingMMDD = `${hM}/${hD}`; // 'mm/dd' 形式 (ゼロ埋め済み)
+
+      // 4. ファイル名とヘッダーの月日部分が一致しない場合
+      if (headingMMDD !== fileMMDD) {
+        // console.warn(`日付が一致しません。ファイル名: ${fileMMDD}, ヘッダー: ${headingMMDD}。blank.html に移動します。`);
+        location.href = "blank.html";
+        return;
+      }
+
+      // 日付が一致していれば、何もしない（ページ表示を継続）
+      // console.log("日付検証OKです。");
+    };
+
+
+    /**
+     * メインの移動処理関数 (Prev/Nextボタン用)
+     * 指定されたオフセットに基づき、次の日/前の日のファイルが存在するか確認して移動する。
+     */
+    const goToRelativeDay = async (offset) => {
+      // 常に「現在の年」を取得します
+      const currentYear = new Date().getFullYear();
+      
+      let baseDate;
+
+      // 1. URL（ファイル名）から日付を取得 (mm-dd.html)
+      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      if (urlMatch) {
+        const [_, mm, dd] = urlMatch;
+        // 年は現在年を使用
+        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
+      } else {
+        // ファイル名が mm-dd.html でない場合、
+        // ページロード時に検証ロジックでこの分岐は考慮されないが、ボタン動作のため、
+        // h3タグから日付を再取得するか、今日の日付をフォールバックとして使用。
+        // ※ここでは、ボタンを押すページは mm-dd.html であることを前提とし、
+        //   URLから取得できない場合は、処理を継続せずエラーログを出力するだけに留めるのが安全です。
+        console.error("URL形式がmm-dd.htmlではありません。ボタン操作を中断します。");
+        return;
+      }
+
+      // 2 & 3. 基準日から +1日 または -1日 する
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      // 移動先のファイル名を作成 (例: 12-05.html)
+      const target = `${formatDateMMDD(baseDate)}.html`;
+
+      // 4. ファイルが存在するか確認して移動、なければ pending.html へ
+      try {
+        // HEADリクエストでファイルの存在だけ確認する
+        const response = await fetch(target, { method: 'HEAD' });
+        
+        if (response.ok) {
+          // ファイルがあれば移動
+          location.href = target;
+        } else {
+          // ファイルが見つからない(404)場合
+          console.warn("Target file not found:", target);
+          location.href = "pending.html";
+        }
+      } catch (error) {
+        // 通信エラー等が起きた場合も pending.html へ
+        console.error("Error fetching target:", error);
+        location.href = "pending.html";
+      }
+    };
+  </script>
+
+</head>
+
+<body onload=""> <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+
+  <div class="box1">
+
+    <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/01/15</h3>
+ <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+    <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
+      rel="nofollow noopener noreferrer" 
+      target="_blank">
+      <img border="0" width="120" height="60" alt="" 
+          src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
+    </a>
+    <img border="0" width="1" height="1" 
+          src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
+      rel="nofollow noopener noreferrer" 
+      target="_blank">
+      <img border="0" width="100" height="60" alt="" 
+          src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
+    </a>
+    <img border="0" width="1" height="1" 
+          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+
+    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
+      rel="nofollow noopener noreferrer" 
+      target="_blank">
+      https://www.xserver.ne.jp/lp/service01/
+    </a>
+    <img border="0" width="1" height="1" 
+          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
+
+    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+    </div>
+
+</body>
+</html>
