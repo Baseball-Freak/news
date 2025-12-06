@@ -2,197 +2,150 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>News Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Freak News</title>
+
   <style>
     body {
-      font-family: sans-serif;
-      font-size: 0.8em;
-      line-height: 1.4;
-      padding: 2em;
-      position: relative;
-    }
-
-    .nav-buttons {
-      position: absolute;
-      top: 1em;
-      left: 1em;
-      display: flex;
-      flex-direction: row;
-      gap: 0.5em;
-    }
-
-    .nav-buttons button {
-      width: 80px;
-      height: 30px;
-      font-size: 0.7em;
+      margin: 0;
       padding: 0;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background-color: #f0f0f0;
-      color: #333;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      background-color: #ffffff;
+    }
+
+    .sidebar-content {
+      font-size: 9pt;
+      line-height: 1.6;
+      width: 95%;
+      margin: 0 auto;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
+
+    .sidebar-content h3 {
+      margin-top: 5px;
+      margin-bottom: 8px;
+      font-size: 10pt;
+      font-weight: bold;
+    }
+
+    /* --- ナビゲーションボタン部分 --- */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 80%;              /* 全体の幅を8割に */
+      margin: 10px auto 14px auto;
+      gap: 10px;               /* ボタンの間隔を確保 */
+    }
+
+    .nav-btn {
+      flex: 1;                 /* 均等に幅を分配 */
+      font-size: 8pt;
+      padding: 6px 0;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      font-family: 'メイリオ', Meiryo, sans-serif;
       cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s, color 0.2s;
+      transition: all 0.2s ease;
     }
 
-    .nav-buttons button:hover {
-      background-color: #ddd;
+    /* 左右の色分け */
+    .nav-btn.prev {
+      background: #e1f0ff;         /* 淡いブルー */
     }
 
-    .box1 {
-      margin-left: -1em;
-      margin-top: 3em;
+    .nav-btn.next {
+      background: #e8ffe1;         /* 淡いグリーン */
     }
 
-    h3.bar3 {
-      font-size: 1.1em;
-      margin-left: 1em;
+    .nav-btn:hover {
+      filter: brightness(0.95);
     }
 
-    ul {
-      padding-left: 1em;
+    .article-body a {
+      color: #0044cc;
+      text-decoration: none;
     }
 
-    li.news-icon {
-      margin-bottom: 0.5em;
+    .article-body a:hover {
+      text-decoration: underline;
+    }
+
+    .article-body ul {
+      padding-left: 16px;
+      margin: 0;
+    }
+
+    .article-body li {
+      margin-bottom: 6px;
     }
   </style>
-
-  <script>
-    // ゼロ埋め関数（例: 5 -> "05"）
-    const pad = (n) => String(n).padStart(2, '0');
-
-    // 日付を "MM-DD" 形式の文字列にする関数
-    const formatDateMMDD = (date) => {
-      const mm = pad(date.getMonth() + 1);
-      const dd = pad(date.getDate());
-      return `${mm}-${dd}`;
-    };
-
-    /**
-     * ページ内の見出しから日付（月・日）を取得する補助関数
-     * 例: <h3>...12月04日</h3> から 12 と 4 を取得
-     */
-    const getDateFromHeading = () => {
-      const heading = document.querySelector('h3.bar3');
-      if (heading) {
-        const match = heading.textContent.match(/(\d{1,2})月(\d{1,2})日/);
-        if (match) {
-          return { mm: parseInt(match[1]), dd: parseInt(match[2]) };
-        }
-      }
-      return null;
-    };
-
-    /**
-     * メインの移動処理関数
-     * 仕様通り、fetchを使用してファイルの存在確認を行います
-     */
-    const goToRelativeDay = async (offset) => {
-      // 常に「現在の年」を取得します（2025年なら2025、2026年なら2026）
-      const currentYear = new Date().getFullYear();
-      
-      let baseDate;
-
-      // 1. URL（ファイル名）から日付を取得 (mm-dd.html)
-      // これにより、12-04.htmlを開いていれば「12月4日」が基準になります
-      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
-      
-      if (urlMatch) {
-        const [_, mm, dd] = urlMatch;
-        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
-      } else {
-        // ファイル名が mm-dd.html でない場合、見出しの日付を使う
-        const headingDate = getDateFromHeading();
-        if (headingDate) {
-           baseDate = new Date(currentYear, headingDate.mm - 1, headingDate.dd);
-        } else {
-           // 特定できない場合は今日の日付
-           baseDate = new Date(); 
-        }
-      }
-
-      // 2 & 3. 基準日から +1日 または -1日 する
-      baseDate.setDate(baseDate.getDate() + offset);
-
-      // 移動先のファイル名を作成 (例: 12-05.html)
-      const target = `${formatDateMMDD(baseDate)}.html`;
-
-      // 4. ファイルが存在するか確認して移動、なければ pending.html へ
-      try {
-        // HEADリクエストでファイルの存在だけ確認する
-        const response = await fetch(target, { method: 'HEAD' });
-        
-        if (response.ok) {
-          // ファイルがあれば移動
-          location.href = target;
-        } else {
-          // ファイルが見つからない(404)場合
-          console.warn("Target file not found:", target);
-          location.href = "pending.html";
-        }
-      } catch (error) {
-        // 通信エラー等が起きた場合も pending.html へ
-        console.error("Error fetching target:", error);
-        location.href = "pending.html";
-      }
-    };
-  </script>
-
 </head>
-
 <body>
 
-  <div class="nav-buttons">
-    <button onclick="goToRelativeDay(-1)">Previous</button>
-    <button onclick="goToRelativeDay(1)">Next</button>
-  </div>
-
-  <div class="box1">
-
-    <!-- 当日News入力　ここから -->
+  <div class="sidebar-content">
 
 
+    <!-- ▼ 日付け更新部分 -->  
+    
+    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-       <h3 class='bar3'><i class="fas fa-calendar-check"></i>2025/12/10</h3>
- <p></p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
+    <!-- ▼ デザイン調整後ナビボタン -->
+    <div class="nav-buttons">
+      <button class="nav-btn prev" onclick="goToPrev()">Previous</button>
+      <button class="nav-btn next" onclick="goToNext()">Next</button>
+    </div>
 
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+    <div class="article-body">
+   
+      
+    <!-- ▼ 記事本文 --ここから>      
+      
 
-    <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
-      <img border="0" width="120" height="60" alt="" 
-           src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
+    <!-- ▼ 記事本文 --ここまで>         
+    </div>
 
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
-      <img border="0" width="100" height="60" alt="" 
-           src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
-       rel="nofollow noopener noreferrer" 
-       target="_blank">
-      https://www.xserver.ne.jp/lp/service01/
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-    <!-- 当日News入力　ここまで -->
 
   </div>
+
+  <script>
+    // ▼ 自動日付チェック
+    (function() {
+      const h3 = document.querySelector(".bar3");
+      const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
+      const fileName = location.pathname.split("/").pop();  // ex: 12-06.html
+      const [fileMonth, fileDay] = fileName.replace(".html", "").split("-");
+
+      if (!dateText) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const [yyyy, mm, dd] = dateText[0].split("/");
+      const today = new Date();
+      const thisYear = today.getFullYear().toString();
+      const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
+      const todayDay = ("0" + today.getDate()).slice(-2);
+
+      if (
+        yyyy !== thisYear ||
+        mm !== fileMonth ||
+        dd !== fileDay ||
+        (mm !== todayMonth || dd !== todayDay)
+      ) {
+        location.href = "blank.html";
+      }
+    })();
+
+    function goToPrev() {
+      location.href = "12-05.html";
+    }
+
+    function goToNext() {
+      location.href = "12-07.html";
+    }
+  </script>
 
 </body>
 </html>
