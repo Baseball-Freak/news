@@ -1,198 +1,93 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>12-06.html</title>
+  <title>Baseball Freak News | 2025/12/06</title>
 
   <style>
     body {
-      font-family: "メイリオ", "Meiryo", sans-serif;
-      margin: 2em;
-      line-height: 1.6;
-      text-align: center;
-      position: relative;
-    }
-
-    .content {
-      font-size: 10pt;
-      text-align: left;
-      display: inline-block;
-      max-width: 600px;
-    }
-
-    h3.bar3 {
-      color: #333;
-      font-weight: bold;
-      margin-bottom: 1em;
-    }
-
-    /* ▼ fetchナビゲーションボタン（上部固定） */
-    .nav-buttons-top {
-      position: absolute;
-      top: 1em;
-      left: 1em;
-      display: flex;
-      flex-direction: row;
-      gap: 0.5em;
-    }
-
-    .nav-buttons-top button {
-      width: 80px;
-      height: 30px;
-      font-size: 0.7em;
+      margin: 0;
       padding: 0;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background-color: #f0f0f0;
-      color: #333;
-      cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s, color 0.2s;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      background-color: #ffffff;
     }
 
-    .nav-buttons-top button:hover {
-      background-color: #ddd;
+    /* サイドバー用の全体ブロック */
+    .sidebar-content {
+      font-size: 9pt;
+      line-height: 1.6;
+      width: 95%;              /* サイドバー幅に合わせて広めに調整 */
+      margin: 0 auto;
+      padding: 8px 10px;
+      box-sizing: border-box;
     }
 
-    /* ▼ 下部ナビボタン（従来） */
+    .sidebar-content h3 {
+      margin-top: 5px;
+      margin-bottom: 8px;
+      font-size: 10pt;
+      font-weight: bold;
+    }
+
     .nav-buttons {
-      margin-top: 2em;
       display: flex;
       justify-content: space-between;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 8px 0 14px 0;     /* ボタン下に余白を確保（文字かぶり防止） */
     }
 
-    .nav-buttons a {
-      display: inline-block;
-      padding: 0.5em 1em;
-      border: 1px solid #333;
-      border-radius: 8px;
+    .nav-btn {
+      font-size: 8pt;
+      padding: 4px 8px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      background: #e8e8e8;
+    }
+
+    .article-body a {
+      color: #0044cc;
       text-decoration: none;
-      color: #333;
-      transition: 0.3s;
-      font-size: 10pt;
     }
 
-    .nav-buttons a:hover {
-      background-color: #333;
-      color: #fff;
+    .article-body a:hover {
+      text-decoration: underline;
+    }
+
+    /* 記事本文内のリスト */
+    .article-body ul {
+      padding-left: 16px;
+      margin: 0;
+    }
+
+    .article-body li {
+      margin-bottom: 6px;
     }
   </style>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // =============================
-      // ▼ 日付チェックによる表示制御
-      // =============================
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      const todayStr = `${yyyy}/${mm}/${dd}`;
-      const filename = location.pathname.split('/').pop();
-      const fileDate = filename.replace('.html', '');
-
-      const h3 = document.querySelector('h3.bar3');
-      if (!h3) {
-        location.href = "blank.html";
-        return;
-      }
-
-      const text = h3.textContent.trim();
-      const dateMatch = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-      if (!dateMatch) {
-        location.href = "blank.html";
-        return;
-      }
-
-      const h3Year = parseInt(dateMatch[1]);
-      const h3Month = dateMatch[2];
-      const h3Day = dateMatch[3];
-
-      const [fileMonth, fileDay] = fileDate.split('-');
-      const isSameFileDate = (h3Month === fileMonth && h3Day === fileDay);
-      const isSameToday = (todayStr === `${h3Year}/${h3Month}/${h3Day}`);
-
-      if (!isSameFileDate || !isSameToday) {
-        location.href = "blank.html";
-        return;
-      }
-
-      // ▼ 下部リンク生成（従来方式）
-      const currentDate = new Date(`${h3Year}-${h3Month}-${h3Day}`);
-      const prevDate = new Date(currentDate);
-      prevDate.setDate(currentDate.getDate() - 1);
-      const nextDate = new Date(currentDate);
-      nextDate.setDate(currentDate.getDate() + 1);
-
-      const formatLink = (d) => {
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${m}-${day}.html`;
-      };
-
-      document.getElementById("prev-link").href = formatLink(prevDate);
-      document.getElementById("next-link").href = formatLink(nextDate);
-    });
-
-    // =============================
-    // ▼ fetch対応版ナビゲーションボタン
-    // =============================
-    const pad = (n) => String(n).padStart(2, '0');
-    const formatDateMMDD = (date) => {
-      const mm = pad(date.getMonth() + 1);
-      const dd = pad(date.getDate());
-      return `${mm}-${dd}`;
-    };
-
-    const goToRelativeDay = async (offset) => {
-      const currentYear = new Date().getFullYear();
-      let baseDate;
-
-      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
-      if (urlMatch) {
-        const [_, mm, dd] = urlMatch;
-        baseDate = new Date(currentYear, parseInt(mm) - 1, parseInt(dd));
-      } else {
-        const heading = document.querySelector('h3.bar3');
-        const match = heading ? heading.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/) : null;
-        baseDate = match ? new Date(match[1], match[2] - 1, match[3]) : new Date();
-      }
-
-      baseDate.setDate(baseDate.getDate() + offset);
-      const target = `${formatDateMMDD(baseDate)}.html`;
-
-      try {
-        const response = await fetch(target, { method: 'HEAD' });
-        if (response.ok) {
-          location.href = target;
-        } else {
-          location.href = "pending.html";
-        }
-      } catch (error) {
-        location.href = "pending.html";
-      }
-    };
-  </script>
 </head>
-
 <body>
-  <!-- 上部 Previous / Next ボタン（fetch存在確認付き） -->
-  <div class="nav-buttons-top">
-    <button onclick="goToRelativeDay(-1)">Previous</button>
-    <button onclick="goToRelativeDay(1)">Next</button>
-  </div>
 
-  <div class="content">
-  
-    <!-- ▼ 日付は h3 から自動取得対象 -->
+  <!-- ▼ サイドバー記事ブロック -->
+  <div class="sidebar-content">
+
+
+    <!-- ▼ 日付は自動取得対象 -->
     <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-    
+    <!-- ▼ ナビゲーションボタン -->
+    <div class="nav-buttons">
+      <button class="nav-btn" onclick="goToPrev()">Previous</button>
+      <button class="nav-btn" onclick="goToNext()">Next</button>
+    </div>
+
+    <!-- ▼ 記事本文 -->
+    <div class="article-body">
+
+      
 <ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251206-BXZ3VU4TKJA4TOSGU5KQTJIV2E/" target="_blank" rel="nofollow">【サンスポ】DeNA・関根大気、今オフもメキシコのウインターリーグに参加　「『転機だった』と胸を張って言えるように」</a></li>
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251206-7HVHCS2DQZKHFIKFXC3OJPN5VU/" target="_blank" rel="nofollow">【サンスポ】【球界ここだけの話（3983）】阪神・大山悠輔、恩師・掛布雅之OB会長への感謝とD1位・立石正広につなぐバトン</a></li>
 <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/06/kiji/20251206s00001173115000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク・栗原陵矢が1000万円ダウンで更改　来季は全試合出場へ「やっぱり試合に出たい」</a></li>
@@ -233,14 +128,50 @@
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202512020000419.html" target="_blank" rel="nofollow">【日刊スポーツ】【舞台裏】畠が舞い踊り､原口が吠えた…虎が「一丸」となった夜　開催ドキュメント</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001463.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太がバット改良を決断「頼んでいるのは１ミリ」グリップエンドを現行より大きく</a></li>
 </ul>
+
+    </div>
+
+
   </div>
 
-  <!-- 下部ナビゲーションリンク（従来機能） -->
-  <div class="nav-buttons">
-    <a id="prev-link" href="#">← 前日へ</a>
-    <a id="next-link" href="#">翌日へ →</a>
-  </div>
+  <script>
+    // ▼ 自動日付取得・リダイレクトチェック
+    (function() {
+      const h3 = document.querySelector(".bar3");
+      const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
+      const fileName = location.pathname.split("/").pop();  // ex: 12-06.html
+      const [fileMonth, fileDay] = fileName.replace(".html", "").split("-");
+
+      if (!dateText) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const [yyyy, mm, dd] = dateText[0].split("/");
+      const today = new Date();
+      const thisYear = today.getFullYear().toString();
+      const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
+      const todayDay = ("0" + today.getDate()).slice(-2);
+
+      // 条件：年 or 月日不一致 → blank.htmlへ
+      if (
+        yyyy !== thisYear ||
+        mm !== fileMonth ||
+        dd !== fileDay ||
+        (mm !== todayMonth || dd !== todayDay)
+      ) {
+        location.href = "blank.html";
+      }
+    })();
+
+    // ▼ ページ遷移ボタン動作
+    function goToPrev() {
+      location.href = "12-05.html";
+    }
+    function goToNext() {
+      location.href = "12-07.html";
+    }
+  </script>
+
 </body>
-
 </html>
-
