@@ -2,126 +2,75 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>News Auto Check</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12-06.html</title>
+
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .content { margin-top: 1em; }
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+      line-height: 1.6;
+    }
+
+    .content {
+      font-size: 8pt; /* ★記事部分の文字サイズを8ptに設定 */
+    }
+
+    h3.bar3 {
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 1em;
+    }
   </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${yyyy}/${mm}/${dd}`;
+      const filename = location.pathname.split('/').pop();
+      const fileDate = filename.replace('.html', '');
+
+      const h3 = document.querySelector('h3.bar3');
+      if (!h3) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const text = h3.textContent.trim();
+      const dateMatch = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+      if (!dateMatch) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const h3Year = parseInt(dateMatch[1]);
+      const h3Month = dateMatch[2];
+      const h3Day = dateMatch[3];
+
+      const [fileMonth, fileDay] = fileDate.split('-');
+      const isSameFileDate = (h3Month === fileMonth && h3Day === fileDay);
+      const isSameToday = (todayStr === `${h3Year}/${h3Month}/${h3Day}`);
+
+      if (!isSameFileDate || !isSameToday) {
+        location.href = "blank.html";
+      }
+    });
+  </script>
 </head>
+
 <body>
-
   <div class="content">
-
-    
+    <p>【開始】</p>
 
     <!-- ▼ 日付は h3 から自動取得対象 -->
     <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-    
-<ul class="nb-list"><li class="teams-icon teams-yb"><a href="http://www.baystars.co.jp/news/2025/12/1206_01.php" target="_blank" rel="nofollow">【公式サイト】DeNAランナーズアカデミー主催 2025年を走り納め！特別ゲストと一緒にハマスタ屋内練習場でトレーニング！気分爽快ジョギング！</a></li>
-<li class="teams-icon teams-f"><a href="http://www.fighters.co.jp/news/detail/202500805350.html" target="_blank" rel="nofollow">【公式サイト】年末年始はボールパークで！「ES CON FIELD 神社」に行こう！</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174993" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】【私服姿をお届け～オフドラショット～】藤嶋健人「アメカジコーデ祖父江さんの影響ですね」「ジーンズの経年変化、楽しい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51119.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】タイトル獲得の村林一輝が凱旋　数多くのプロ輩出の大阪・堺市　永藤英機市長「堺の子どもたちに希望と勇気」</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/06/post1873968/" target="_blank" rel="nofollow">【Full-count】中田翔氏のために…集まった超豪華メンバー「泣いちゃう」　退団後も繋がる絆「神」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682327/" target="_blank" rel="nofollow">【ベースボールキング】ロッテ・早坂響「いろんな経験もできて学びもあった年」一軍で9試合に登板「オフは体づくり、1年間戦える体づくりが最優先」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682330/" target="_blank" rel="nofollow">【ベースボールキング】西武へFA移籍の石井一成「大好きな北海道とファイターズを離れる事はすごく寂しい」ファンに感謝の想いを綴る</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682338/" target="_blank" rel="nofollow">【ベースボールキング】DeNA・関根、今オフもメキシコのウインターリーグに参戦！「進化してきます」</a></li>
-<li class="teams-icon teams-yb"><a href="http://www.baystars.co.jp/news/2025/12/1206_02.php" target="_blank" rel="nofollow">【公式サイト】メキシコ・ウインターリーグに関根大気選手が参加</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/06/0019783484.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・坂倉 巻き返しへ“新相棒”　バットは巨人丸仕様「０．２５インチ短く」　ミットは青＆黒２種</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/06/0019783190.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【阪神ドラフト選手特集・岡城快生（中）】監督を驚かせた「ＰＤＣＡサイクル」の実践　コロナ禍でも打撃技術急上昇</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000969.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】前田健太「マエケン画伯」最新作披露　来年の干支にちなんだ馬や通天閣、お好み焼きなど</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000979.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ２早大・伊藤樹、小学６年時ジュニア以来10年ぶりユニホームに「実感わきました」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000741.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】帯広で緊張の初体験…馬は本当に賢くて穏やかですね／滝谷美夢のみゆダイアリー</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251206-PRQBNKRTHVO5NDLHWTF7KVF2JE/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】「サンスポは虎とともに生きる」　阪神中心の紙面改革を打ち出した賀川浩さんの生きざま</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/06/kiji/20251206s00001000046000c.html" target="_blank" rel="nofollow">【スポニチ】「練習の虫」西武・村田怜音、3年目の来季に注目　「凄い場面で凄い当たり」プロ1号は次への糧に</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/06/0019783490.shtml" target="_blank" rel="nofollow">【デイリースポーツ】「そんなに上がったん！！」広島・中村奨　鈴木誠也以来の昇給率３・７５倍２２００万増更改　愛妻家の一面も</a></li>
-<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1431781/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンク中村7年ぶり昇給で1億2000万円　26年はプロ1...New</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51297.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】元謙太が命の危機から完全復活誓う「本当に死んじゃうのかな」育成再契約でも異例の３００万円アップ</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51243.html" target="_blank" rel="nofollow">【スポーツ報知】「来年は後ろでもっと投げたい」巨人・中川皓太、尊敬する先輩から熱いエール　大勢らとの競争に意欲</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51245.html" target="_blank" rel="nofollow">【スポーツ報知】練習して練習して練習して練習して練習して　巨人・岸田行倫　“無休トレ”でＷＢＣ視野</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51298.html" target="_blank" rel="nofollow">【スポーツ報知】左肘大けがから復活へ　来季育成３年目の巨人・村山源　左打ち挑戦「やるしかない」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51244.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・森田駿哉　地元・富山で来年３０年ぶり球宴開催「選ばれた時には他の選手より大きめに応援して」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51228.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】桐敷拓馬が来季復活期し憧れカブス・今永昇太を質問攻め「教わることは多かった」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51210.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】大竹耕太郎、現役ドラフト出身選手初のタイトル獲得誓う「一番は最多勝」４０００万円増の１・３億円でサイン</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000983.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ１藤原聡大「目標は沢村賞」背番号13がエース道を歩んでいく</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001117.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】育成で大砲候補加入、４位金子京介＆２位大坪梓恩がスラッガー問題解決する</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001097.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ３中大・繁永晟「浅村選手に近づけるように」／新入団選手コメント</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001061.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ４学法石川・大栄利哉「本当に自分が憧れてたユニホーム」地元・福島の星になるぞ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202512020000419.html" target="_blank" rel="nofollow">【日刊スポーツ】【舞台裏】畠が舞い踊り､原口が吠えた…虎が「一丸」となった夜　開催ドキュメント</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001463.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太がバット改良を決断「頼んでいるのは１ミリ」グリップエンドを現行より大きく</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001519.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎「逃げずに向き合ってきた結果」１・３億円更改　来季最多勝決意「一番勝つ」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001524.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大山悠輔「特殊だからこそ、もっと面白いことができる」ファーストミットの人気貢献誓う</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001562.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今季GG賞獲得の佐藤輝明、新技術詰まったグラブで来季に臨む　ミズノと意見交換済み</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001568.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢は新人からの質問歓迎「答えられる範囲で」ドラ１立石、ドラ２谷端は同じ内野手</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001567.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】桐敷拓馬が午年の来季も馬柄のロゴを継続「そこは変わらず入れます」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001566.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】糸原健斗「どこでも守れる準備」大山モデルのファーストミットで柔軟な起用に応える</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000773.html" target="_blank" rel="nofollow">【日刊スポーツ】【広島】結婚発表の中村奨成が275％の大幅増更改「妻には感謝しています」来季はレギュラー確保へ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202511290000018.html" target="_blank" rel="nofollow">【日刊スポーツ】【私と長嶋さん〈25〉】「高校大学の友人は一生…」　山口・周南市との意外な縁／4</a></li>
-</ul>
+    <p>ここに記事本文を入力</p>
 
-    
-
-    
+    <p>【ここまで】</p>
   </div>
-
-  <script>
-    // 今日の日付を "YYYY/MM/DD" 形式で返す
-    function getTodayString() {
-      const d = new Date();
-      return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}`;
-    }
-
-    // ファイル名の月日を取得 (例: 12-06.html → "12/06")
-    const fileName = location.pathname.split("/").pop();
-    const [mm, dd] = fileName.replace(".html", "").split("-");
-    const fileMD = `${mm}/${dd}`;
-
-    const h3 = document.querySelector("h3.bar3");
-    const today = getTodayString();
-    let reason = ""; // デバッグ用
-    let redirect = false;
-
-    if (!h3) {
-      reason = "❌ h3が存在しない";
-      redirect = true;
-    } else {
-      const text = h3.textContent;
-      const match = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-      if (!match) {
-        reason = "❌ h3に日付形式がない";
-        redirect = true;
-      } else {
-        const yyyy = match[1], mm2 = match[2], dd2 = match[3];
-        const dateFromH3 = `${yyyy}/${mm2}/${dd2}`;
-        const mdFromH3 = `${mm2}/${dd2}`;
-
-        if (dateFromH3 !== today) {
-          reason = `❌ h3の日付(${dateFromH3})が今日(${today})と一致しない`;
-          redirect = true;
-        } else if (mdFromH3 !== fileMD) {
-          reason = `❌ h3の月日(${mdFromH3})がファイル名(${fileMD})と一致しない`;
-          redirect = true;
-        } else {
-          reason = "✅ 一致 — 表示OK";
-        }
-      }
-    }
-
-    console.log("判定結果:", reason);
-
-    if (redirect) {
-      console.warn("➡ blank.html にリダイレクトします");
-      setTimeout(() => { window.location.replace("blank.html"); }, 100);
-    }
-
-    // 0時更新チェック
-    setInterval(() => {
-      const now = new Date();
-      if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-        location.reload();
-      }
-    }, 1000);
-  </script>
 </body>
 </html>
