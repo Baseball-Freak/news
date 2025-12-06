@@ -62,13 +62,48 @@
     // ゼロ埋め関数
     const pad = (n) => String(n).padStart(2, '0');
 
-    // 移動ボタン処理
+    // MM-DD 形式に変換
     const formatDateMMDD = (date) => {
       const mm = pad(date.getMonth() + 1);
       const dd = pad(date.getDate());
       return `${mm}-${dd}`;
     };
 
+    // ▼ 日付チェック処理 ▼
+    window.addEventListener('DOMContentLoaded', () => {
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())}`;
+      const heading = document.querySelector('.box1 h3.bar3');
+
+      // ファイル名から mm-dd を抽出
+      const urlMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!urlMatch) return; // mm-dd.html 形式でないなら何もしない
+
+      // h3タグが存在しない場合
+      if (!heading) {
+        location.href = "blank.html";
+        return;
+      }
+
+      // テキストから yyyy/mm/dd を抽出
+      const text = heading.textContent.trim();
+      const dateMatch = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+      if (!dateMatch) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const foundDate = `${dateMatch[1]}/${dateMatch[2]}/${dateMatch[3]}`;
+
+      // 日付が当日と一致しない場合
+      if (foundDate !== todayStr) {
+        location.href = "blank.html";
+      }
+    });
+    // ▲ 日付チェックここまで ▲
+
+    // ▼ 前日・翌日移動 ▼
     const goToRelativeDay = async (offset) => {
       const currentYear = new Date().getFullYear();
       let baseDate;
@@ -95,40 +130,6 @@
         location.href = "pending.html";
       }
     };
-
-    // ▼ 新規追加部分：当日チェック ▼
-    window.addEventListener('DOMContentLoaded', () => {
-      // 今日の日付を YYYY/MM/DD 形式で取得
-      const now = new Date();
-      const todayStr = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())}`;
-
-      // box1 内の h3.bar3 を探す
-      const heading = document.querySelector('.box1 h3.bar3');
-
-      if (!heading) {
-        // h3 が存在しない場合
-        location.href = "blank.html";
-        return;
-      }
-
-      // テキストから日付部分を抽出
-      const text = heading.textContent.trim();
-      const dateMatch = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-
-      if (!dateMatch) {
-        // 日付形式がない場合
-        location.href = "blank.html";
-        return;
-      }
-
-      const foundDate = `${dateMatch[1]}/${dateMatch[2]}/${dateMatch[3]}`;
-
-      // 当日の日付と一致しなければ blank.html へ
-      if (foundDate !== todayStr) {
-        location.href = "blank.html";
-      }
-    });
-    // ▲ 当日チェックここまで ▲
   </script>
 </head>
 
@@ -143,9 +144,6 @@
     <!--
     <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/01/01</h3>
     -->
-
-    <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/01/15</h3>
-
     <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
 
     <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
@@ -163,4 +161,3 @@
   </div>
 </body>
 </html>
-
