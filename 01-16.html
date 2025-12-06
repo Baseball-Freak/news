@@ -5,31 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>記事自動日付チェック</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    #article-date {
-      display: none; /* 内部管理用。表示不要 */
-    }
-    .content {
-      margin-top: 1em;
-    }
-    .notice {
-      color: #999;
-      font-size: 0.9em;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    .content { margin-top: 1em; }
   </style>
 </head>
 <body>
-
-  <!-- 記事日付（自動取得） -->
-  <div id="article-date"></div>
 
   <!-- ▼ 記事ここから -->
   <div class="content">
     <p>【開始】</p>
 
+    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
     <h2>この記事の内容をここに入力してください。</h2>
     <p>これはサンプルです。</p>
 
@@ -38,14 +24,7 @@
   <!-- ▲ 記事ここまで -->
 
   <script>
-    // ファイル名から日付を自動取得（例: 12-06.html → 2025/12/06）
-    const fileName = location.pathname.split("/").pop(); // 例: 12-06.html
-    const [mm, dd] = fileName.replace(".html", "").split("-");
-    const yyyy = new Date().getFullYear(); // フォルダに年情報がないため、当年を使用
-    const articleDate = `${yyyy}/${mm}/${dd}`;
-    document.getElementById("article-date").textContent = articleDate;
-
-    // 当日を取得
+    // ▼ 今日の日付を取得
     function getTodayString() {
       const today = new Date();
       return (
@@ -55,22 +34,50 @@
       );
     }
 
-    // 判定関数
-    function checkDate() {
-      const todayString = getTodayString();
-      if (articleDate !== todayString) {
-        window.location.href = "blank.html";
+    // ▼ ファイル名から月日を取得（例: 12-06.html → 12/06）
+    const fileName = location.pathname.split("/").pop();
+    const [mm, dd] = fileName.replace(".html", "").split("-");
+    const fileMD = `${mm}/${dd}`;
+
+    // ▼ <h3 class="bar3"> の中身を取得
+    const h3 = document.querySelector("h3.bar3");
+    const todayString = getTodayString();
+
+    let redirect = false;
+
+    if (!h3) {
+      // ① h3 が存在しない
+      redirect = true;
+    } else {
+      const text = h3.textContent.trim();
+      const match = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+      if (!match) {
+        // ② 日付形式が存在しない
+        redirect = true;
+      } else {
+        const yyyy = match[1];
+        const mdFromH3 = `${match[2]}/${match[3]}`;
+        const dateFromH3 = `${yyyy}/${mdFromH3}`;
+
+        // ③ h3の日付が今日と一致しない
+        if (dateFromH3 !== todayString) redirect = true;
+
+        // ④ h3内の月日がファイル名の月日と一致しない
+        if (mdFromH3 !== fileMD) redirect = true;
       }
     }
 
-    // 初回チェック
-    checkDate();
+    // ▼ 条件に合わなければ blank.html にリダイレクト
+    if (redirect) {
+      window.location.href = "blank.html";
+    }
 
-    // 午前0時を監視して、日付が変わった瞬間に再チェック
+    // ▼ 午前0時監視（開いたままでも切り替え）
     setInterval(() => {
       const now = new Date();
       if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-        checkDate();
+        location.reload(); // 日付再判定のためリロード
       }
     }, 1000);
   </script>
