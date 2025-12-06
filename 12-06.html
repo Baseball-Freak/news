@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <title>News Auto Check</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>記事自動日付チェック</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
     .content { margin-top: 1em; }
@@ -11,73 +11,72 @@
 </head>
 <body>
 
-  <!-- ▼ 記事ここから -->
   <div class="content">
     <p>【開始】</p>
 
-    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
-    <h2>この記事の内容をここに入力してください。</h2>
-    <p>xxxxxxxxxxxxxxxxこれはサンプルです。xxxxxxxxxxxxxxxxx</p>
+    <!-- ▼ 日付は h3 から自動取得対象 -->
+    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2026/01/15</h3>
+
+    <p>ここに記事本文を入力</p>
 
     <p>【ここまで】</p>
   </div>
-  <!-- ▲ 記事ここまで -->
 
   <script>
-    // ▼ 今日の日付を取得
+    // 今日の日付を "YYYY/MM/DD" 形式で返す
     function getTodayString() {
-      const today = new Date();
-      return (
-        today.getFullYear() + "/" +
-        String(today.getMonth() + 1).padStart(2, "0") + "/" +
-        String(today.getDate()).padStart(2, "0")
-      );
+      const d = new Date();
+      return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}`;
     }
 
-    // ▼ ファイル名から月日を取得（例: 12-06.html → 12/06）
+    // ファイル名の月日を取得 (例: 12-06.html → "12/06")
     const fileName = location.pathname.split("/").pop();
     const [mm, dd] = fileName.replace(".html", "").split("-");
     const fileMD = `${mm}/${dd}`;
 
-    // ▼ <h3 class="bar3"> の中身を取得
     const h3 = document.querySelector("h3.bar3");
-    const todayString = getTodayString();
-
+    const today = getTodayString();
+    let reason = ""; // デバッグ用
     let redirect = false;
 
     if (!h3) {
-      // ① h3 が存在しない
+      reason = "❌ h3が存在しない";
       redirect = true;
     } else {
-      const text = h3.textContent.trim();
+      const text = h3.textContent;
       const match = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-
       if (!match) {
-        // ② 日付形式が存在しない
+        reason = "❌ h3に日付形式がない";
         redirect = true;
       } else {
-        const yyyy = match[1];
-        const mdFromH3 = `${match[2]}/${match[3]}`;
-        const dateFromH3 = `${yyyy}/${mdFromH3}`;
+        const yyyy = match[1], mm2 = match[2], dd2 = match[3];
+        const dateFromH3 = `${yyyy}/${mm2}/${dd2}`;
+        const mdFromH3 = `${mm2}/${dd2}`;
 
-        // ③ h3の日付が今日と一致しない
-        if (dateFromH3 !== todayString) redirect = true;
-
-        // ④ h3内の月日がファイル名の月日と一致しない
-        if (mdFromH3 !== fileMD) redirect = true;
+        if (dateFromH3 !== today) {
+          reason = `❌ h3の日付(${dateFromH3})が今日(${today})と一致しない`;
+          redirect = true;
+        } else if (mdFromH3 !== fileMD) {
+          reason = `❌ h3の月日(${mdFromH3})がファイル名(${fileMD})と一致しない`;
+          redirect = true;
+        } else {
+          reason = "✅ 一致 — 表示OK";
+        }
       }
     }
 
-    // ▼ 条件に合わなければ blank.html にリダイレクト
+    console.log("判定結果:", reason);
+
     if (redirect) {
-      window.location.href = "blank.html";
+      console.warn("➡ blank.html にリダイレクトします");
+      setTimeout(() => { window.location.replace("blank.html"); }, 100);
     }
 
-    // ▼ 午前0時監視（開いたままでも切り替え）
+    // 0時更新チェック
     setInterval(() => {
       const now = new Date();
       if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-        location.reload(); // 日付再判定のためリロード
+        location.reload();
       }
     }, 1000);
   </script>
