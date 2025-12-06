@@ -14,7 +14,7 @@
     }
 
     .sidebar-content {
-      font-size: 8pt;
+      font-size: 9pt;
       line-height: 1.6;
       width: 95%;
       margin: 0 auto;
@@ -32,15 +32,15 @@
     /* --- ナビゲーションボタン部分 --- */
     .nav-buttons {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      width: 80%;
+      width: 80%;              /* 全体の幅を8割に */
       margin: 10px auto 14px auto;
-      gap: 15px; /* ボタンの間隔 */
+      gap: 10px;               /* ボタンの間隔を確保 */
     }
 
     .nav-btn {
-      width: 100px;
+      flex: 1;                 /* 均等に幅を分配 */
       font-size: 8pt;
       padding: 6px 0;
       border: 1px solid #bbb;
@@ -50,16 +50,17 @@
       transition: all 0.2s ease;
     }
 
+    /* 左右の色分け */
     .nav-btn.prev {
-      background-color: #e1f0ff; /* 淡いブルー */
+      background: #e1f0ff;         /* 淡いブルー */
     }
 
     .nav-btn.next {
-      background-color: #e8ffe1; /* 淡いグリーン */
+      background: #e8ffe1;         /* 淡いグリーン */
     }
 
     .nav-btn:hover {
-      filter: brightness(0.9);
+      filter: brightness(0.95);
     }
 
     .article-body a {
@@ -84,42 +85,59 @@
 <body>
 
   <div class="sidebar-content">
-    <p>【開始】</p>
 
-    <!-- ▼ 日付見出し -->
-    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-    <!-- ▼ ナビゲーションボタン -->
+    <!-- ▼ 日付け更新部分 -->  
+    
+    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/08</h3>
+
+    <!-- ▼ デザイン調整後ナビボタン -->
     <div class="nav-buttons">
       <button class="nav-btn prev" onclick="goToPrev()">Previous</button>
       <button class="nav-btn next" onclick="goToNext()">Next</button>
     </div>
 
-    <!-- ▼ ニュース本文 -->
     <div class="article-body">
-      <ul>
-        <li><a href="#">【サンスポ】DeNA・関根大気、今オフもメキシコのウインターリーグに参加 「転機だった」と胸を張って言えるように</a></li>
-        <li><a href="#">【サンスポ】「球界ここだけの話（3983）」阪神・大山悠輔…恩師・掛布雅之OB会長への感謝とD1位・立石正広につなぐバトン</a></li>
-      </ul>
+   
+      
+    <!-- ▼ 記事本文 ここから-->      
+      
+
+     <!-- ▼ 記事本文 ここまで -->          
     </div>
 
-        <!-- ▼ ここまで　-->
+
   </div>
 
   <script>
-    // ▼ タイトルを自動で更新
+    // ▼ 自動日付チェック
     (function() {
       const h3 = document.querySelector(".bar3");
       const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
+      const fileName = location.pathname.split("/").pop();  // ex: 12-06.html
+      const [fileMonth, fileDay] = fileName.replace(".html", "").split("-");
 
-      if (dateText) {
-        document.title = "Baseball Freak News | " + dateText[0];
-      } else {
-        document.title = "Baseball Freak News";
+      if (!dateText) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const [yyyy, mm, dd] = dateText[0].split("/");
+      const today = new Date();
+      const thisYear = today.getFullYear().toString();
+      const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
+      const todayDay = ("0" + today.getDate()).slice(-2);
+
+      if (
+        yyyy !== thisYear ||
+        mm !== fileMonth ||
+        dd !== fileDay ||
+        (mm !== todayMonth || dd !== todayDay)
+      ) {
+        location.href = "blank.html";
       }
     })();
 
-    // ▼ ページ遷移ボタン
     function goToPrev() {
       location.href = "12-05.html";
     }
