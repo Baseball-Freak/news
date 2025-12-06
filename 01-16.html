@@ -3,83 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>記事自動日付チェック</title>
+  <title>Baseball Freak News</title>
+
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .content { margin-top: 1em; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      background-color: #ffffff;
+    }
+
+    .sidebar-content {
+      font-size: 9pt;
+      line-height: 1.6;
+      width: 95%;
+      margin: 0 auto;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
+
+    .sidebar-content h3 {
+      margin-top: 5px;
+      margin-bottom: 8px;
+      font-size: 10pt;
+      font-weight: bold;
+    }
+
+    /* --- ナビゲーションボタン部分 --- */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 80%;              /* 全体の幅を8割に */
+      margin: 10px auto 14px auto;
+      gap: 10px;               /* ボタンの間隔を確保 */
+    }
+
+    .nav-btn {
+      flex: 1;                 /* 均等に幅を分配 */
+      font-size: 8pt;
+      padding: 6px 0;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    /* 左右の色分け */
+    .nav-btn.prev {
+      background: #e1f0ff;         /* 淡いブルー */
+    }
+
+    .nav-btn.next {
+      background: #e8ffe1;         /* 淡いグリーン */
+    }
+
+    .nav-btn:hover {
+      filter: brightness(0.95);
+    }
+
+    .article-body a {
+      color: #0044cc;
+      text-decoration: none;
+    }
+
+    .article-body a:hover {
+      text-decoration: underline;
+    }
+
+    .article-body ul {
+      padding-left: 16px;
+      margin: 0;
+    }
+
+    .article-body li {
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- ▼ 記事ここから -->
-  <div class="content">
-    <p>【開始】</p>
+  <div class="sidebar-content">
 
+
+    <!-- ▼ 日付け更新部分 -->  
+    
     <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
-    <h2>この記事の内容をここに入力してください。</h2>
-    <p>これはサンプルです。</p>
 
-    <p>【ここまで】</p>
+    <!-- ▼ デザイン調整後ナビボタン -->
+    <div class="nav-buttons">
+      <button class="nav-btn prev" onclick="goToPrev()">Previous</button>
+      <button class="nav-btn next" onclick="goToNext()">Next</button>
+    </div>
+
+    <div class="article-body">
+   
+      
+    <!-- ▼ 記事本文 ここから-->      
+      
+
+     <!-- ▼ 記事本文 ここまで -->          
+    </div>
+
+
   </div>
-  <!-- ▲ 記事ここまで -->
 
   <script>
-    // ▼ 今日の日付を取得
-    function getTodayString() {
+    // ▼ 自動日付チェック
+    (function() {
+      const h3 = document.querySelector(".bar3");
+      const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
+      const fileName = location.pathname.split("/").pop();  // ex: 12-06.html
+      const [fileMonth, fileDay] = fileName.replace(".html", "").split("-");
+
+      if (!dateText) {
+        location.href = "blank.html";
+        return;
+      }
+
+      const [yyyy, mm, dd] = dateText[0].split("/");
       const today = new Date();
-      return (
-        today.getFullYear() + "/" +
-        String(today.getMonth() + 1).padStart(2, "0") + "/" +
-        String(today.getDate()).padStart(2, "0")
-      );
-    }
+      const thisYear = today.getFullYear().toString();
+      const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
+      const todayDay = ("0" + today.getDate()).slice(-2);
 
-    // ▼ ファイル名から月日を取得（例: 12-06.html → 12/06）
-    const fileName = location.pathname.split("/").pop();
-    const [mm, dd] = fileName.replace(".html", "").split("-");
-    const fileMD = `${mm}/${dd}`;
-
-    // ▼ <h3 class="bar3"> の中身を取得
-    const h3 = document.querySelector("h3.bar3");
-    const todayString = getTodayString();
-
-    let redirect = false;
-
-    if (!h3) {
-      // ① h3 が存在しない
-      redirect = true;
-    } else {
-      const text = h3.textContent.trim();
-      const match = text.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-
-      if (!match) {
-        // ② 日付形式が存在しない
-        redirect = true;
-      } else {
-        const yyyy = match[1];
-        const mdFromH3 = `${match[2]}/${match[3]}`;
-        const dateFromH3 = `${yyyy}/${mdFromH3}`;
-
-        // ③ h3の日付が今日と一致しない
-        if (dateFromH3 !== todayString) redirect = true;
-
-        // ④ h3内の月日がファイル名の月日と一致しない
-        if (mdFromH3 !== fileMD) redirect = true;
+      if (
+        yyyy !== thisYear ||
+        mm !== fileMonth ||
+        dd !== fileDay ||
+        (mm !== todayMonth || dd !== todayDay)
+      ) {
+        location.href = "blank.html";
       }
+    })();
+
+    function goToPrev() {
+      location.href = "12-05.html";
     }
 
-    // ▼ 条件に合わなければ blank.html にリダイレクト
-    if (redirect) {
-      window.location.href = "blank.html";
+    function goToNext() {
+      location.href = "12-07.html";
     }
-
-    // ▼ 午前0時監視（開いたままでも切り替え）
-    setInterval(() => {
-      const now = new Date();
-      if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-        location.reload(); // 日付再判定のためリロード
-      }
-    }, 1000);
   </script>
+
 </body>
 </html>
