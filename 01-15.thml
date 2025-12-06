@@ -1,146 +1,102 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>News Summary</title>
-<style>
-  body {
-    font-family: sans-serif;
-    font-size: 0.8em;
-    line-height: 1.4;
-    padding: 2em;
-    position: relative;
-  }
-  .nav-buttons {
-    position: absolute;
-    top: 1em;
-    left: 1em;
-    display: flex;
-    flex-direction: row;
-    gap: 0.5em;
-  }
-  .nav-buttons button {
-    width: 80px;
-    height: 30px;
-    font-size: 0.7em;
-    padding: 0;
-    border: 1px solid #333;
-    border-radius: 4px;
-    background-color: #f0f0f0;
-    color: #333;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  .nav-buttons button:hover {
-    background-color: #ddd;
-  }
-  iframe {
-    width: 100%;
-    height: 1200px;
-    border: none;
-    margin-top: 4em;
-  }
-  .marker {
-    background-color: #fffae5;
-    color: #444;
-    border: 1px dashed #999;
-    padding: 5px 10px;
-    margin: 20px 0;
-    font-weight: bold;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Summary</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      line-height: 1.8;
+      padding: 2em;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .article {
+      margin-top: 2em;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 1.5em;
+      background-color: #fafafa;
+    }
+
+    .marker {
+      color: #b00;
+      font-weight: bold;
+      text-align: center;
+      margin: 1em 0;
+    }
+
+    h3.bar3 {
+      color: #333;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="nav-buttons">
-  <button onclick="goToRelativeDay(-1)">Previous</button>
-  <button onclick="goToRelativeDay(1)">Next</button>
-</div>
+  <div class="article">
+    <div class="marker">▼ 記事開始 ▼</div>
+    <div class="box1">
+    <!-- ↓↓↓ ここから記事を入力 ↓↓↓ -->
 
-<iframe id="newsFrame" src=""></iframe>
+      <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-<script>
-// ゼロ埋め
-const pad = (n) => String(n).padStart(2, "0");
+      <p>この記事は2026年1月15日分のニュースサマリーです。</p>
+      <p>ここに記事本文を入力してください。</p>
+    </div>
 
-// mm-dd形式
-const formatMMDD = (date) => `${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    <!-- ↑↑↑ ここまで記事を入力 ↑↑↑ -->
 
-// yyyy/mm/dd形式
-const formatYYYYMMDD = (date) =>
-  `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())}`;
+    <div class="marker">▲ ここまで ▲</div>
+  </div>
 
-// --- 当日の日付処理 ---
-const today = new Date();
-const todayMMDD = formatMMDD(today);
-const todayFull = formatYYYYMMDD(today);
-const todayFile = `${todayMMDD}.html`;
+  <script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    // 今日の日付（例: 2025/12/06）
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}/${mm}/${dd}`;
 
-const newsFrame = document.getElementById("newsFrame");
+    // HTML内の日付（<h3 class="bar3">内）を取得
+    const heading = document.querySelector("h3.bar3");
+    const match = heading ? heading.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/) : null;
 
-// --- 1. 当日ファイルの存在チェック ---
-fetch(`news/${todayFile}`, { method: "GET" })
-  .then(async (res) => {
-    if (!res.ok) throw new Error("file not found");
-    const htmlText = await res.text();
-
-    // --- 2. h3.bar3 の中身確認 ---
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlText, "text/html");
-    const h3 = doc.querySelector("h3.bar3");
-
-    if (!h3) {
-      newsFrame.src = "news/blank.html";
+    if (!match) {
+      // 日付がHTML内にない場合
+      window.location.href = "blank.html";
       return;
     }
 
-    const headingDate = h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/);
-    if (!headingDate || headingDate[0] !== todayFull) {
-      newsFrame.src = "news/blank.html";
+    const articleDate = `${match[1]}/${match[2]}/${match[3]}`;
+
+    // ファイル名 (例: 12-06.html)
+    const file = window.location.pathname.split("/").pop();
+    const fileMatch = file.match(/(\d{2})-(\d{2})\.html$/);
+
+    if (!fileMatch) {
+      // ファイル名が日付形式でない場合も blank.html へ
+      window.location.href = "blank.html";
       return;
     }
 
-    // --- 3. 条件すべてOKなら当日ファイルを表示 ---
-    newsFrame.src = `news/${todayFile}`;
-  })
-  .catch(() => {
-    // ファイルが存在しない or エラー → blank.htmlへ
-    newsFrame.src = "news/blank.html";
+    const [_, fmm, fdd] = fileMatch;
+
+    // HTML内の日付の「月日」とファイル名の月日が一致しているか
+    const articleMonth = match[2];
+    const articleDay = match[3];
+    const monthDayMatch = (articleMonth === fmm && articleDay === fdd);
+
+    // 今日の日付とHTML内の日付を比較
+    if (articleDate !== todayStr || !monthDayMatch) {
+      window.location.href = "blank.html";
+    }
   });
-
-// --- 前後移動ボタン機能 ---
-async function goToRelativeDay(offset) {
-  const currentYear = new Date().getFullYear();
-  const baseDate = new Date(currentYear, today.getMonth(), today.getDate() + offset);
-  const targetFile = `${formatMMDD(baseDate)}.html`;
-  const res = await fetch(`news/${targetFile}`, { method: "HEAD" });
-
-  if (res.ok) {
-    newsFrame.src = `news/${targetFile}`;
-  } else {
-    newsFrame.src = "news/blank.html";
-  }
-}
-</script>
-
-<!-- =============================== -->
-<div class="marker">=== 当日記事 開始 ===</div>
-<!-- 当日記事 開始 -->
-
-<div class="box1">
-
-  <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
-  <ul>
-    <li class="news-icon">ここに当日ニュースを入力してください。</li>
-  </ul>
-
-</div>
-
-<!-- 当日記事 ここまで -->
-<div class="marker">=== 当日記事 ここまで ===</div>
-<!-- =============================== -->
-
+  </script>
 </body>
 </html>
