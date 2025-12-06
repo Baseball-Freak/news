@@ -4,22 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>News Summary</title>
-
   <style>
     body {
-      font-family: system-ui, sans-serif;
+      font-family: sans-serif;
       line-height: 1.8;
       padding: 2em;
       max-width: 800px;
       margin: auto;
-    }
-
-    .article {
-      margin-top: 2em;
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 1.5em;
-      background-color: #fafafa;
     }
 
     .marker {
@@ -32,68 +23,70 @@
     h3.bar3 {
       color: #333;
       text-align: center;
+      font-size: 1.1em;
+    }
+
+    .box1 {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 1.5em;
+      background-color: #fafafa;
     }
   </style>
 </head>
 
 <body>
+  <div class="marker">▼ 記事開始 ▼</div>
 
-  <div class="article">
-    <div class="marker">▼ 記事開始 ▼</div>
-    <div class="box1">
-    <!-- ↓↓↓ ここから記事を入力 ↓↓↓ -->
-
-      <h3 class="bar3"><i class="fas fa-calendar-check"></i>2026/01/15</h3>
-
-      <p>この記事は2026年1月15日分のニュースサマリーです。</p>
-      <p>ここに記事本文を入力してください。</p>
-    </div>
-
-    <!-- ↑↑↑ ここまで記事を入力 ↑↑↑ -->
-
-    <div class="marker">▲ ここまで ▲</div>
+  <div class="box1">
+    <!-- ▼▼ ここから記事を入力 ▼▼ -->
+    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2026/01/15</h3>
+    <p>この記事は2026年1月15日分のニュースサマリーです。</p>
+    <!-- ▲▲ ここまで記事を入力 ▲▲ -->
   </div>
 
+  <div class="marker">▲ ここまで ▲</div>
+
   <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    // 今日の日付（例: 2025/12/06）
+  document.addEventListener("DOMContentLoaded", () => {
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     const todayStr = `${yyyy}/${mm}/${dd}`;
 
-    // HTML内の日付（<h3 class="bar3">内）を取得
+    // --- 1. HTML内の日付を取得 ---
     const heading = document.querySelector("h3.bar3");
-    const match = heading ? heading.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/) : null;
-
-    if (!match) {
-      // 日付がHTML内にない場合
+    if (!heading) {
       window.location.href = "blank.html";
       return;
     }
 
-    const articleDate = `${match[1]}/${match[2]}/${match[3]}`;
+    const match = heading.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+    if (!match) {
+      window.location.href = "blank.html";
+      return;
+    }
 
-    // ファイル名 (例: 12-06.html)
+    const [_, y, m, d] = match;
+    const articleDate = `${y}/${m}/${d}`;
+
+    // --- 2. ファイル名から mm-dd を取得 ---
     const file = window.location.pathname.split("/").pop();
     const fileMatch = file.match(/(\d{2})-(\d{2})\.html$/);
-
     if (!fileMatch) {
-      // ファイル名が日付形式でない場合も blank.html へ
       window.location.href = "blank.html";
       return;
     }
 
-    const [_, fmm, fdd] = fileMatch;
+    const [__, fmm, fdd] = fileMatch;
 
-    // HTML内の日付の「月日」とファイル名の月日が一致しているか
-    const articleMonth = match[2];
-    const articleDay = match[3];
-    const monthDayMatch = (articleMonth === fmm && articleDay === fdd);
+    // --- 3. 判定ロジック ---
+    const monthDayMatch = (m === fmm && d === fdd);
+    const dateMatch = (articleDate === todayStr);
 
-    // 今日の日付とHTML内の日付を比較
-    if (articleDate !== todayStr || !monthDayMatch) {
+    if (!monthDayMatch || !dateMatch) {
+      // どちらか一致しなければ blank.html へ
       window.location.href = "blank.html";
     }
   });
