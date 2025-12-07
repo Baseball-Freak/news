@@ -3,32 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <title>Redirecting...</title>
+
   <script>
     (async () => {
+      // -------------------------------
+      // ✅ 今日の日付を取得
+      // -------------------------------
       const today = new Date();
-      // YYYY (年) の取得は不要になりました
+      const yyyy = today.getFullYear();
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
-      
-      // ターゲットファイル名が MM-DD.html 形式になります
-      const dateStr = `${mm}-${dd}`; 
-      const targetURL = `${dateStr}.html`; // 例: 12-02.html
+
+      // -------------------------------
+      // ✅ 対象ファイルパスを生成
+      // 例: 2025/12-07.html
+      // -------------------------------
+      const dateStr = `${mm}-${dd}`;
+      const targetURL = `${yyyy}/${dateStr}.html`;
 
       try {
+        // -------------------------------
+        // ✅ ファイル存在チェック（HEADリクエスト）
+        // -------------------------------
         const response = await fetch(targetURL, { method: 'HEAD' });
+
         if (response.ok) {
+          // ファイルが存在する → そのページへ遷移
           location.href = targetURL;
         } else {
-          location.href = "pending.html"; // 記事が存在しない場合
+          // ファイルが存在しない → pending.html へ
+          location.href = "pending.html";
         }
-      } catch {
-        location.href = "pending.html"; // 通信エラー時も
+      } catch (error) {
+        // 通信エラー時も pending.html へ
+        console.error("Error checking file:", error);
+        location.href = "pending.html";
       }
     })();
   </script>
 </head>
+
 <body>
   <p>Redirecting to today's article...</p>
 </body>
 </html>
-
