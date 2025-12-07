@@ -140,6 +140,7 @@
     </div>
 
         <div class="news">
+      
             <ul class="nb-list">
         <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-EARWQNP4XJFENAIZ5INZSZ2NWY/" target="_blank" rel="nofollow">【サンスポ】DeNA・度会隆輝らがトークショーでファンと交流　来季の目標は「横浜ファミリーと必ず優勝」</a></li>
         <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-MRWOGRM6LBBWBA4LVDDEFKG2LE/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、小野ハーフマラソンで1・2キロ快走「自分の中ではリスペクトする方の中にマラソンランナーが入っている」</a></li>
@@ -189,52 +190,55 @@
 
   <script>
     // --- 日付ナビゲーション（前日／翌日への移動）と日付表示の制御 ---
-    // ※サーバー上のファイル構造（例: ../2025/12-07.html）に依存します
+    // ※このスクリプトは、URLパス（例: /2025/12-07.html）から日付を解析し、表示とナビゲーションに利用します。
     (() => {
       const pathParts = location.pathname.split('/');
       let filename = pathParts.pop();       // 例: 12-07.html
       let folder = pathParts.pop();         // 例: 2025
 
-      // ファイル名が日付形式でない場合のフォールバック
+      // ファイル名が日付形式でない場合は処理を終了
       if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
-        // 日付として解析できない場合は、日付表示もナビゲーションも行わない
         return; 
       }
 
+      // ファイル名から月と日を抽出し、数値に変換
       const [mm_num, dd_num] = filename.replace('.html', '').split('-').map(Number);
+      // フォルダ名から年を抽出し、失敗したら現在の年をフォールバックとして使用
       const currentYear = parseInt(folder) || new Date().getFullYear();
       
-      // URLから抽出した日付（mm_num, dd_num, currentYear）を使用してDateオブジェクトを作成
+      // URLから抽出した日付（mm_num, dd_num, currentYear）を使用してDateオブジェクトを作成（これが記事の日付）
       const currentDate = new Date(currentYear, mm_num - 1, dd_num);
 
-      // 1. 【修正部分】抽出した日付を画面に表示する
+      // 1. 抽出した記事の日付を画面に表示する
       const dateElement = document.querySelector('.date');
       if (dateElement) {
         const yyyy = currentDate.getFullYear();
         const mm_display = String(currentDate.getMonth() + 1).padStart(2, '0');
         const dd_display = String(currentDate.getDate()).padStart(2, '0');
+        // YYYY/MM/DD形式で表示
         dateElement.textContent = `${yyyy}/${mm_display}/${dd_display}`;
       }
 
-      // 2. ナビゲーションリンクの計算（変更なし）
+      // 2. ナビゲーションリンクの計算のためのヘルパー関数
       const formatDate = (date) => {
         const m = String(date.getMonth() + 1).padStart(2, '0');
         const d = String(date.getDate()).padStart(2, '0');
         return `${m}-${d}.html`;
       };
 
-      // 前日
+      // 前日の日付を計算し、URLを構築
       const prev = new Date(currentDate);
       prev.setDate(currentDate.getDate() - 1);
       const prevYear = prev.getFullYear();
       const prevURL = `../${prevYear}/${formatDate(prev)}`;
 
-      // 翌日
+      // 翌日の日付を計算し、URLを構築
       const next = new Date(currentDate);
       next.setDate(currentDate.getDate() + 1);
       const nextYear = next.getFullYear();
       const nextURL = `../${nextYear}/${formatDate(next)}`;
 
+      // ボタンにリンクを設定
       const prevBtn = document.getElementById('prev-day');
       const nextBtn = document.getElementById('next-day');
 
