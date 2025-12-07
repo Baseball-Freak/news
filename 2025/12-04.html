@@ -1,5 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
 
-<ul class="nb-list"><li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/04/post1872451/" target="_blank" rel="nofollow">【Full-count】防御率6点台で監督から“名指し”「土俵際や」　1267日ぶり勝利も…貰えなかったボール</a></li>
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      // ※現在は /yyyy/ の中にいるため、pending.html がルートにある場合は ../ を付けます
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2025/12/04</h3>
+
+  <ul class="nb-list"><li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/04/post1872451/" target="_blank" rel="nofollow">【Full-count】防御率6点台で監督から“名指し”「土俵際や」　1267日ぶり勝利も…貰えなかったボール</a></li>
 <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/04/0019778810.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神戦力外の漆原大晟が現役引退発表「本当に人に恵まれた幸せな野球人生でした」オリックスから２３年現役ドラフトで移籍　今季１１試合で防御率０・００も</a></li>
 <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51271.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】漆原大晟が引退発表…インスタグラムに「幸せな野球人生」タイガースアカデミーのコーチ就任予定</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001582.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】戦力外の漆原大晟が現役引退を発表「本当に人に恵まれた幸せな野球人生でした」</a></li>
@@ -67,3 +177,10 @@
 <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/04/0019775437.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・早川　古巣くふうハヤテのスポンサー問題「僕にできることはないですけど」活躍して「良い方向に向けば」</a></li>
 <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/04/0019775440.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・湯浅“エルモの心得”挑戦心「その心を忘れたら成長がない」　長寿番組にあやかり息の長い活躍誓う</a></li>
 </ul>
+
+
+</div>
+</body>
+</html>
+
+
