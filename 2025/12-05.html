@@ -1,588 +1,250 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baseball Freak News</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Freak News</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'メイリオ', Meiryo, sans-serif;
-      background-color: #ffffff;
-      color: #333;
-    }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+    }
 
-    /* コンテンツ全体のラッパー（中央寄せ・幅調整） */
-    .container {
-      width: 95%;
-      max-width: 800px; /* PCで見やすくするための最大幅 */
-      margin: 0 auto;
-      padding: 10px;
-      box-sizing: border-box;
-    }
+    /* コンテンツ全体のラッパー（中央寄せ・幅調整） */
+    .container {
+      width: 95%;
+      max-width: 800px; /* PCで見やすくするための最大幅 */
+      margin: 0 auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
 
-    /* 日付表示 */
-    .date {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1em;
-      margin-top: 10px;
-      color: #555;
-    }
+    /* 日付表示 */
+    .date {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-top: 10px;
+      color: #555;
+    }
 
-    /* --- ナビゲーションボタン部分 --- */
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin: 15px auto 20px auto;
-      gap: 10px;
-    }
+    /* --- ナビゲーションボタン部分 --- */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin: 15px auto 20px auto;
+      gap: 10px;
+    }
 
-    .nav-btn, .nav-buttons a {
-      flex: 1;
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      color: #333;
-      font-size: 9pt;
-      padding: 8px 0;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      transition: all 0.2s ease;
-    }
+    .nav-btn, .nav-buttons a {
+      flex: 1;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 9pt;
+      padding: 8px 0;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      transition: all 0.2s ease;
+    }
 
-    /* 左右の色分け */
-    #prev-day {
-      background: #e1f0ff; /* 淡いブルー */
-    }
+    /* 左右の色分け */
+    #prev-day {
+      background: #e1f0ff; /* 淡いブルー */
+    }
 
-    #next-day {
-      background: #e8ffe1; /* 淡いグリーン */
-    }
+    #next-day {
+      background: #e8ffe1; /* 淡いグリーン */
+    }
 
-    .nav-buttons a:hover {
-      filter: brightness(0.95);
-      font-weight: bold;
-    }
+    .nav-buttons a:hover {
+      filter: brightness(0.95);
+      font-weight: bold;
+    }
 
-    /* --- ニュース記事リスト部分 --- */
-    .news {
-      font-size: 9.5pt;
-      line-height: 1.6;
-    }
+    /* --- ニュース記事リスト部分 --- */
+    .news {
+      font-size: 9.5pt;
+      line-height: 1.6;
+    }
 
-    .nb-list {
-      list-style: none; /* ドットを消す */
-      padding: 0;
-      margin: 0;
-    }
+    .nb-list {
+      list-style: none; /* ドットを消す */
+      padding: 0;
+      margin: 0;
+    }
 
-    .nb-list li {
-      margin-bottom: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px dotted #ccc;
-    }
+    .nb-list li {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dotted #ccc;
+    }
 
-    .nb-list li:last-child {
-      border-bottom: none;
-    }
+    .nb-list li:last-child {
+      border-bottom: none;
+    }
 
-    .nb-list a {
-      color: #0044cc;
-      text-decoration: none;
-      display: block; /* クリック領域を広げる */
-    }
+    .nb-list a {
+      color: #0044cc;
+      text-decoration: none;
+      display: block; /* クリック領域を広げる */
+    }
 
-    .nb-list a:hover {
-      text-decoration: underline;
-      color: #0066ff;
-    }
+    .nb-list a:hover {
+      text-decoration: underline;
+      color: #0066ff;
+    }
 
-    /* アイコン代わりの簡易スタイル（画像がない場合用） */
-    .news-icon::before, .teams-icon::before {
-      content: '■';
-      font-size: 0.8em;
-      margin-right: 5px;
-      color: #999;
-    }
-    
-    /* サイトごとの色分け例（必要に応じて） */
-    .news-ssp::before { color: #f5a623; } /* サンスポっぽい色 */
-    .news-snc::before { color: #4a90e2; } /* スポニチっぽい色 */
-    .news-nsp::before { color: #d0021b; } /* 日刊スポーツっぽい色 */
-    .teams-g::before  { color: #f97306; } /* 巨人 */
-    .teams-t::before  { color: #ffe800; } /* 阪神 */
+    /* アイコン代わりの簡易スタイル（画像がない場合用） */
+    .news-icon::before, .teams-icon::before {
+      content: '■';
+      font-size: 0.8em;
+      margin-right: 5px;
+      color: #999;
+    }
+    
+    /* サイトごとの色分け例（必要に応じて） */
+    .news-ssp::before { color: #f5a623; } /* サンスポっぽい色 */
+    .news-snc::before { color: #4a90e2; } /* スポニチっぽい色 */
+    .news-nsp::before { color: #d0021b; } /* 日刊スポーツっぽい色 */
+    .teams-g::before  { color: #f97306; } /* 巨人 */
+    .teams-t::before  { color: #ffe800; } /* 阪神 */
 
-    footer {
-      text-align: center;
-      font-size: 8pt;
-      color: #888;
-      margin-top: 30px;
-      margin-bottom: 20px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
-    }
-  </style>
-
-  <script>
-    // 日付の自動挿入
-    window.onload = () => {
-      const dateElement = document.querySelector('.date');
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      
-      // 既に日付が入っていなければ現在日付を入れる
-      if(dateElement && !dateElement.textContent) {
-        dateElement.textContent = `${yyyy}/${mm}/${dd}`;
-      }
-    };
-  </script>
+    footer {
+      text-align: center;
+      font-size: 8pt;
+      color: #888;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="container">
-    <!-- 日付 -->
-    <div class="date"></div>
+  <div class="container">
+        <div class="date"></div>
 
-    <!-- 前日・翌日ボタン -->
-    <div class="nav-buttons">
-      <a id="prev-day" href="#">&laquo; Previous</a>
-      <a id="next-day" href="#">Next &raquo;</a>
-    </div>
+        <div class="nav-buttons">
+      <a id="prev-day" href="#">&laquo; Previous</a>
+      <a id="next-day" href="#">Next &raquo;</a>
+    </div>
 
-    <!-- 記事を貼り付ける場所 -->
-    <div class="news">
-      <!-- ▼▼▼ ここにNews記事を貼り付けてください ▼▼▼ -->
-<ul class="nb-list"><li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1872940/" target="_blank" rel="nofollow">【Full-count】齋藤響介が悔やむ“迷い”「腕が振れなくなった」　フォーム修正が招いた怪我…誓った4年目の飛躍</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873114/" target="_blank" rel="nofollow">【Full-count】「絶対に野球やめる」　首脳陣にカチン…血気盛んのドラ1候補、許せなかった“横暴”</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873362/" target="_blank" rel="nofollow">【Full-count】ノムさんから「お前、痩せろ！」　1か月10キロ減も…成績低下で「もうええやん。太ろう」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001685.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】育成５位の島原大河「自分は打てるキャッチャーというのが武器」目標は巨人阿部監督</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174832" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】中日・樋口正修、理想の走り”8割の力で全速力”を追求へ「走り出しの早さや体に無理をさせないフォームを学べたら」</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174831" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】【中日】帰ってきた”マスター”阿部寿樹、竜での完全燃焼誓う　「もっともっとうまくなれれば」と野球への情熱は冷めず</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174834" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】中日・上林誠知、来季テーマは「突き抜ける感じでいきたい」“2代目ピンキー”は継続、エメラルド色の用具も作成中</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174823" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】中日・加藤匠馬、自主トレ中に復帰の阿部寿樹と遭遇「いい先輩なのでまた一緒にできてうれしい」</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174814" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】中日・木下拓哉、来季は自身初のグレーミット「キャンプで使って試合用に備えたい」ミズノ本社で感触チェック</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174812" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】中日・柳裕也、楽天から4年ぶり復帰の明大先輩・阿部寿樹を歓迎 「年の近い選手中心に、良い雰囲気で迎えたい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51290.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】２６年シーズンの選手会役員を公表　選手会長は３年連続で外崎修汰</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51310.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】相沢白虎がＶ打！３安打１打点　レギュラーシーズン白星締め…台湾ＷＬ</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51309.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】石塚裕惺が１１試合で６度目のマルチ安打　打率３割７分５厘に上昇…オーストラリアＷＬ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001625.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】育成４位の金子京介は乃木坂ガチ勢スラッガー「グッズやライブに…」推し活に100万円</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001569.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】育成３位の中沢匠磨、藤平尚真の背中を追いかける「勢いを持ってこられるような投手に」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001484.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】育成１位の幌村黛汰、憧れは中島大輔「３拍子そろっていて、そういう選手になりたい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001441.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ６九谷瑠、「矢場とんポーズ」で登場「お立ち台で出来たらやりたいなと思います」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001312.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】繁永晟「ミート力と明るさ全面に」新人王とチームの元気印目指す　先輩の浅村栄斗を尊敬</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001402.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ４大栄利哉「YG安田さんのような、大きい体を目指して」１年目は体作りに注力　</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001256.html" target="_blank" rel="nofollow">【日刊スポーツ】ソフトバンク退団した村上隆行氏が韓国プロ野球・サムスンの１軍打撃コーチに就任</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001274.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】川瀬晃、来季一番の目標は「開幕スタメン」1200万円増の5000万円で契約更改</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001272.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】「苦しかった」塩見泰隆が告白、愛妻や家族「やりたいなら全力で支える」に救われた</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-HFF2JHSACBJ23JKNWGD763MBBM/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・下川隼佑、400万円増の年俸900万円で契約更改　昇給分の使い道は「ちょっといい家電を…」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-DNYGRU6455LEVAGZUFUDGXQYVE/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・青木宣親、大改革に意欲「生まれ変わるチャンス」　競争求め「若い選手にチャンスを与えたい」　GM就任を発表</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173322000c.html" target="_blank" rel="nofollow">【スポニチ】熱烈オリ党の人気アイドルが気づいちゃった…岸田護監督の“秘密”とは</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173334000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢がサンテレビ「熱血！タイガース党」出演　来季目標は打率3割</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173333000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　01年トリオの富田蓮、西純矢、井上広大が大阪市内でトークショーに出演</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873818/" target="_blank" rel="nofollow">【Full-count】大人の色気漂う28歳「イケメンすぎて無理」　スーツ姿にファン悶絶「カッコ良すぎて倒れた」</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873834/" target="_blank" rel="nofollow">【Full-count】悲しき流出「マイナス21」の過去から逆襲　10年ぶりの“動き”に驚愕「今年どうした!?」</a></li>
-<li class="news-icon news-kng"><a href="https://www.kanaloco.jp/sports/baseball/baystars/article-1229761.html" target="_blank" rel="nofollow">【神奈川新聞】ＤｅＮＡ佐々木千隼、ＣＳでサヨナラ被弾の悔しさ胸に　来季のフル回転誓う</a></li>
-<li class="news-icon news-kng"><a href="https://www.kanaloco.jp/sports/baseball/baystars/article-1229748.html" target="_blank" rel="nofollow">【神奈川新聞】ＤｅＮＡ平良拳太郎は３千万円でサイン、佐々木千隼も３４００万円で更改</a></li>
-<li class="news-icon news-cgk"><a href="https://www.chugoku-np.co.jp/articles/-/754285" target="_blank" rel="nofollow">【中国新聞】益田武尚、個人トレーナーに師事</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248532/" target="_blank" rel="nofollow">【北海道新聞】日本ハム2軍誘致の夢、苫小牧に託す　伊達の市民団体、期成会に署名手渡す</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248517/" target="_blank" rel="nofollow">【北海道新聞】日本ハムからFAの石井が西武へ　出場機会求め　今季は二塁手としてチームトップ102試合出場</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248512/" target="_blank" rel="nofollow">【北海道新聞】日本ハム　春季キャンプは来年2月1日から沖縄・名護で　1・2軍の日程発表</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248510/" target="_blank" rel="nofollow">【北海道新聞】日ハム中島選手　雄武で15日トークショー</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51226.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】外崎修汰が契約更改「勝手な思いだとセカンドで…」思い明かすも一方で「試合に出られるなら」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51287.html" target="_blank" rel="nofollow">【スポーツ報知】【日本ハム】郡司裕也がミズノ社へ珍リクエスト「郡司で対応するフリーサイズを作ってくださいと」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51237.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】山野太一が結婚＆第１子となる長女の誕生を報告「勝利の女神ですね」　９００万円増の２３００万円でサイン　</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51285.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・森田駿哉が一日警察署長　富山中央署が年末の事件事故の防止を呼びかけ「年末特別警戒出発式」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51225.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】相沢白虎が８番・右翼で先発　金城コーチ率いるＮＰＢ選抜レギュラーシーズン最終戦…台湾ＷＬ</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51234.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】岩崎優が児童福祉施設・保育園等に１０６万相当の玩具寄贈「野球を身近に感じられる取り組み」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001134.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】元謙太と育成契約、育成では異例の300万円増の年俸1000万円でサイン</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001149.html" target="_blank" rel="nofollow">【日刊スポーツ】【ロッテ】新人王の西川史礁、オフは10g軽量化したバット試す「来季は２桁本塁打打ちたい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001200.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】村林一輝「こんな機会はない」カブス鈴木誠也に質問攻め　10年目に最多安打など飛躍</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001054.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】中村晃19年目で2000万円増「代打１本」から４番まで…リーグ連覇の立役者</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001044.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】川瀬晃、1200万円増の5000万円「レギュラー取りへ、長打力つけたい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001041.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】「頭でかい」郡司裕也が「郡司に対応するフリーサイズ」要望　特注の帽子をオーダー</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001133.html" target="_blank" rel="nofollow">【日刊スポーツ】シーズンオフ話題は今季セMVPのサトテルだ　今年の覚醒は緩急のボールに対応したこと／寺尾で候</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001160.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太ら４選手が「ミズノアンバサダーミーティング」参加　バットやグラブ等意見交換</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001137.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】岩崎優、こども園訪問＆玩具寄贈「喜んでくれたので…」21年から始めて今季も</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001169.html" target="_blank" rel="nofollow">【日刊スポーツ】【巨人】「THE TALK　スペシャルトークショー」7日開催　リチャード、浅野翔吾らが出演</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050001043.html" target="_blank" rel="nofollow">【日刊スポーツ】【巨人】岸田行倫がWBCメンバー入り想定し準備「癖ですぐ返しちゃう」ピッチクロック慣れ必要</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-55JMQG4UFZNTBINA37GXZE5GIA/" target="_blank" rel="nofollow">【サンスポ】ソフトバンク・中村晃外、1億2000万円で更改　川瀬晃内は1200万円増</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-37YPAN6SFBOJBIKPTG3OVKZRHQ/" target="_blank" rel="nofollow">【サンスポ】楽天D1位・藤原聡大「日本ハム・伊藤さんのように5年目くらいで…」　目標は沢村賞</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-F22ZAOJFINNJPBHHBEDKNZQCWI/" target="_blank" rel="nofollow">【サンスポ】楽天D2位・伊藤樹、ジュニア以来の〝古巣ユニ〟「やっとプロの舞台に立てたと実感した」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-YNNTKTXRLZO73C3HY3IMPUR57U/" target="_blank" rel="nofollow">【サンスポ】日本ハム、春季キャンプ日程発表</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-4AG7DF77TZPHDEL4BTTXRYLW6M/" target="_blank" rel="nofollow">【サンスポ】トライアウト後に異例の再契約を結んだ日本ハム・福田俊が決意「結果で返すしかない」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-W4W4R3ZFGRLIPBRKXFS266KUCI/" target="_blank" rel="nofollow">【サンスポ】西武、巨人戦力外の高橋礼を獲得へ</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-CGFU4OJQ3NADBEJF6PDLZQCVRI/" target="_blank" rel="nofollow">【サンスポ】DeNA・佐々木千隼、100万円減で更改　来季の目標は自己最多登板「今までで一番を」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173313000c.html" target="_blank" rel="nofollow">【スポニチ】日本ハム郡司　ミズノに珍要求　足のサイズは29センチ　フリーサイズ練習用帽子は入らず「末端がでかい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173311000c.html" target="_blank" rel="nofollow">【スポニチ】杉谷拳士氏の“大谷翔平と元チームメート”アピールに中田翔氏ピシャリ！「その場にいただけ」</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873846/" target="_blank" rel="nofollow">【Full-count】電撃発表の夜に“長文”で明かした決断の背景　「すごく寂しいですが」ファンへの本音</a></li>
-<li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_10578.html" target="_blank" rel="nofollow">【公式サイト】岩崎選手による社会貢献活動の実施について</a></li>
-<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28227/" target="_blank" rel="nofollow">【公式サイト】森田投手が地元・富山で一日警察署長</a></li>
-<li class="teams-icon teams-l"><a href="http://www.seibulions.jp/news/detail/202500626262.html" target="_blank" rel="nofollow">【公式サイト】2026シーズン埼玉西武ライオンズ選手会役員の決定について</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019781726.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岩崎が地元・清水で玩具贈呈式　５年連続の活動「野球が身近になるように」</a></li>
-<li class="news-icon news-cgk"><a href="https://www.chugoku-np.co.jp/articles/-/754307" target="_blank" rel="nofollow">【中国新聞】坂倉将吾、改良ミットに好感触</a></li>
-<li class="news-icon news-cgk"><a href="https://www.chugoku-np.co.jp/articles/-/754215" target="_blank" rel="nofollow">【中国新聞】2200万円アップの中村奨成「どんな時も妻に支えてもらいま...</a></li>
-<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1431671/" target="_blank" rel="nofollow">【西日本スポーツ】中村晃が1億2000万円で更改　ソフトバンクホークス、川瀬晃は...New</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248372/" target="_blank" rel="nofollow">【北海道新聞】西武移籍が決まった日本ハム石井一成　写真で振り返る9年間</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248351/" target="_blank" rel="nofollow">【北海道新聞】石井FA流出　日本ハム、二遊間の底上げ必要</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51202.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】森田駿哉が地元・富山で一日警察署長「来年は富山でオールスターがある」出場を熱望</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51174.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】「ＧＩＡＮＴＳ　ＨＯＭＥＴＯＷＮ　ｆｅｓ　２０２５」　トークショーゲスト出演日程変更</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51168.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】好調の石塚裕惺が「１番・遊撃」、荒巻悠が「４番・三塁」で先発出場…オーストラリアＷＬ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000767.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ５伊藤大晟、ユニ表記は「TAISEI・I」伊藤姓が４人で「自由にしていいよと」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000842.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ７阪上翔也、トリプルスリーに照準「プロ野球の歴史に名が残るような選手に」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000784.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ２伊藤樹、ドラ４大栄利哉との東北出身バッテリー結成に意欲「素晴らしいこと」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000978.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】外崎修汰が選手会長留任　副会長に渡辺勇と西川愛也、執行役員に蛭間拓哉と隅田知一郎</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000947.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】甲斐野央は3300万円増の6800万円　クローザーについて「勝ち抜いていきたい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000769.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】血も空気も加速度的に入れ替わる今オフ補強　「トノゲン」でさえもはや聖域ではない</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512050000700.html" target="_blank" rel="nofollow">【日刊スポーツ】ロバーツ監督、今井達也は「メジャーで活躍できる」山本由伸とのフォームや球筋の相違点交え語る</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000785.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】玉井大翔「同級生」西川遥輝５年ぶり復帰歓迎、阪神島本も加入92年組“勢力拡大”</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000867.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】佐々木千隼、100万円減の3400万円「悔しいシーズン。体のトラブルなくす」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512050000813.html" target="_blank" rel="nofollow">【日刊スポーツ】DeNA前監督の三浦大輔氏「POMPADOUR」からパンのプレゼント「似顔絵似てますね」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000743.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】平良拳太郎400万増“うちなー今帰仁村トレ”で体幹強化「規定と２ケタ勝利目標」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000835.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】山野太一、900万円増の2300万円で更改　同学年女性と結婚＆第１子誕生を報告</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-XKSHYXSWF5NLXNBMZ7R6T6XNMA/" target="_blank" rel="nofollow">【サンスポ】ロッテ・西川、新人王にも前進あるのみ「2桁本塁打は打ちたい」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-B4G54TLJYNLPFERWEJ6T4BUKS4/" target="_blank" rel="nofollow">【サンスポ】日本ハム・斎藤友貴哉、4年ぶりにチームメートとなる島本浩也と共闘誓う「島さんと必勝リレーをつなげられたら」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-RWAAKN2YKBKKPHAY3M3FHPTLNA/" target="_blank" rel="nofollow">【サンスポ】西武、日本ハム・石井一成を獲得　DeNAからは桑原将志　FA宣言選手2人同時獲得は球団史上初　広池本部長「育成だけでは強くなれない」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-ULDRPQO6DREQBMZYJ5PXID274E/" target="_blank" rel="nofollow">【サンスポ】DeNA・平良拳太郎、400万円増で更改　来季は規定投球回と2桁勝利目指す</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-6ITSPN4RYVPCFE6JFHAKDM6A2Q/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・小川淳司GM、12月末で退任→約42年間在籍した球団を退団　後継の新GMは青木宣親GM特別補佐</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-QC36HJ6LNRAGZHLGS5AYUCTPDE/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・山野太一、結婚＆第1子誕生を報告「〝勝利の女神〟です」　来季のテーマは「悪」　900万円増で更改</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-63BZ2EL2SRGPFMYB7O6G4FAQFU/" target="_blank" rel="nofollow">【サンスポ】阪神・岩崎優、地元・清水のこども園に玩具を寄贈「野球が身近になるように」　子供たちと交流し笑顔はじける</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-GHDQ3HMX5RMCRDR4RGJ53OSE3E/" target="_blank" rel="nofollow">【サンスポ】巨人・岸田「ピッチコム」を〝予習〟「時間制限も厳しいので、慣れるまでは配球どころじゃない」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173239000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク川瀬が1200万増の5000万円でサイン　来季は長打力アップ狙う</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173248000c.html" target="_blank" rel="nofollow">【スポニチ】楽天村林　カブス誠也を質問攻め「こんな機会ない。なんでアッシュを使われているのか気になって」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173238000c.html" target="_blank" rel="nofollow">【スポニチ】杉谷拳士氏が猛反省「一生かけて償っていきたいです」　泣きそうな顔で中田翔氏に謝罪　一体何が…</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173246000c.html" target="_blank" rel="nofollow">【スポニチ】オリックス　小木田が「右肘骨片除去手術」を受けたことを発表　今年4月にTJ手術</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173259000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルトの5年目左腕・山野が結婚＆第1子の誕生を発表　最愛の家族は「勝利の女神です」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173272000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　岩崎優が静岡のこども園に玩具贈呈　子供たちと交流「これからも続けていきたい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173249000c.html" target="_blank" rel="nofollow">【スポニチ】中田翔氏　撮影された動画「すぐもらいました」　巨人時代に経験した「最高の時間」とは</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873458/" target="_blank" rel="nofollow">【Full-count】鷹・中村晃が2000万円増の1.2億円で更改「評価してもらった」　オフに手術も開幕に意欲「問題ない」</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873791/" target="_blank" rel="nofollow">【Full-count】今季引退の阪神・原口文仁が「育成アドバイザー」に就任　赤星憲広オーナーの中学生チーム</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682319/" target="_blank" rel="nofollow">【ベースボールキング】西武、2026シーズンの選手会役員決定　会長は外崎修汰</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682301/" target="_blank" rel="nofollow">【ベースボールキング】もう一度輝きを！古巣に復帰した西川遥輝と阿部寿樹</a></li>
-<li class="teams-icon teams-s"><a href="http://www.yakult-swallows.co.jp/news/detail/31779" target="_blank" rel="nofollow">【公式サイト】契約更改について</a></li>
-<li class="teams-icon teams-c"><a href="http://www.carp.co.jp/news25/n-398.html" target="_blank" rel="nofollow">【公式サイト】中村 奨成選手が契約更改</a></li>
-<li class="teams-icon teams-c"><a href="http://www.carp.co.jp/news25/n-397.html" target="_blank" rel="nofollow">【公式サイト】シーズンオフ テレビ・ラジオ出演（12/8～12/14）について</a></li>
-<li class="teams-icon teams-c"><a href="http://www.carp.co.jp/news25/n-396.html" target="_blank" rel="nofollow">【公式サイト】シーズンオフイベント（12/8～12/14）について</a></li>
-<li class="teams-icon teams-e"><a href="http://www.rakuteneagles.jp/news/detail/202500939357.html" target="_blank" rel="nofollow">【公式サイト】第4回楽天イーグルス杯ミズノキッズベースボール東北大会 優勝は古川スワローズ!</a></li>
-<li class="teams-icon teams-e"><a href="http://www.rakuteneagles.jp/news/detail/202500954953.html" target="_blank" rel="nofollow">【公式サイト】「2026年度 東北楽天ゴールデンイーグルス 新入団選手発表会見」を行いました</a></li>
-<li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670147.html" target="_blank" rel="nofollow">【公式サイト】【BPB DX】動画『「Mびっぴー賞2025」 結果発表＆表彰式』公開！</a></li>
-<li class="teams-icon teams-l"><a href="http://www.seibulions.jp/news/detail/202500626023.html" target="_blank" rel="nofollow">【公式サイト】契約更改のお知らせ</a></li>
-<li class="news-icon news-kng"><a href="https://www.kanaloco.jp/sports/baseball/baystars/article-1229634.html" target="_blank" rel="nofollow">【神奈川新聞】ＤｅＮＡ、来春キャンプの休養日は４日間　１軍練習試合の日程も公表</a></li>
-<li class="news-icon news-khk"><a href="https://kahoku.news/articles/20251205khn000028.html" target="_blank" rel="nofollow">【河北新報】意気込む12人の若ワシ  楽天新入団選手発表</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248333/" target="_blank" rel="nofollow">【北海道新聞】日本ハム石井一成　西武へ移籍発表　国内FA権を行使</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51129.html" target="_blank" rel="nofollow">【スポーツ報知】佐々木朗希　ロッテ時代の同僚ピッチャー２人とオフ満喫「一緒やったんか」「どんな話を」「リラックスしてるねー」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51114.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】元巨人・高橋礼獲得へ本格調査「先発もリリーフもしていてアンダースローの希少価値もある」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51138.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】前田健太が新天地でも“画伯”ぶりを披露　大阪名物描いて笑顔…広島時代の同僚らと交流も</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51136.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】救援右腕・小木田敦也が右肘骨片除去手術　４月のトミー・ジョン手術に続き万全期す</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51117.html" target="_blank" rel="nofollow">【スポーツ報知】【ソフトバンク】秋広優人の来季の目標は「ビールかけ」　巨人、ソフトの連続Ｖでも果たせず</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51125.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】育成出身ルーキー・下川隼佑が４００万円増の９００万円でサイン　昇給分の使い道は「ちょっといい家電を…」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51120.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】塩見泰隆が減俸でサイン　左膝の状態は「試合に出てもいいんじゃないかくらいのレベル」来季は完全復活目指す</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51108.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】青木宣親新ＧＭが大改革決意　「変えるところがたくさんある」「大きくスワローズが変わっていけるタイミング」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51159.html" target="_blank" rel="nofollow">【スポーツ報知】【中日】村松開人が１４日にファンミーティング開催</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51150.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】大城卓三と中川皓太がミズノブランドアンバサダーミーティングに出席</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51160.html" target="_blank" rel="nofollow">【スポーツ報知】【ＤｅＮＡ】佐々木千隼「悔しいシーズンでした」１００万円減の３４００万円でサイン</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51145.html" target="_blank" rel="nofollow">【スポーツ報知】【ＤｅＮＡ】平良拳太郎が４００万円増の３０００万円でサイン「２ケタ勝利をとりたい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000535.html" target="_blank" rel="nofollow">【日刊スポーツ】【ロッテ】今季限りで退団の荻野貴司氏、今後は「新しい経験としてどこかでできれば」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000630.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】「マエケン画伯」の最新作　前田健太がグラブタイプのソファにサイン　馬や自画像など…</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000646.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ１藤原聡大「絶対的に試合を支配できるような投手に」将来の目標は沢村賞</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000558.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ１藤原聡大、目標は沢村賞「30歳になるまで取りたい」新入団選手発表会見</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000538.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】前巨人の高橋礼を「獲得の方向で」広池本部長認める「アンダースローで希少価値もある」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000512.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】日本ハムFA石井一成と契約合意、広池本部長明かす　内外野まもれ、あらゆる打順対応</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000659.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】育成出身の下川隼佑、400万増の900万円でサイン「１軍経験でき充実した１年」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000611.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】青木宣親氏、26年からGM就任「まずは競争。結果を出せる人間を使いたい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000495.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】塩見泰隆、３年連続減額「去年に引き続き大きなケガ…試合に出たいのが一番」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-YGMPXBMTE5E5BBBQNHSCRQ4ILQ/" target="_blank" rel="nofollow">【サンスポ】楽天移籍の前田健太が「ミズノブランドアンバサダーズミーティング」に出席　元同僚の会沢らと談笑</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-2P5LNUDKKNPNRJ2QBR4HAVFLWU/" target="_blank" rel="nofollow">【サンスポ】オリックス・小木田敦也が右肘をクリーニング手術</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-4M4DQO7TEFIFPO3NIEEMVAI7TI/" target="_blank" rel="nofollow">【サンスポ】西武・滝沢夏央は2100万円アップ　「自分の中では源田さんはスーパースター」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-MRPXIP3NABO2XNM6AH2TQURPKI/" target="_blank" rel="nofollow">【サンスポ】西武・外崎修汰、4年契約最終年の来季に向けて「二塁で出たい」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-STBLAEQ4UFHOJEYH3LGWUVLZCE/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・塩見泰隆、2年連続でダウン更改　リハビリ期間に石川雅規から授かった「百折不撓」の精神で来季こそ復活へ</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-BWO4UHRPVNDAXOO5A53GY2DQWY/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・奥川恭伸、増額でサイン　来季の目標は規定投球回＆2桁勝利「期待以上の数字を」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-QYNXKOIVERKSZFNI7WX6DSBKW4/" target="_blank" rel="nofollow">【サンスポ】中日、楽天を戦力外の阿部寿樹を獲得　4年ぶり古巣復帰「本当に光栄。最善を尽くしたい」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-GPFENUD7GNGCHF7XPEQASECBPE/" target="_blank" rel="nofollow">【サンスポ】阪神・森下翔太「グラブをどうしようか迷っているところでいい時間になった」 </a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173228000c.html" target="_blank" rel="nofollow">【スポニチ】ロッテ退団の荻野貴司氏　海外挑戦を視野「今チームを探しているところ」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173118000c.html" target="_blank" rel="nofollow">【スポニチ】西武・石井一成の獲得を発表　桑原の加入に続き、球団史上初となる同一年2人目のFA移籍選手</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173219000c.html" target="_blank" rel="nofollow">【スポニチ】巨人リチャード　お見事！？“1冠目”　中田翔氏ニヤニヤ　まさかのプレーで大賞に輝く</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873729/" target="_blank" rel="nofollow">【Full-count】西武がFAの石井一成との契約合意を正式発表　異例の今オフ2人目…球団本部長「心から嬉しい」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682308/" target="_blank" rel="nofollow">【ベースボールキング】西武、今オフ2人目のFA選手獲得！石井一成の入団合意を正式発表！広池球団本部長「大きく貢献してくれることが期待できる」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682307/" target="_blank" rel="nofollow">【ベースボールキング】日本ハム、2026年の春季キャンプ日程を発表</a></li>
-<li class="teams-icon teams-c"><a href="http://www.carp.co.jp/news25/n-395.html" target="_blank" rel="nofollow">【公式サイト】広島ドラゴンフライズ「カープコラボDAY」開催のお知らせ</a></li>
-<li class="teams-icon teams-d"><a href="http://dragons.jp/news/2025/25120501.php" target="_blank" rel="nofollow">【公式サイト】阿部寿樹選手入団会見</a></li>
-<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28226/" target="_blank" rel="nofollow">【公式サイト】HOMETOWN fesのトークショーゲスト出演日程変更のお知らせ</a></li>
-<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28225/" target="_blank" rel="nofollow">【公式サイト】「CLUB GIANTS」ファミリー申請スタート</a></li>
-<li class="teams-icon teams-e"><a href="http://www.rakuteneagles.jp/news/detail/202500960817.html" target="_blank" rel="nofollow">【公式サイト】「楽天イーグルス ファン感謝祭2025 Supported by 洋服の青山～EAGLES MEETS YOU!～」を開催しました!</a></li>
-<li class="teams-icon teams-l"><a href="http://www.seibulions.jp/news/detail/202500626350.html" target="_blank" rel="nofollow">【公式サイト】石井一成選手の入団合意について</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019781044.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　ミズノブランドアンバサダーズミーティングに森下と大山、糸原、桐敷が参加　来季使用の道具について話し合い　森下は「いい時間になった」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019780814.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　大竹が４０００万円アップの１億３０００万円で更改　育成入団から現役ドラフト経て大台突破！球団から感謝の言葉も</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174544" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】【私服姿をお届け～オフドラショット～】金丸夢斗「STONE ISLAND」のデニムのセットアップです。あとポイントは…</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174535" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】【私服姿をお届け～オフドラショット～】上林誠知「私服は黒色のファッションが多いですね」「シンプルに合わせやすい服装を」</a></li>
-<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1174526" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】【中日】阿部寿樹「あらためてここに来て…懐かしい思いとありがたいという思いが強い」年俸1500万円で契約、36歳11年目へ決意</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51065.html" target="_blank" rel="nofollow">【スポーツ報知】【ロッテ】今季限りで退団の荻野貴司が海外挑戦も視野「現役でプレーすることにこだわりたい」　今後は選択肢を幅広く模索</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51081.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】日本ハムからＦＡの石井一成との契約合意を正式発表</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51085.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】仲田慶介が１２００万円で契約更改　ファン感では企画に出演「野球でしっかり歓声を」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51070.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】古賀悠斗が２０００万増で契約更改　ドラ１・小島加入に「譲る気はない」と宣戦布告</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51099.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】打倒ＭＶＰ左腕！　ドラ７・阪上翔也の目標はソフトバンク・モイネロ討ち　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51098.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】「環境のせいにしないことを学べた」　ドラ６・九谷瑠はクラブチームでの経験を胸に活躍誓う　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51096.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】ドラ５・伊藤大晟は背ネーム「ＴＡＩＳＥＩ」でファンにアピール　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51090.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】東北で過ごした誇りを胸にドラ４・大栄利哉が「信頼されるキャッチャー目指す」　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51082.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】ドラ３・繁永晟は高校の大先輩・浅村栄斗が目標　「自分もそういうバッターに」　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51073.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】育成５位・島原大河「小さい頃からテレビで見ていた」　憧れの巨人・阿部慎之助監督のように打てる捕手目指す</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51069.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】「僕の力で埋められるように」　ドラ２・伊藤樹が地元・秋田開催での登板に意欲　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51067.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】「身近な目標はプロ初登板初勝利」　ドラ１・藤原聡大が衝撃デビュー目指す　新入団選手発表会見</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51068.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】元謙太、育成契約も３００万増　右鎖骨下静脈血栓症から復帰へ「やり直せるぞってところを見せる」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51101.html" target="_blank" rel="nofollow">【スポーツ報知】【中日】楽天戦力外の阿部寿樹が中日に４年ぶり復帰「最善を尽くして、やれることをやって、終わる時は終わりたい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51103.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】原辰徳氏、中畑清氏ら出場　ファンとＯＢが同組で一緒にラウンド「ゴルフ選手権」概要発表</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51080.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】“現ドラの星”大竹耕太郎が大台突破！１・３億でサイン「ケタが変わった」来季から背番号２１</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000417.html" target="_blank" rel="nofollow">【日刊スポーツ】【中日】楽天戦力外の「マスター」阿部寿樹が４年ぶり古巣復帰　年俸1500万円で再出発</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000338.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】大津亮介が来季契約を保留「話し合いをしたい」球団では今オフ２人目</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000443.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】滝沢夏央、2100万円増の3200万円　キャリアハイ125試合出場、華麗な守備で投手救う</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000407.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】外崎修汰、現状維持の1.6億</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000404.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】春季キャンプ日程発表　１軍は例年通り沖縄・名護市、２軍は沖縄・国頭村</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000402.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹が１億3000万円で更改　現役ドラフト経験者では中日細川に続く１億円プレーヤーに</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000368.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎、現役ドラフト２人目の１億円プレーヤーに　23年移籍同期の中日細川に続く</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000350.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎4000万増の１億3000万円　NPB最多17選手１億超え見えた !?</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-7DO4SBP44RLFBHHUNSSYAW2YNE/" target="_blank" rel="nofollow">【サンスポ】楽天、新人背番号発表　D1位・藤原聡大13、D2位・伊藤樹20、D3位・繁永晟30</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-S6QGNR2P5FFINCZA4457CLJRJA/" target="_blank" rel="nofollow">【サンスポ】オリックス・元謙太、来季から育成契約　9月に血栓症が発覚　異例の年俸300万円増に「評価を台無しにしないように」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-DL6ZVFTIJFD2FB4XBDMMVTPT4I/" target="_blank" rel="nofollow">【サンスポ】オリックス・大城滉二、現状維持の4000万円　けが防止へダイエット計画「500グラムとか。絶対瘦せれるよね」　</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-HWM7POWFWVOZZIZL3SRUGNHDTE/" target="_blank" rel="nofollow">【サンスポ】石井一成、西武と契約合意　日本ハムから国内FA</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-T3U4IOTRGJKBDEVDUYKWSXR6JU/" target="_blank" rel="nofollow">【サンスポ】西武・仲田慶介は500万円増　福岡大大濠高の同級生・古賀悠について「高校時代はヤンキーチックで絡みづらかった」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-PIPEOTPICVIHXE2YOODFUIJ5LE/" target="_blank" rel="nofollow">【サンスポ】西武・古賀悠斗は2000万円アップ　D1位・小島に対して正捕手の座を「譲る気はない」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-TEA7ENQCEVLPVGJ5MUF4JZO5DA/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎、4000万円増1億3000万円で更改「しっかり上げていただいた」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173158000c.html" target="_blank" rel="nofollow">【スポニチ】今季6勝のソフトバンク大津亮介　チーム2人目の更改保留後に来季の新背番号「19」発表</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173083000c.html" target="_blank" rel="nofollow">【スポニチ】楽天加入の前田健太こと“マエケン画伯”が最新作披露！大阪名物に来年の干支…新同僚・早川と交流も</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173170000c.html" target="_blank" rel="nofollow">【スポニチ】楽天　新入団選手発表会見　ドラ1花園大・藤原　目標は「20代のうちに沢村賞。身近な目標は…」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173161000c.html" target="_blank" rel="nofollow">【スポニチ】オリックス　元謙太と育成契約締結　「右鎖骨下静脈血栓症」で体感した死の境地から復活へ「恩返ししたい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173176000c.html" target="_blank" rel="nofollow">【スポニチ】西武・外崎修汰　現状維持1億6000万円でサイン　来季は「開幕戦から出られるようにアピール」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173171000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト　青木次期GMが就任会見「スワローズの礎を築き、中長期的な視点でチームの強化を進めていく」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173187000c.html" target="_blank" rel="nofollow">【スポニチ】中日復帰の「マスター」阿部寿樹「自分ではまだ若いと思ってやりたい」　4年ぶり古巣復帰会見で意欲</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173172000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　大竹耕太郎が1億3000万円でサイン「連覇に大きなパーツとして加わりたい」　背番号は「21」に</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873616/" target="_blank" rel="nofollow">【Full-count】鷹・大津亮介が契約保留「もう少し時間をかけて」　約1時間の交渉…柳町に続き2人目</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873650/" target="_blank" rel="nofollow">【Full-count】育成に眠る“逸材”が衝撃159キロ「唸りをあげてる」　異国で急成長「何したら化けるん？」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682298/" target="_blank" rel="nofollow">【ベースボールキング】オリックス、元謙太と育成再契約　背番号は『127』</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682296/" target="_blank" rel="nofollow">【ベースボールキング】ソフトバンク・大津、背番号を『26』から『19』に変更</a></li>
-<li class="teams-icon teams-yb"><a href="http://www.baystars.co.jp/news/2025/12/1205_01.php" target="_blank" rel="nofollow">【公式サイト】【今週末開催!!】ノジマ×Hisense Presents 横浜DeNAベイスターズ 選手トークショーinららぽーと横浜開催のお知らせ！</a></li>
-<li class="teams-icon teams-d"><a href="http://dragons.jp/news/2025/campaign-prospi1206.php" target="_blank" rel="nofollow">【公式サイト】「プロスピA プロリーグ」2025シーズン supported by TIR GAMING 第4節！</a></li>
-<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28205/" target="_blank" rel="nofollow">【公式サイト】第4回CLUB GIANTSゴルフ選手権を開催～ファンクラブ会員限定イベント</a></li>
-<li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500903704.html" target="_blank" rel="nofollow">【公式サイト】背番号の変更について</a></li>
-<li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500903555.html" target="_blank" rel="nofollow">【公式サイト】オフシーズンもホークスTVは特別企画が目白押し！</a></li>
-<li class="teams-icon teams-m"><a href="http://www.marines.co.jp/news/detail/202500751495.html" target="_blank" rel="nofollow">【公式サイト】12/11(木) 2025年新入団選手発表会の中継決定</a></li>
-<li class="teams-icon teams-f"><a href="http://www.fighters.co.jp/news/detail/202500806240.html" target="_blank" rel="nofollow">【公式サイト】2026年春季キャンプ日程のお知らせ</a></li>
-<li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500669954.html" target="_blank" rel="nofollow">【公式サイト】育成選手契約締結のお知らせ</a></li>
-<li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500669017.html" target="_blank" rel="nofollow">【公式サイト】【これはいいっすね～♪】BsCLUB入会グッズを選手が紹介！</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/05/0019780537.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島　中村奨成が８００万円→３０００万円の大幅アップでサイン「正直ここまで上がるとは」キャリアハイの１０４試合出場「本当に妻には感謝しています」</a></li>
-<li class="news-icon news-cgk"><a href="https://www.chugoku-np.co.jp/articles/-/754003" target="_blank" rel="nofollow">【中国新聞】中村奨成、2200万円増で更改「ここまで上がると思っていな...</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51049.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】佐藤隼輔が５００万円減で契約更改「解決策が分からないままズルズルいってしまった」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51048.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】支配下復帰の仲三河優太が１４０万円増で契約更改「波なく一定数の結果を出せるように」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51037.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】糸川亮太が２５０万円増で契約更改「どんどん食い込んでいきたい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51033.html" target="_blank" rel="nofollow">【スポーツ報知】【楽天】新人選手の背番号発表　ドラ１藤原聡大は「１３」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51056.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】大城滉二が現状維持の４０００万円でサイン「野手の『おっさん組』で」１月は杉本裕太郎、西野真弘と自主トレ</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51028.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】遠藤成が現状維持の５００万円でサイン…昨年オフに阪神から加入「１軍の試合で活躍」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51054.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】奥川恭伸が５年ぶり昇給でサイン　今オフは既にブルペン入り　来季は「規定投球回達成」＆「２ケタ勝利」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51047.html" target="_blank" rel="nofollow">【スポーツ報知】【広島】中村奨成、年俸３・７５倍の大幅昇給「正直ここまで上がるとは」前日に結婚発表と公私で充実</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51104.html" target="_blank" rel="nofollow">【スポーツ報知】【YouTube】高橋由伸氏が監修「SPONOBA」が元プロを現役復帰させる⁈ 墨田区に再生工場OPEN【コラボ報知】</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000138.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】ドラ１藤原聡大は背番号「13」２位伊藤樹は「20」３位繁永晟は「30」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000182.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】秋広優人、現状維持2450万円で更改「悔しい成績…」移籍２年目の来季へ決意</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000297.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】仲田慶介＆古賀悠斗が互いに昔イジリ　福岡大大濠チームメートコンビが成長ぶり認めつつ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000293.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】古賀悠斗は2000万円増　ドラ１捕手指名も「ここでつかむか、逃すか。譲る気はない」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000256.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】仲田慶介は500万増の1200万円「拾っていただいたライオンズに感謝しか」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000243.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】高松渡は50万増の1150万円　ライバル？入団も「強い気持ちでいきます」と意気込み</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000238.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】佐藤隼輔は500万円減の3800万円「自分自身がその恩恵を受けられるように」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000165.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】プロ初安打の仲三河優太は140万円増「スピードボールに対応していければ」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000192.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】来季ユニホームデザイン変更　リーグ制覇に伴い王者として金色を交える</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000237.html" target="_blank" rel="nofollow">【日刊スポーツ】【広島】中村奨成275％増!!「ここまで上がるとは」キャリアハイ＆結婚発表に加え三重の喜び</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000280.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】奥川恭伸４年ぶり増額でサイン「久々のアップでよかった」規定投球回＆２桁勝利狙う</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-YFK3BYYFGFDS7KWOUJKK7WF7MI/" target="_blank" rel="nofollow">【サンスポ】オリックス・遠藤成は現状維持の500万円　1月に吉田正尚と2年ぶりに合同自主トレへ「もっと吸収したい」　</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-OCHBJRNOO5I45N3PRJT5KLTUCM/" target="_blank" rel="nofollow">【サンスポ】今井達也にシンカーを教えた男　西武・糸川亮太が250万円増でサイン「おこがましいが、うれしい」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-VBYNZTRQZRMFHE5J7JLNMYGX3Y/" target="_blank" rel="nofollow">【サンスポ】【球界ここだけの話（3982）】DeNA・伊勢大夢が示すリリーフの道　後押しは三浦前監督の言葉</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-KFTSFWXJOVPU7KSBL7VGAYMOGI/" target="_blank" rel="nofollow">【サンスポ】ヤクルト、新GMに青木宣親氏の就任を発表　小川淳司GMは12月31日付で退任</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-ISKXJUNDV5F5XICEBEALAMOJ6M/" target="_blank" rel="nofollow">【サンスポ】広島・中村奨成、2200万円増の3000万円でサイン「正直ここまで上がるとは思っていなかった。ビックリ」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-EWID3BCNVJNXBFKZL47OZDDNQ4/" target="_blank" rel="nofollow">【サンスポ】阪神が2026年ユニホームのデザインを変更　ゴールドを基調としたワッペンに</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173115000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク秋広が現状維持の来季推定2450万円でサイン　「何としてもビールかけがしたい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173127000c.html" target="_blank" rel="nofollow">【スポニチ】楽天　新入団選手の背番号発表　ドラ1・藤原聡大は「13」　2位・伊藤樹は「20」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173149000c.html" target="_blank" rel="nofollow">【スポニチ】オリックス大城が現状維持で更改　2年契約終え「頑張らないといけない気持ちが…」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173114000c.html" target="_blank" rel="nofollow">【スポニチ】オリックス・遠藤が現状維持更改　支配下昇格へ吉田正尚と2年ぶり自主トレ「チャンスをつかんでいきたい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173151000c.html" target="_blank" rel="nofollow">【スポニチ】西武・古賀悠斗　2000万円増の6600万円でサイン「優勝、ゴールデングラブ、ベストナイン目指す」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173128000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト・奥川が4年ぶりの年俸アップで契約更改「久々のアップなので良かった」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173141000c.html" target="_blank" rel="nofollow">【スポニチ】広島・中村奨成2200万円増の3000万円でサイン「ここまで上がるとは思っていなかった」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173108000c.html" target="_blank" rel="nofollow">【スポニチ】阪神が26年ユニホームとキャップのデザイン発表　先行受注も開始　</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873396/" target="_blank" rel="nofollow">【Full-count】周囲は期待も「気にしてない」　中村剛也が明かした大偉業への“本音”「面倒臭くなってきた」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682285/" target="_blank" rel="nofollow">【ベースボールキング】DeNA、2026年春季キャンプの日程、マスコット、dianaの宜野湾登場日程が決定！</a></li>
-<li class="teams-icon teams-yb"><a href="http://www.baystars.co.jp/news/2025/12/1205_02.php" target="_blank" rel="nofollow">【公式サイト】2026年春季キャンプの日程およびマスコット、dianaの宜野湾登場日程について</a></li>
-<li class="teams-icon teams-s"><a href="http://www.yakult-swallows.co.jp/news/detail/31773" target="_blank" rel="nofollow">【公式サイト】【公式アプリ・スマホサイト】動画「60秒チャレンジ 撮影の裏側」～松本龍之介選手&amp;根岸辰昇選手編〜を公開！</a></li>
-<li class="teams-icon teams-d"><a href="http://dragons.jp/news/2025/campaign-his.php" target="_blank" rel="nofollow">【公式サイト】中日ドラゴンズ×HIS 特別企画 荒木雅博さん×祖父江大輔さんスペシャルトークショー&ドアラと2ショット撮影会付沖縄ツアー！</a></li>
-<li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_10575.html" target="_blank" rel="nofollow">【公式サイト】2026シーズン「ユニフォーム・キャップ」デザイン変更およびレプリカユニフォーム・キャップの先行受注開始について</a></li>
-<li class="teams-icon teams-t"><a href="https://shop.hanshintigers.jp/ad.html?ccd=kt25120509p" target="_blank" rel="nofollow">【公式サイト】選手直筆サイン入りフォトパネル受注受付中！</a></li>
-<li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500902829.html" target="_blank" rel="nofollow">【公式サイト】プエルトリコから1か月【海外武者修行日記 3】</a></li>
-<li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500902695.html" target="_blank" rel="nofollow">【公式サイト】選手トークショー 12/20尾形投手、松本晴投手、12/21川瀬選手</a></li>
-<li class="teams-icon teams-e"><a href="http://www.rakuteneagles.jp/news/detail/202500959751.html" target="_blank" rel="nofollow">【公式サイト】【受付開始】12月開催!エンジェルスによるボールパークツアー</a></li>
-<li class="teams-icon teams-f"><a href="http://www.fighters.co.jp/news/detail/202500804833.html" target="_blank" rel="nofollow">【公式サイト】「FAVプレ」開催！選手着用ユニフォームなどが当たるチャンス！</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019780367.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　来季ユニホーム＆キャップのデザイン変更を発表　王者の風格漂うゴールドを新たに取り入れ</a></li>
-<li class="news-icon news-dsn"><a href="https://www.hokkaido-np.co.jp/article/1248139/" target="_blank" rel="nofollow">【北海道新聞】日本ハムからFA権行使　石井が西武入りへ</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251205-OHT1T51017.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】青木宣親氏が新GM就任へ　小川GMは今年限りで退任</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000149.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】250万円増で更改した糸川亮太が「シンプルに楽しみ」にしていることは…</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000097.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】日本ハムFAの石井一成と合意　複数年契約へ　同一年にFA選手2人獲得は球団史上初</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512050000147.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】青木宣親氏、26年からGM就任　前任の小川淳司氏は年内で退任</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512050000059.html" target="_blank" rel="nofollow">【日刊スポーツ】岡本和真にレッドソックスなど３球団が強い興味　吉田正尚の存在が争奪戦に有利と米名物記者</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173096000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト　新GMに青木宣親氏の就任発表　小川淳司GMは退任</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682268/" target="_blank" rel="nofollow">【ベースボールキング】ロッテ・上田希由翔「全部の面でまだまだ足りない」と反省も「後半戦、自分の中でも掴んだところも多かった」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682276/" target="_blank" rel="nofollow">【ベースボールキング】ヤクルト、青木宣親氏のGM就任と小川淳司氏のGM退任を発表</a></li>
-<li class="teams-icon teams-s"><a href="http://www.yakult-swallows.co.jp/news/detail/31781" target="_blank" rel="nofollow">【公式サイト】ゼネラルマネージャーの就任について</a></li>
-<li class="teams-icon teams-s"><a href="http://www.yakult-swallows.co.jp/news/detail/31782" target="_blank" rel="nofollow">【公式サイト】ゼネラルマネージャーの退任について</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/05/0019779434.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島が空前の結婚ラッシュ！　中村奨「責任と自覚」鈴木「今まで以上に責任感」益田「より一層野球に」　発表は今オフ７人目</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779114.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【ドラフト選手特集・岡城快生（上）】中学時代はクラスで学級委員、野球部では主将「誰からも愛される子」中学時代の恩師が太鼓判</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51144.html" target="_blank" rel="nofollow">【スポーツ報知】関西テレビで初の女性プロ野球実況　橋本和花子アナ「早くしゃべりたいんですよ、次を」…６月＆８月オリックス戦</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51131.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】岸田護監督が明かした「投手・平野佳寿」への期待　クローザー構想「お客さんも見たいでしょ」…同期対談後編</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51124.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】岸田護監督＆平野佳寿兼任コーチ　お互いのほしい部分は？に「強じんな胃袋」からの秘話…同期対談前編</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040000740.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】野球観戦を好きになるきっかけをくれた大切な選手…おかえりなさい！／谷本安美</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001084.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】球団の黒歴史ついに公開　「藤村富美男監督退陣要求書」　連判状には12人の母印</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-7UNOTMSAKZLDZCNBSZNON6DPKE/" target="_blank" rel="nofollow">【サンスポ】【小早川毅彦ベースボールカルテ】参加した広島OB戦に約2万7000人のファン…初優勝から51年目の来季Vをぜひ</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-447IHT34RFN6DMWV3FXMW7XNTQ/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】受賞者の自宅にお迎え？　「頼むから起きてくれ」と願う担当記者の過去も</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/05/post1873440/" target="_blank" rel="nofollow">【Full-count】2年間0HR→異国で連発…20歳逸材が「マジで覚醒しとる」　漂う進化の“兆し”「楽天の未来」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682270/" target="_blank" rel="nofollow">【ベースボールキング】西武、昨季までの無風状態が一転…西川の成長、桑原の加入で来季は若手・中堅外野手は厳しい立場に</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/05/0019779437.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・床田　プロ１０年目へ３つの誓い　貯金５＆自己最多１８０イニング＆Ｖ弾！　「今年も結局勝負どころで勝てなかった」</a></li>
-<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1431309/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス新選手会長の栗原「ずっと断っていたけどやる...New</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51278.html" target="_blank" rel="nofollow">【スポーツ報知】西武・山田陽翔が球団歴代４位昇給率３２９％「やるべきことをできた」２３００万増の年俸３０００万円でサイン</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51262.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】森友哉が「６０歳現役」を宣言！？　「まだまだやるつもり。もう一回（成績を）上げたい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51216.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】平野佳寿が一日警察署長「投手にとってアウトローは生命線ですが、社会にとってのアウトローは要注意」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51240.html" target="_blank" rel="nofollow">【スポーツ報知】日本ハム・清宮幸太郎、来季９年目を迎えての大台突破「やっとか…」５０００万円増の年俸１億３０００万円でサイン</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51241.html" target="_blank" rel="nofollow">【スポーツ報知】ヤクルト・荘司宏太目指すは「クローザー」球団最多４１セーブ更新狙う…３０００万円増の年俸４２００万円でサイン</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51218.html" target="_blank" rel="nofollow">【スポーツ報知】【広島】床田寛樹が２年連続アーチに意欲「いいところで打ちたい」３５００万円増の１億８５００万円で更改</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51217.html" target="_blank" rel="nofollow">【スポーツ報知】【中日】岡林勇希が球団高卒野手最速の７年目で１億円到達「まだまだ上を目指して」一般女性との結婚も公表</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51239.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・横川凱が１１００万円増の年俸３０００万円でサイン「力不足感じた」先発に来季も挑戦「はい上がっていく」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51237.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・郡拓也と松本剛の深い縁とは　「めっちゃケツたたいてくれます」巨人入りを大歓迎</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51236.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・赤星優志「継続していきたい」阿部監督の助言で得た「慎フォーム」で今季後半０勝の借り返す</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51232.html" target="_blank" rel="nofollow">【スポーツ報知】巨人先発立て直しへ着実補強　ドラフト１位で竹丸を指名　助っ人右腕も調査中　さらに国内大物右腕の動向も注視</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51233.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・井上温大「クロスファイア」でよみがえる！　来年４月には故郷凱旋へ「活躍している姿をまた見せたい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51228.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】連覇へ最先端バーチャル打撃マシン導入…日本シリーズ４連敗につながった“因縁の”機材</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51221.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督が殿堂入り候補に　イチロー氏、松井秀喜氏らに続く資格初年度の選出なるか</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001251.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】広岡大志、倍増4400万円で契約更改も「レギュラーを取るためにまた一から」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001115.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】三木監督、新加入の前田健太にメッセージ「あんまり気負わず、彼らしく今まで通り」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512050000016.html" target="_blank" rel="nofollow">【日刊スポーツ】今井達也にカブス、フィリーズ、ヤンキースが興味　メッツ、オリオールズも接触と米メディア</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202512030001363.html" target="_blank" rel="nofollow">【日刊スポーツ】【契約更改2025全文・DeNA京田陽太】若手に気遣い「朝活」お勧め/6000万円</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001363.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】石井大智、藤川監督の野球殿堂候補者入りに「245セーブですか…考えられないですね」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001391.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】坂本誠志郎が「サダマサシ」自主トレ参加意図明かす「１月からピッチャーの球を」　　</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001253.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】２億円つぎ込み最新鋭バーチャル打撃マシンを導入　大谷翔平も愛用　選手から要望の声　</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001411.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】井坪陽生「誹謗中傷はダメ」愛のある厳しい声援は歓迎　「人権週間」街頭で啓発活動</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001111.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】史上最悪のお家騒動、前代未聞のクーデター「未熟な時代」／藤村富美男監督排斥事件とは</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001030.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】吉田義男、小山正明、金田正泰氏ら12人の母印　藤村富美男監督退陣要求書／全文</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040000872.html" target="_blank" rel="nofollow">【日刊スポーツ】【広島】床田寛樹、DHなし最終年で自己最多65打席へ「うれしいHR打ちたい」プロ２号に意欲</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202511290000011.html" target="_blank" rel="nofollow">【日刊スポーツ】【私と長嶋さん〈24〉】一般人唯一の超レア体験とは　山口・周南市との意外な縁／3</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-N4KPRUXWPBEIDF5NCQ7DF6PAJU/" target="_blank" rel="nofollow">【サンスポ】楽天・三木監督、新加入のマエケンに「気負わずに。できることをやってもらえたら…」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-ZF7VGBKGGFP3TINH4TYLCCUO3U/" target="_blank" rel="nofollow">【サンスポ】日本ハム・清宮幸太郎、苦節8年大台突破！！「遅かったな。それが僕の人生で僕の道」　5000万円増の1億3000万円＆来季選手会長でハムの顔へ</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-JI4OL3FPBZM23ID4SPW5CIFJUU/" target="_blank" rel="nofollow">【サンスポ】【MLB】今井達也はWM後に球団訪問へ…米報道　交渉期限は来年3日午前7時　〝打倒ドジャース〟発言も…交渉オープンでカブスも候補</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-KTL4SXE4ONJ3VIHNUTGS4EHMEI/" target="_blank" rel="nofollow">【サンスポ】DeNA・竹田祐「エースになる夢がある」　今季9勝のケイの穴、俺が埋める！！　〝タケちゃん先生〟、小学生を相手に語る</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-Z6UPJCSAWVJBBELALD2YRHTP7A/" target="_blank" rel="nofollow">【サンスポ】田上健一氏、DeNAの走塁担当アナリストに就任「大きな責任と喜びを感じています」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-B7WDRJ7BJNPFNI57FMUUILEOMM/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・荘司宏太「来年は守護神を取りに行きたい」　3000万円増の年俸4200万円で更改　新人王獲得から「自分に対してのプレッシャー」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-2HGPDRUVRVIUDJ5QHXNHDLSCZE/" target="_blank" rel="nofollow">【サンスポ】阪神・坂本誠志郎、岩貞＆伊藤将らと自主トレ「1月から投手の球を見ておきたい」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-2NFFQGGS4RPA5MRXNR6S4QTGVA/" target="_blank" rel="nofollow">【サンスポ】阪神、連覇へ新兵器導入！　ド軍大谷使用の「トラジェクトアーク」2台でリース代3年2億円も「投資は惜しまない」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-7PZFKP7W4JI3PLEKSD77DL2H2A/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、通算登板数は「620試合を目指してはいる」その理由とは…坂本とテレビ出演</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-ATH6JNXH6RPJPGKIJZJXW2OX74/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川監督が野球殿堂プレーヤー表彰候補入り…粟井球団社長「大変喜ばしいこと」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251205-J5E25G4IJNOVZA35CAUUJKQ5KA/" target="_blank" rel="nofollow">【サンスポ】【輝＆翔トーク②完＝質問編】阪神・佐藤輝、一番耳にした曲は「六甲おろし」…毎日母親に怒られる小学生に森下「お母さんが喜ぶことをお小遣い制に」／ミキハウス・サンスポMVP</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173368000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク　栗原陵矢「全試合に出てしっかりいい数字を」新選手会長の誓い</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173371000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク　周東佑京「いつ面白いことを言うのかなと」栗原陵矢へ辛口エール</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173027000c.html" target="_blank" rel="nofollow">【スポニチ】楽天・山田遥楓氏＆松井友飛氏　現役引退しアカデミーコーチに就任　今オフに戦力外</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173324000c.html" target="_blank" rel="nofollow">【スポニチ】楽天・三木監督が新加入の前田健太に「いろんなものを伝えてくれる期待がある」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173432000c.html" target="_blank" rel="nofollow">【スポニチ】ロッテ・ドラ7田中大聖　同世代「朗希超え」誓う　今秋日本選手権161キロも「165キロを目指して」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173420000c.html" target="_blank" rel="nofollow">【スポニチ】日本ハム・清宮幸　8年目を終え初の大台突破「遅かったけど、一つのステータスなのでうれしい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173424000c.html" target="_blank" rel="nofollow">【スポニチ】日本ハム・万波　来季は優勝するために「数字はとにかくぶっちぎりたい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173426000c.html" target="_blank" rel="nofollow">【スポニチ】日本ハム・水谷　2年間で約9倍！ド派手な「パイナップルコーデ」で登場「来季は“にんべん”」狙う</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173010000c.html" target="_blank" rel="nofollow">【スポニチ】日本ハム・郡司「サヨナラ賞年間大賞」受賞　中田翔氏がエール「監督より派手にやって」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173032000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト・石川＆日本ハム・宮西　ファン歓喜の“マニアック”トークショー</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173339000c.html" target="_blank" rel="nofollow">【スポニチ】8年ぶりアップ更改のオリックス岩崎翔　メジャー球団から関心も残留「このチームで優勝したい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173012000c.html" target="_blank" rel="nofollow">【スポニチ】西武・中村剛2500万円減でサイン　来季現役野手最年長43歳「優勝を目指して、勝ちにこだわる」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173013000c.html" target="_blank" rel="nofollow">【スポニチ】現役野手最年長の西武・中村剛　長男は大阪桐蔭2年生　将来プロ入りで同時出場ならNPB初</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173008000c.html" target="_blank" rel="nofollow">【スポニチ】西武・渡部聖　1850万円増でサイン　惜しくも新人賞ならず「プロ野球人生で賞を獲れるように頑張る」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173006000c.html" target="_blank" rel="nofollow">【スポニチ】西武の源田　ゴールデングラブ賞奪還誓う　炭谷は「62歳まで」現役宣言</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173430000c.html" target="_blank" rel="nofollow">【スポニチ】巨人・赤星　1500万円増でサイン！先発に手応え　横川は1100万円増「圧倒的な力を付ける」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173028000c.html" target="_blank" rel="nofollow">【スポニチ】DeNA・石田裕　1700万円増でサイン　来季の目標は「たくさん勝つ！」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173425000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト・荘司　3000万円増の年俸4200万円で更改　来季は「クローザー」意欲</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173427000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト・並木　母校・独協大で来季「盗塁王」誓う　学生に「夢を追いかけてほしい」メッセージも</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173030000c.html" target="_blank" rel="nofollow">【スポニチ】ヤクルト・茂木　来季目標は143試合出場「レギュラーを獲り、優勝して池山監督に成長した姿を」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173002000c.html" target="_blank" rel="nofollow">【スポニチ】広島・床田寛樹　年俸1億8500万円で更改　“打撃ラストシーズン”異例の目標「65打席は立ちたい」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173380000c.html" target="_blank" rel="nofollow">【スポニチ】中日　岡林勇希「妻と二人三脚でより一層、野球に励んで」年俸1・5億円で更改&結婚発表</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173422000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・岩崎優にメキシコの熱烈虎党女性からファンレター　推しメンになった理由は…</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173428000c.html" target="_blank" rel="nofollow">【スポニチ】阪神が新兵器でリーグ連覇へ　天敵の球筋を“完コピ”する投球マシン「トラジェクトアーク」を採用</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173419000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・坂本誠志郎　WBC選出視野に今オフは岩貞、伊藤将の左腕コンビとの合同自主トレに参加</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智 “クマ回避”年末年始は関西で自主トレ　故郷・秋田で目撃情報多発　「襲われたくない」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173007000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督　来年の野球殿堂候補入り　岡田彰布前監督との師弟ダブル選出の可能性も</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神「藤村監督退陣要求書」を一般公開　粟井一夫社長「どうすればチームが強くなるか黒歴史に学ぶ機会に」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・井坪陽生　プレーへのヤジ歓迎「成長することもある」　来季4年目飛躍へ「スピードも求めていく」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173423000c.html" target="_blank" rel="nofollow">【スポニチ】巨人・リチャード　大谷とほぼ互角!最高打球速度12球団トップ　8月看板直撃弾で最長飛距離も1位</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251204s00001173433000c.html" target="_blank" rel="nofollow">【スポニチ】巨人・井上　7年目となる来季目標は「先発ローテ＆規定投球回と2桁勝利」</a></li>
-<li class="news-icon news-chi"><a href="https://www.chibanippo.co.jp/sports/lotte/1539862" target="_blank" rel="nofollow">【千葉日報】７位田中と合意　ドラフトだより　千葉ロッテ</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779117.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督が殿堂候補者入り　１年目選出なら史上８人目　エキスパート表彰候補の岡田彰布氏とＷ選出も</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779120.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原　お金も勝ち星も“貯金生活”　今季は５勝７敗、来季連覇へ「貢献できるように」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779122.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・石井　殿堂候補入り藤川監督７８２試合登板に「考えられない」自身の目標６２０試合登板、恩師・吉田氏超えへ</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779127.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・工藤“筋肉先生”教壇で「夢を与えられるような選手になりたい」球団育成出身初の新人王狙う</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779133.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　甲子園歴史館で「藤村富美男監督退陣要求書」を一般公開　粟井球団社長「史実に学ぶことが一番の目的」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779136.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・井坪　虎党“ゲキ”歓迎も「人が傷つく誹謗中傷はダメ」　「一日人権擁護委員」に就任、阪神尼崎駅前で啓発活動</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/05/0019779140.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　秘密兵器「トラジェクトアーク」甲子園とＳＧＬに導入へ　ＭＬＢでは主流、ソフトバンクや巨人も導入済み</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51196.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】小木田敦也が右肘手術へ　４月のトミー・ジョンに続き万全期す　来春Ｃで投球再開見込み</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512040001257.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】巨人戦力外の高橋礼を調査、育成契約検討か　先発陣強化課題で支配下昇格のチャンス十分</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251204-OHT1T51283.html" target="_blank" rel="nofollow">【スポーツ報知】日本ハム・石井一成が西武入り確実　ＤｅＮＡ桑原に続き今オフＦＡ補強２人目</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001173016000c.html" target="_blank" rel="nofollow">【スポニチ】西武　日本ハムからFA・石井と契約合意、3年総額4億円、背番号4　桑原に続きFA補強2人は球団史上初</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/05/kiji/20251205s00001007023000c.html" target="_blank" rel="nofollow">【スポニチ】元DeNAのケイ　ホワイトソックスと2年総額18億6000万円で合意　3季ぶりメジャー復帰</a></li>
-</ul>
-      
-      <!-- ▲▲▲ ここまで ▼▼▼ -->
-    </div>
+        <div class="news">
+      
+            <ul class="nb-list">
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-EARWQNP4XJFENAIZ5INZSZ2NWY/" target="_blank" rel="nofollow">【サンスポ】DeNA・度会隆輝らがトークショーでファンと交流　来季の目標は「横浜ファミリーと必ず優勝」</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-MRWOGRM6LBBWBA4LVDDEFKG2LE/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、小野ハーフマラソンで1・2キロ快走「自分の中ではリスペクトする方の中にマラソンランナーが入っている」</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173191000c.html" target="_blank" rel="nofollow">【スポニチ】ロッテ・上田、フリースロー3本決めた河村に「大人げない」　千葉ジェッツ戦にゲストで登場</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173190000c.html" target="_blank" rel="nofollow">【スポニチ】杉谷拳士氏　試合中、体に突如起きた“異変”とは　恐怖の“海賊”に怯えて…</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173120000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智「マラソンが苦手なので…」も気迫の走り！赤星氏大会アンバサダーの小野ハーフマラソン参加</a></li>
+        <li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/07/post1874547/" target="_blank" rel="nofollow">【Full-count】ベッキーが突然の“報告”　WBC戦士なのに…46文字の珍紹介にツッコミ殺到「旦那や」</a></li>
+        <li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682371/" target="_blank" rel="nofollow">【ベースボールキング】ロッテ、河村と上田が千葉ジェッツのホームゲームでフリースローチャレンジ！「希由翔に1本は決めて欲しかった」</a></li>
+        <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788148.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　石井が小野ハーフマラソンに参加「競技としてやられている方はすごい」</a></li>
+        <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51087.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】松本剛が札幌市内で野球教室「楽しさは忘れずにいてほしい」野球少年・少女にメッセージ</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060000918.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】今宮健太「どうぞとはならない」内野全ポジ準備も開幕遊撃ゆずらん　１億減更改</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000528.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】清宮幸太郎、中田翔氏のお疲れさま会に参加　特製ケーキ手に笑顔の集合写真など公開</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000424.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人、同じドラ１左腕への意識を問われ「してないと言えばうそ。会ったら…」</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000421.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人がトークショー　今季は森下モデルバットで４安打、来季は「絶対ホームラン」</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000396.html" target="_blank" rel="nofollow">【日刊スポーツ】元阪神・関本賢太郎氏が忘れられない今成亮太氏の言葉「先輩を喜ばせるのは…」杉谷拳士氏も同調</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-4OT46EABUZFW5GZICLOIAHMFGQ/" target="_blank" rel="nofollow">【サンスポ】阪神・前川右京、仲のいい人は「岡田前監督です！」　豊田寛らと兵庫・姫路市で野球教室に参加</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-JEWE3TDMOFNWZK4JAIPDSL6VXA/" target="_blank" rel="nofollow">【サンスポ】阪神・伊原陵人、トークショーで「来年は絶対にホームランを打ちます」</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-AKVC62XS3BBLRNO7ZBJ4ZMHDFQ/" target="_blank" rel="nofollow">【サンスポ】巨人・阿部慎之助監督、中大若手OBOGゴルフでヤクルトD6位・石井巧らとラウンド</a></li>
+        <li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/07/post1874549/" target="_blank" rel="nofollow">【Full-count】突如公開された“豪華すぎる1枚”　阪神ファン感涙…奇跡の再会に「偉人しかいない」</a></li>
+        <li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28230/" target="_blank" rel="nofollow">【公式サイト】６選手が登場！よみうりランドでイベント開催</a></li>
+        <li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670102.html" target="_blank" rel="nofollow">【公式サイト】12月21日（日）バファローブル＆ベルイベント出演情報</a></li>
+        <li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670479.html" target="_blank" rel="nofollow">【公式サイト】テレビ大阪「オリックス、ちょっといいですか？」で新入団選手が紹介されます！</a></li>
+        <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788075.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　「第４回はりま少年少女野球教室」で前川、豊田、江草投手コーチらが少年野球チームへ指導</a></li>
+        <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788043.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原陵人　後半戦の失速を自虐トークで沸かせる　「海外初めて」のハワイ旅行では親孝行</a></li>
+        <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51045.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】西舘勇陽が中大野球部ＯＢＯＧゴルフコンペで同級生のＤｅＮＡ・石田裕太郎と同組</a></li>
+        <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51037.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】阿部監督が中大野球部ＯＢＯＧゴルフに出席　ヤクルト６位の石井巧と同組でラウンド</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000290.html" target="_blank" rel="nofollow">【日刊スポーツ】「なめてるんですよ！」平石洋介氏がPL学園の後輩の今江敏晃氏にクレーム？「理由があるんです…」</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001581.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人がトークショーで来季の目標問われ「タイトル総どりです」今季は最優秀防御率</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000268.html" target="_blank" rel="nofollow">【日刊スポーツ】元広島・西山秀二氏、金本知憲氏と飲みにいくワケとは「広島のマンションを１個、丸々買える…」</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-DALVE5RKDRNE7JGFGG4VUWEJ6E/" target="_blank" rel="nofollow">【サンスポ】【球界ここだけの話（3984）】オリックス・寺西成騎、ルーキーイヤーで直面した1軍の壁「中6日でローテーションを回る難しさを感じた」</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173098000c.html" target="_blank" rel="nofollow">【スポニチ】「来年はホームラン打ちます」阪神・伊原陵人が甲子園歴史館でトークショー、グラブの色のこだわりも明かす</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173092000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督「選手の感情とかは…」　選手との付き合い方に“虎党”有働アナも衝撃！</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173091000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督「自分の責任」　日本シリーズの勝負を分けた1球…「申し訳ないことをした」</a></li>
+        <li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500903637.html" target="_blank" rel="nofollow">【公式サイト】【チャリティーオークション】祝勝会グッズ出品月間！</a></li>
+        <li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670441.html" target="_blank" rel="nofollow">【公式サイト】【BPB DX】動画『【バファローズトレカ】クリスマスver.撮影の裏側』公開！</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060002180.html" target="_blank" rel="nofollow">【日刊スポーツ】元楽天監督の平石洋介氏、PL学園の後輩・今江敏晃氏が１年で退任した“理由”を告白</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000209.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】三浦大輔氏「お幸せに～ヨ・ロ・シ・ク！！」結婚した伊勢大夢を祝福</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001461.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】和田ヘッド「かわいい後輩と思ったら…金本さんの６番だった」後輩のドラ２谷端イジる</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001374.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ２谷端将伍「2000安打を目指します」日大出身初の記録へ　和田ヘッドと握手</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001963.html" target="_blank" rel="nofollow">【日刊スポーツ】元広島の佐々岡真司氏「スライダーの投げ方忘れた」地獄の17敗シーズン裏話を元女房役が明かす</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512070000211.html" target="_blank" rel="nofollow">【日刊スポーツ】ブルージェイズの元中日ジャリエル・ロドリゲス、40人枠を外れ3A降格　今季66試合登板</a></li>
+      </ul>
+          </div>
 
-    <footer>© 2025 Baseball Freak</footer>
-  </div>
+    <footer>© 2025 Baseball Freak</footer>
+  </div>
 
-  <script>
-    // --- 日付ナビゲーション（前日／翌日への移動） ---
-    // ※サーバー上のファイル構造（例: ../2025/12-07.html）に依存します
-    (() => {
-      // 現在ページのパスから "yyyy/mm-dd.html" を解析
-      // URLの例: http://example.com/2025/12-07.html
-      const pathParts = location.pathname.split('/');
-      let filename = pathParts.pop();       // 例: 12-07.html
-      let folder = pathParts.pop();         // 例: 2025
+  <script>
+    // --- 日付ナビゲーション（前日／翌日への移動）と日付表示の制御 ---
+    // ※このスクリプトは、URLパス（例: /2025/12-07.html）から日付を解析し、表示とナビゲーションに利用します。
+    (() => {
+      const pathParts = location.pathname.split('/');
+      let filename = pathParts.pop();       // 例: 12-07.html
+      let folder = pathParts.pop();         // 例: 2025
 
-      // ファイル名が日付形式でない場合のフォールバック（テスト用）
-      if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
-        // 通常はここで処理を中断するか、デフォルト値を設定します
-        // console.warn("ファイル名が日付形式ではありません");
-        return; 
-      }
+      // ファイル名が日付形式でない場合は処理を終了
+      if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
+        return; 
+      }
 
-      const [mm, dd] = filename.replace('.html', '').split('-').map(Number);
-      // folderが年でない場合は現在の年を使用する等の処理が必要ですが、ここではそのまま使用
-      const currentYear = parseInt(folder) || new Date().getFullYear();
-      const currentDate = new Date(currentYear, mm - 1, dd);
+      // ファイル名から月と日を抽出し、数値に変換
+      const [mm_num, dd_num] = filename.replace('.html', '').split('-').map(Number);
+      // フォルダ名から年を抽出し、失敗したら現在の年をフォールバックとして使用
+      const currentYear = parseInt(folder) || new Date().getFullYear();
+      
+      // URLから抽出した日付（mm_num, dd_num, currentYear）を使用してDateオブジェクトを作成（これが記事の日付）
+      const currentDate = new Date(currentYear, mm_num - 1, dd_num);
 
-      const formatDate = (date) => {
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${m}-${d}.html`;
-      };
+      // 1. 抽出した記事の日付を画面に表示する
+      const dateElement = document.querySelector('.date');
+      if (dateElement) {
+        const yyyy = currentDate.getFullYear();
+        const mm_display = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const dd_display = String(currentDate.getDate()).padStart(2, '0');
+        // YYYY/MM/DD形式で表示
+        dateElement.textContent = `${yyyy}/${mm_display}/${dd_display}`;
+      }
 
-      // 前日
-      const prev = new Date(currentDate);
-      prev.setDate(currentDate.getDate() - 1);
-      // 年が変わる場合の考慮（フォルダ階層の変更）
-      const prevYear = prev.getFullYear();
-      const prevURL = `../${prevYear}/${formatDate(prev)}`;
+      // 2. ナビゲーションリンクの計算のためのヘルパー関数
+      const formatDate = (date) => {
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${m}-${d}.html`;
+      };
 
-      // 翌日
-      const next = new Date(currentDate);
-      next.setDate(currentDate.getDate() + 1);
-      const nextYear = next.getFullYear();
-      const nextURL = `../${nextYear}/${formatDate(next)}`;
+      // 前日の日付を計算し、URLを構築
+      const prev = new Date(currentDate);
+      prev.setDate(currentDate.getDate() - 1);
+      const prevYear = prev.getFullYear();
+      const prevURL = `../${prevYear}/${formatDate(prev)}`;
 
-      const prevBtn = document.getElementById('prev-day');
-      const nextBtn = document.getElementById('next-day');
+      // 翌日の日付を計算し、URLを構築
+      const next = new Date(currentDate);
+      next.setDate(currentDate.getDate() + 1);
+      const nextYear = next.getFullYear();
+      const nextURL = `../${nextYear}/${formatDate(next)}`;
 
-      if(prevBtn) prevBtn.href = prevURL;
-      if(nextBtn) nextBtn.href = nextURL;
-    })();
-  </script>
+      // ボタンにリンクを設定
+      const prevBtn = document.getElementById('prev-day');
+      const nextBtn = document.getElementById('next-day');
+
+      if(prevBtn) prevBtn.href = prevURL;
+      if(nextBtn) nextBtn.href = nextURL;
+    })();
+  </script>
 </body>
 </html>
