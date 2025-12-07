@@ -1,1 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Freak News</title>
 
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+    }
+
+    /* コンテンツ全体のラッパー（中央寄せ・幅調整） */
+    .container {
+      width: 95%;
+      max-width: 800px; /* PCで見やすくするための最大幅 */
+      margin: 0 auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    /* 日付表示 */
+    .date {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-top: 10px;
+      color: #555;
+    }
+
+    /* --- ナビゲーションボタン部分 --- */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin: 15px auto 20px auto;
+      gap: 10px;
+    }
+
+    .nav-btn, .nav-buttons a {
+      flex: 1;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 9pt;
+      padding: 8px 0;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      transition: all 0.2s ease;
+    }
+
+    /* 左右の色分け */
+    #prev-day {
+      background: #e1f0ff; /* 淡いブルー */
+    }
+
+    #next-day {
+      background: #e8ffe1; /* 淡いグリーン */
+    }
+
+    .nav-buttons a:hover {
+      filter: brightness(0.95);
+      font-weight: bold;
+    }
+
+    /* --- ニュース記事リスト部分 --- */
+    .news {
+      font-size: 9.5pt;
+      line-height: 1.6;
+    }
+
+    .nb-list {
+      list-style: none; /* ドットを消す */
+      padding: 0;
+      margin: 0;
+    }
+
+    .nb-list li {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    .nb-list li:last-child {
+      border-bottom: none;
+    }
+
+    .nb-list a {
+      color: #0044cc;
+      text-decoration: none;
+      display: block; /* クリック領域を広げる */
+    }
+
+    .nb-list a:hover {
+      text-decoration: underline;
+      color: #0066ff;
+    }
+
+    /* アイコン代わりの簡易スタイル（画像がない場合用） */
+    .news-icon::before, .teams-icon::before {
+      content: '■';
+      font-size: 0.8em;
+      margin-right: 5px;
+      color: #999;
+    }
+    
+    /* サイトごとの色分け例（必要に応じて） */
+    .news-ssp::before { color: #f5a623; } /* サンスポっぽい色 */
+    .news-snc::before { color: #4a90e2; } /* スポニチっぽい色 */
+    .news-nsp::before { color: #d0021b; } /* 日刊スポーツっぽい色 */
+    .teams-g::before  { color: #f97306; } /* 巨人 */
+    .teams-t::before  { color: #ffe800; } /* 阪神 */
+
+    footer {
+      text-align: center;
+      font-size: 8pt;
+      color: #888;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+
+  <script>
+    // 日付の自動挿入
+    window.onload = () => {
+      const dateElement = document.querySelector('.date');
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      
+      // 既に日付が入っていなければ現在日付を入れる
+      if(dateElement && !dateElement.textContent) {
+        dateElement.textContent = `${yyyy}/${mm}/${dd}`;
+      }
+    };
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <!-- 日付 -->
+    <div class="date"></div>
+
+    <!-- 前日・翌日ボタン -->
+    <div class="nav-buttons">
+      <a id="prev-day" href="#">&laquo; Previous</a>
+      <a id="next-day" href="#">Next &raquo;</a>
+    </div>
+
+    <!-- 記事を貼り付ける場所 -->
+    <div class="news">
+      <!-- ▼▼▼ ここにNews記事を貼り付けてください ▼▼▼ -->
+
+      
+      <!-- ▲▲▲ ここまで ▼▼▼ -->
+    </div>
+
+    <footer>© 2025 Baseball Freak</footer>
+  </div>
+
+  <script>
+    // --- 日付ナビゲーション（前日／翌日への移動） ---
+    // ※サーバー上のファイル構造（例: ../2025/12-07.html）に依存します
+    (() => {
+      // 現在ページのパスから "yyyy/mm-dd.html" を解析
+      // URLの例: http://example.com/2025/12-07.html
+      const pathParts = location.pathname.split('/');
+      let filename = pathParts.pop();       // 例: 12-07.html
+      let folder = pathParts.pop();         // 例: 2025
+
+      // ファイル名が日付形式でない場合のフォールバック（テスト用）
+      if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
+        // 通常はここで処理を中断するか、デフォルト値を設定します
+        // console.warn("ファイル名が日付形式ではありません");
+        return; 
+      }
+
+      const [mm, dd] = filename.replace('.html', '').split('-').map(Number);
+      // folderが年でない場合は現在の年を使用する等の処理が必要ですが、ここではそのまま使用
+      const currentYear = parseInt(folder) || new Date().getFullYear();
+      const currentDate = new Date(currentYear, mm - 1, dd);
+
+      const formatDate = (date) => {
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${m}-${d}.html`;
+      };
+
+      // 前日
+      const prev = new Date(currentDate);
+      prev.setDate(currentDate.getDate() - 1);
+      // 年が変わる場合の考慮（フォルダ階層の変更）
+      const prevYear = prev.getFullYear();
+      const prevURL = `../${prevYear}/${formatDate(prev)}`;
+
+      // 翌日
+      const next = new Date(currentDate);
+      next.setDate(currentDate.getDate() + 1);
+      const nextYear = next.getFullYear();
+      const nextURL = `../${nextYear}/${formatDate(next)}`;
+
+      const prevBtn = document.getElementById('prev-day');
+      const nextBtn = document.getElementById('next-day');
+
+      if(prevBtn) prevBtn.href = prevURL;
+      if(nextBtn) nextBtn.href = nextURL;
+    })();
+  </script>
+</body>
+</html>
