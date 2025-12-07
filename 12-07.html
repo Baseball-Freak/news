@@ -153,24 +153,29 @@
     // --- ユーティリティ関数 ---
 
     /**
-     * 指定された日付からオフセット（日数）を計算し、「MM-DD.html」形式のファイル名を返します。
+     * 指定された年、月、日からオフセット（日数）を計算し、「MM-DD.html」形式のファイル名を返します。
+     * @param {number} currentYear - 現在のHTMLから取得した年 (例: 2025)
      * @param {number} currentMonth - 現在のファイル名から取得した月 (1-12)
      * @param {number} currentDay - 現在のファイル名から取得した日 (1-31)
      * @param {number} offset - 日数の増減（前日なら-1、翌日なら+1）
-     * @returns {string} - 「MM-DD.html」形式のファイル名
+     * @returns {object} - { fileName: 'MM-DD.html', year: YYYY }
      */
-    function calculateFileName(currentMonth, currentDay, offset) {
-        // 年はダミーで 2000 年を使用。月をまたぐ計算は Date オブジェクトに任せる
-        // JSの Date は月を 0-11 で扱うため、-1 して計算、最後に +1 して表示月に戻す
-        const baseDate = new Date(2000, currentMonth - 1, currentDay);
+    function calculateFileName(currentYear, currentMonth, currentDay, offset) {
+        // JSの Date は月を 0-11 で扱うため、-1 して計算
+        const baseDate = new Date(currentYear, currentMonth - 1, currentDay);
         baseDate.setDate(baseDate.getDate() + offset); // 日付を増減させる
 
         const mm = ("0" + (baseDate.getMonth() + 1)).slice(-2);
         const dd = ("0" + baseDate.getDate()).slice(-2);
-        return `${mm}-${dd}.html`;
+        
+        return {
+            fileName: `${mm}-${dd}.html`,
+            year: baseDate.getFullYear()
+        };
     }
 
-    // --- メイン処理と初期チェック（元のロジックを維持）---
+    // --- メイン処理と初期チェック（元のロジックを維持・強化）---
+    let articleYear = null;
     let fileMonth = null;
     let fileDay = null;
 
@@ -180,53 +185,75 @@
       const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
       const fileName = location.pathname.split("/").pop();  // ex: 12-07.html
       
-      // ファイル名から月と日を抽出し、グローバル変数に保存
-      const [fMonth, fDay] = fileName.replace(".html", "").split("-");
-      fileMonth = parseInt(fMonth, 10);
-      fileDay = parseInt(fDay, 10);
-
-      if (!dateText) {
+      // ① 日付情報が不正な場合
+      if (!dateText || fileName === "" || !fileName.includes("-")) {
         location.href = "blank.html";
         return;
       }
 
       const [yyyy, mm, dd] = dateText[0].split("/");
+      const [fMonth, fDay] = fileName.replace(".html", "").split("-");
+
+      // グローバル変数に保存
+      articleYear = parseInt(yyyy, 10);
+      fileMonth = parseInt(fMonth, 10);
+      fileDay = parseInt(fDay, 10);
+
+      // ② HTML内の日付とファイル名が一致しない場合
+      if (mm !== fMonth || dd !== fDay) {
+        location.href = "blank.html";
+        return;
+      }
+
+      // ③ 年と今日の日付のチェック (元のロジックを維持)
       const today = new Date();
       const thisYear = today.getFullYear().toString();
       const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
       const todayDay = ("0" + today.getDate()).slice(-2);
 
-      // 最初の３条件（年、月、日とファイル名の月日が一致しない）は、ファイル名が不正な場合に blank.html に移動するロジックとして維持
+      // 元のコードの厳密なリダイレクトロジックを再現
       if (
         yyyy !== thisYear ||
         mm !== fMonth ||
         dd !== fDay ||
         (mm !== todayMonth || dd !== todayDay)
       ) {
-        // location.href = "blank.html"; // ← **デバッグのためコメントアウト**
-        // ↑ このロジックがあると、過去の記事を開いたときに強制的に blank.html に移動してしまうため、
-        // 開発・運用中はコメントアウトすることを強くお勧めします。
+        location.href = "blank.html"; 
       }
     })();
 
 
     // Previousボタン (前日)
     function goToPrev() {
-      if (fileMonth && fileDay) {
-          // calculateFileNameを使って前日のファイル名を計算 (オフセット: -1)
-          location.href = calculateFileName(fileMonth, fileDay, -1);
+      if (fileMonth && fileDay && articleYear) {
+          // HTML内の年を基準に前日のファイル名を計算
+          const result = calculateFileName(articleYear, fileMonth, fileDay, -1);
+
+          // 年が変わった場合（前年になる場合）は移動をキャンセルし、アラートを出します
+          if (result.year !== articleYear) {
+             alert(`このボタンで${articleYear - 1}年の記事には移動しません。前年の記事は別途アクセスしてください。`);
+             return;
+          }
+          location.href = result.fileName;
       } else {
-        location.href = "blank.html"; // ファイル名から日付が取得できなかった場合
+        location.href = "blank.html";
       }
     }
 
     // Nextボタン (翌日)
     function goToNext() {
-      if (fileMonth && fileDay) {
-          // calculateFileNameを使って翌日のファイル名を計算 (オフセット: +1)
-          location.href = calculateFileName(fileMonth, fileDay, 1);
+      if (fileMonth && fileDay && articleYear) {
+          // HTML内の年を基準に翌日のファイル名を計算
+          const result = calculateFileName(articleYear, fileMonth, fileDay, 1);
+
+          // 年が変わった場合（翌年になる場合）は移動をキャンセルします
+          if (result.year !== articleYear) {
+             alert(`このボタンで${articleYear + 1}年の記事には移動しません。`);
+             return;
+          }
+          location.href = result.fileName;
       } else {
-        location.href = "blank.html"; // ファイル名から日付が取得できなかった場合
+        location.href = "blank.html";
       }
     }
   </script>
