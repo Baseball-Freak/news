@@ -2,163 +2,95 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>News Summary | 準備中</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Freak | Blank</title>
+
   <style>
     body {
-      font-family: sans-serif;
-      font-size: 0.8em;
-      line-height: 1.4;
-      padding: 2em;
-      position: relative;
-      background-color: #fafafa;
-    }
-
-    /* 上部の日付・時刻表示欄 */
-    .nav-buttons {
-      position: absolute;
-      top: 1em;
-      left: 1em;
-      display: flex;
-      flex-direction: row;
-      gap: 0.5em;
-      font-size: 1.1em;
-      font-weight: bold;
+      font-family: "メイリオ", sans-serif;
+      font-size: 9pt;
       color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    /* メインコンテンツ */
-    .box1 {
-      margin-left: -1em;
-      margin-top: 3em;
+    .container {
+      max-width: 480px;
+      padding: 2em;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     }
 
-    h3.bar3 {
-      font-size: 1.1em;
-      margin-left: 1em;
-    }
-
-    ul {
-      padding-left: 1em;
-    }
-
-    li.news-icon {
+    h1 {
+      font-size: 1.2em;
       margin-bottom: 0.5em;
+      color: #222;
     }
 
-    hr {
-      border: none;
-      border-top: 2px dashed green;
-      margin: 20px 0;
+    p {
+      margin: 0.5em 0 1.5em 0;
+      line-height: 1.5;
     }
 
-    a {
-      color: #0645ad;
-      text-decoration: none;
+    .datetime {
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 1em;
     }
 
-    a:hover {
-      text-decoration: underline;
+    button {
+      font-family: "メイリオ", sans-serif;
+      font-size: 9pt;
+      padding: 0.6em 2em;
+      border-radius: 5px;
+      border: 1px solid #555;
+      background: #f0f0f0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #ddd;
     }
   </style>
 
   <script>
-    // ゼロ埋め関数
-    const pad = (n) => String(n).padStart(2, '0');
-
-    // 曜日を日本語で返す関数
-    const getJapaneseDayOfWeek = (i) => ["日", "月", "火", "水", "木", "金", "土"][i];
-
-    // 日付＋時刻表示の更新
-    const updateCurrentDateTime = () => {
+    // ページロード時に現在の日付を表示
+    window.onload = () => {
       const now = new Date();
       const yyyy = now.getFullYear();
-      const mm = pad(now.getMonth() + 1);
-      const dd = pad(now.getDate());
-      const day = getJapaneseDayOfWeek(now.getDay());
-      const hh = pad(now.getHours());
-      const mi = pad(now.getMinutes());
-      document.getElementById('current-datetime').textContent = `${yyyy}/${mm}/${dd}(${day}) ${hh}:${mi}`;
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const dayNames = ["日", "月", "火", "水", "木", "金", "土"];
+      const day = dayNames[now.getDay()];
+
+      document.getElementById("today-date").textContent = `${yyyy}/${mm}/${dd} (${day})`;
     };
 
-    // --- 記事自動遷移チェック ---
-    window.onload = async () => {
-      updateCurrentDateTime();
-
-      // チェック対象ファイル（yyyy-mm-dd.html）
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = pad(now.getMonth() + 1);
-      const dd = pad(now.getDate());
-      const targetFile = `${yyyy}-${mm}-${dd}.html`;
-
-      try {
-        // 該当ファイルが存在するか確認
-        const res = await fetch(targetFile, { method: 'HEAD' });
-
-        if (res.ok) {
-          // 存在する → 最新記事へ即移動
-          location.href = targetFile;
-        } else {
-          // 存在しない → 準備中メッセージを表示
-          document.getElementById('status-msg').textContent = "本日分の記事はまだ投稿されていません。";
-          document.getElementById('status-msg').style.color = "red";
-        }
-      } catch {
-        document.getElementById('status-msg').textContent = "通信エラーが発生しました。";
-        document.getElementById('status-msg').style.color = "red";
-      }
+    // 再読み込みボタン処理
+    const retry = () => {
+      location.href = "today.html";
     };
   </script>
 </head>
 
 <body>
-  <!-- 日付・時刻表示 -->
-  <div class="nav-buttons">
-    <div id="current-datetime">日付と時刻を読み込み中...</div>
-  </div>
+  <div class="container">
+    <h1>本日分の記事はまだ投稿されていません。</h1>
+    <div id="today-date" class="datetime">読み込み中...</div>
+    <p>記事が公開され次第、自動で <strong>today.html</strong> から反映されます。</p>
+    <p>しばらく時間をおいて再度アクセスしてください。</p>
 
-  <div class="box1">
-    <!-- ▼ ここに「記事未公開時の案内メッセージ」が表示されます ▼ -->
-    <p id="status-msg">本日分の記事はまだ準備中です。確認しています...</p>
-
-    <hr>
-
-    <!-- ▼ 広告ブロック開始（必要に応じて維持 or 編集）▼ -->
-    <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
-      rel="nofollow noopener noreferrer" target="_blank">
-      <img border="0" width="120" height="60" alt="" 
-           src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
-    <hr>
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
-      rel="nofollow noopener noreferrer" target="_blank">
-      <img border="0" width="100" height="60" alt="" 
-           src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
-    <hr>
-
-    <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
-      rel="nofollow noopener noreferrer" target="_blank">
-      https://www.xserver.ne.jp/lp/service01/
-    </a>
-    <img border="0" width="1" height="1" 
-         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
-    <hr>
-    <!-- ▲ 広告ブロックここまで ▲ -->
-
-    <!-- ▼ 記事を貼り付ける場所（記事が公開される場合） ▼
-         例: <div id="article-content"> ... 記事HTML ... </div>
-         ここに自動生成された記事を追加してもOK -->
-    <!-- ★ 記事貼付位置 ★ -->
-
-    <p style="font-size:0.8em; margin-top:20px;">
-      <a href="today.html">トップへ戻る</a>
-    </p>
+    <button onclick="retry()">再読み込み</button>
   </div>
 </body>
 </html>
