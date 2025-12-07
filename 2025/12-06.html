@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Freak News</title>
+
+  <style>
+    body {
+      font-family: "メイリオ", sans-serif;
+      font-size: 9pt;
+      line-height: 1.6;
+      margin: 0;
+      padding: 2em;
+      background-color: #fafafa;
+      color: #222;
+    }
+
+    /* 日付表示 */
+    .date {
+      font-size: 10pt;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 1.5em;
+    }
+
+    /* ナビゲーションボタン */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      margin: 0 auto 2em auto;
+      gap: 1em;
+    }
+
+    .nav-buttons a {
+      display: inline-block;
+      flex: 1;
+      text-align: center;
+      padding: 0.6em 0;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      font-weight: bold;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-buttons a:hover {
+      background: #333;
+      color: #fff;
+    }
+
+    /* 記事本体 */
+    .news {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1.5em 2em;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 8pt;
+      color: #666;
+      margin-top: 2em;
+    }
+  </style>
+
+  <script>
+    // 日付の自動挿入
+    window.onload = () => {
+      const dateElement = document.querySelector('.date');
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      dateElement.textContent = `${yyyy}/${mm}/${dd}`;
+    };
+  </script>
+</head>
+
+<body>
+  <!-- 日付 -->
+  <div class="date"></div>
+
+  <!-- 前日・翌日ボタン -->
+  <div class="nav-buttons">
+    <a id="prev-day" href="#">Previous</a>
+    <a id="next-day" href="#">Next</a>
+  </div>
+
 
