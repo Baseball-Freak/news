@@ -34,13 +34,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 80%;
+      width: 80%;              /* 全体の幅を8割に */
       margin: 10px auto 14px auto;
-      gap: 10px;
+      gap: 10px;               /* ボタンの間隔を確保 */
     }
 
     .nav-btn {
-      flex: 1;
+      flex: 1;                 /* 均等に幅を分配 */
       font-size: 8pt;
       padding: 6px 0;
       border: 1px solid #bbb;
@@ -52,11 +52,11 @@
 
     /* 左右の色分け */
     .nav-btn.prev {
-      background: #e1f0ff;
+      background: #e1f0ff;         /* 淡いブルー */
     }
 
     .nav-btn.next {
-      background: #e8ffe1;
+      background: #e8ffe1;         /* 淡いグリーン */
     }
 
     .nav-btn:hover {
@@ -154,69 +154,79 @@
 
     /**
      * 指定された日付からオフセット（日数）を計算し、「MM-DD.html」形式のファイル名を返します。
-     * @param {Date} date - 基準となる日付オブジェクト
+     * @param {number} currentMonth - 現在のファイル名から取得した月 (1-12)
+     * @param {number} currentDay - 現在のファイル名から取得した日 (1-31)
      * @param {number} offset - 日数の増減（前日なら-1、翌日なら+1）
      * @returns {string} - 「MM-DD.html」形式のファイル名
      */
-    function getFormattedDate(date, offset) {
-        const targetDate = new Date(date);
-        targetDate.setDate(targetDate.getDate() + offset); // 日付を増減させる
+    function calculateFileName(currentMonth, currentDay, offset) {
+        // 年はダミーで 2000 年を使用。月をまたぐ計算は Date オブジェクトに任せる
+        // JSの Date は月を 0-11 で扱うため、-1 して計算、最後に +1 して表示月に戻す
+        const baseDate = new Date(2000, currentMonth - 1, currentDay);
+        baseDate.setDate(baseDate.getDate() + offset); // 日付を増減させる
 
-        const mm = ("0" + (targetDate.getMonth() + 1)).slice(-2);
-        const dd = ("0" + targetDate.getDate()).slice(-2);
+        const mm = ("0" + (baseDate.getMonth() + 1)).slice(-2);
+        const dd = ("0" + baseDate.getDate()).slice(-2);
         return `${mm}-${dd}.html`;
     }
 
-    // --- メイン処理 ---
-    let currentDate = null; // 現在のファイルに対応する日付
+    // --- メイン処理と初期チェック（元のロジックを維持）---
+    let fileMonth = null;
+    let fileDay = null;
 
-    // ▼ 自動日付チェック (ここでは、現在のファイル名から日付を取得する役割も持たせる)
+    // ▼ 自動日付チェック (ナビゲーションボタンのために、ファイル名から月と日を抽出する)
     (function() {
       const h3 = document.querySelector(".bar3");
       const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
       const fileName = location.pathname.split("/").pop();  // ex: 12-07.html
       
-      if (!dateText || fileName === "") {
-        // 日付テキストがない、またはファイル名がない場合は blank.html に移動（元のロジックを維持）
+      // ファイル名から月と日を抽出し、グローバル変数に保存
+      const [fMonth, fDay] = fileName.replace(".html", "").split("-");
+      fileMonth = parseInt(fMonth, 10);
+      fileDay = parseInt(fDay, 10);
+
+      if (!dateText) {
         location.href = "blank.html";
         return;
       }
 
-      // 現在のファイル名から日付オブジェクトを作成 (ナビゲーションボタンのために使用)
-      const [fileMonth, fileDay] = fileName.replace(".html", "").split("-");
-      // 注意: JavaScriptの月は 0 (1月) から始まるため、-1 する
-      currentDate = new Date(dateText[0].split("/")[0], fileMonth - 1, fileDay);
-
-
-      // 元の自動チェックロジック: ファイル名とHTMLの日付が一致しない、または今日の日付と一致しない
       const [yyyy, mm, dd] = dateText[0].split("/");
-      const thisYear = new Date().getFullYear().toString();
-      const todayMonth = ("0" + (new Date().getMonth() + 1)).slice(-2);
-      const todayDay = ("0" + new Date().getDate()).slice(-2);
+      const today = new Date();
+      const thisYear = today.getFullYear().toString();
+      const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
+      const todayDay = ("0" + today.getDate()).slice(-2);
 
+      // 最初の３条件（年、月、日とファイル名の月日が一致しない）は、ファイル名が不正な場合に blank.html に移動するロジックとして維持
       if (
         yyyy !== thisYear ||
-        mm !== fileMonth ||
-        dd !== fileDay ||
+        mm !== fMonth ||
+        dd !== fDay ||
         (mm !== todayMonth || dd !== todayDay)
       ) {
-        // location.href = "blank.html"; // 必要に応じてコメントアウト
+        // location.href = "blank.html"; // ← **デバッグのためコメントアウト**
+        // ↑ このロジックがあると、過去の記事を開いたときに強制的に blank.html に移動してしまうため、
+        // 開発・運用中はコメントアウトすることを強くお勧めします。
       }
     })();
 
+
     // Previousボタン (前日)
     function goToPrev() {
-      // 現在の日付 (currentDate) から 1日戻った日付のファイル名を生成
-      if (currentDate) {
-        location.href = getFormattedDate(currentDate, -1);
+      if (fileMonth && fileDay) {
+          // calculateFileNameを使って前日のファイル名を計算 (オフセット: -1)
+          location.href = calculateFileName(fileMonth, fileDay, -1);
+      } else {
+        location.href = "blank.html"; // ファイル名から日付が取得できなかった場合
       }
     }
 
     // Nextボタン (翌日)
     function goToNext() {
-      // 現在の日付 (currentDate) から 1日進んだ日付のファイル名を生成
-      if (currentDate) {
-        location.href = getFormattedDate(currentDate, 1);
+      if (fileMonth && fileDay) {
+          // calculateFileNameを使って翌日のファイル名を計算 (オフセット: +1)
+          location.href = calculateFileName(fileMonth, fileDay, 1);
+      } else {
+        location.href = "blank.html"; // ファイル名から日付が取得できなかった場合
       }
     }
   </script>
