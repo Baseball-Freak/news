@@ -1,34 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em; /* フォントサイズを小さく */
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px; /* ボタンの幅を調整 */
+      height: 30px; /* ボタンの高さを調整 */
+      font-size: 0.7em; /* ボタンのフォントサイズを調整 */
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px; /* 角を丸く */
+      background-color: #f0f0f0; /* 背景色を追加 */
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s; /* ホバーエフェクト */
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em; /* 記事部分を左端から表示するために調整 */
+      margin-top: 3em; /* ボタンとの間にスペース */
+    }
+    h3.bar3 {
+      font-size: 1.1em; /* 見出しのフォントサイズを調整 */
+      margin-left: 1em; /* 見出しの位置を調整 */
+    }
+    ul {
+      padding-left: 1em; /* リストのインデントを調整 */
+    }
+    li.news-icon {
+      margin-bottom: 0.5em; /* リスト項目の間隔を調整 */
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
 
-<ul class="nb-list"><li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/01/post1871428/" target="_blank" rel="nofollow">【Full-count】阪神“2大スター”に女性ファン急増で…自覚した場違い　V逸の裏にあった失態「超浮かれていた」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251201s00001173304000c.html" target="_blank" rel="nofollow">【スポニチ】今季のお立ち台ランキングが判明！　セ・リーグMVPサトテルは「2位かよ…」連呼　3位は柳町</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019767395.shtml" target="_blank" rel="nofollow">【デイリースポーツ】関本賢太郎氏「１回シメなあかん…」トレード加入選手への第一印象「チャラい。風紀が乱れる」「タイガースは伝統と規律を重んじる名門」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010000549.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】タイガースWomen新入団選手発表　松井秀喜氏から空振り三振奪った阿部さくらら６選手</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-KGLNYT3YQVFR3J543GL76F3OWM/" target="_blank" rel="nofollow">【サンスポ】阪神、タイガースWomenの新入団6選手を発表　松井秀喜氏から空振り三振を奪った阿部さくら「日本一になれるように」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251201s00001173207000c.html" target="_blank" rel="nofollow">【スポニチ】阪神「タイガースWomen」6選手の新加入を発表　「常に挑戦する気持ち」「1日1日を大切に」</a></li>
-<li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_10566.html" target="_blank" rel="nofollow">【公式サイト】2026年度 阪神タイガース Women 新入団選手について</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019766399.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　湯浅が２３００万アップの６０００万円で更改　難病から復活を遂げて復帰　４０試合に登板し４勝４敗防御率２・５２「目標としていた４０試合登板もできた」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019766537.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　創設６年目の阪神タイガースＷｏｍｅｎに６選手が加入　谷本選手は「チームの勝利に全力を尽くし、常に挑戦する気持ちを忘れずプレーします」とコメント</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51092.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】女子チームの来季新入団６選手を発表　松井秀喜氏から空振り三振奪った阿部さくらも入団</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51074.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】湯浅京己、２３００万増の６０００万円で更改　国指定難病から復活　来季は「また違ったスタイル」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010000392.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】国指定難病から１軍復帰の湯浅京己「学ぶことも多かった」2300万円増の6000万円</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010000370.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】西勇輝は現状維持の３億円「いい経験だった」ケガで今季１試合　来季４年契約の最終年</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-LUMWNNQTDNHFNPKBQGROYW7AZA/" target="_blank" rel="nofollow">【サンスポ】国指定の難病から復活の阪神・湯浅京己、2300万増6000万円で更改 </a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-PZN5Y53GOZEV3FMDNGGC5SBV3Y/" target="_blank" rel="nofollow">【サンスポ】阪神・西勇輝は現状維持の年俸3億円「いつかするけがが今年に来たら仕方ないなと。悲観をせずに」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251201s00001173192000c.html" target="_blank" rel="nofollow">【スポニチ】兵庫県が阪神・近本の公開自主トレ予定を発表</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251201s00001173182000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　湯浅京己が62％増の6000万円で更改「来年につながるシーズン」難病から復活し40試合登板</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019766099.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　西勇輝が現状維持の３億円で更改　プロ最少１試合登板も「悔しいっていうのはない」来季は４年契約最終年</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51042.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】西勇輝が現状維持３億円で契約更改「いい経験」４年契約最終年の来季へ「貢献できるように」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010000269.html" target="_blank" rel="nofollow">【日刊スポーツ】元阪神の関本賢太郎氏が今成亮太氏の第一印象に「風紀が乱れると思って、これはちょっと１回…」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001631.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】嶋村麟士朗は四国IL高知時代カブス今永らと自主トレ「『焦りすぎないように』と」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251201s00001173116000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・西勇輝　4年契約最終年に向け意気込み　故障離脱も「いい経験だった」現状維持3億円でサイン</a></li>
-<li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_10536.html" target="_blank" rel="nofollow">【公式サイト】月刊タイガース12月号、本日発売！</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001816.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】石井大智、今季NPB新50戦連続無失点も進化へ「数字はすごく見栄えすると思うが…」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-QFFBT5JQR5O6VJD7VSWBGOI5EM/" target="_blank" rel="nofollow">【サンスポ】【元虎番キャップ・稲見誠の話】「大山さんに感謝」「輝明が…」スキのない阪神両コーナー…D1位・立石でも壊せない？</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019764697.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【ドラフト選手特集・立石正広（下）】「上には上がいる」日本代表で苦悩した創価大時代　高みを目指し掴んだ３球団競合</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-FQLWBIHGOBJDBFPTSKQ5SVZYPA/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】甲子園ボウルを懸けた〝関関戦〟に関大魂爆発　関大勝利想定で作業進めるもOB記者の怨念晴れず</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-KEOPMI6QNZJINPJVMUP4FHOWJA/" target="_blank" rel="nofollow">【サンスポ】【阪神新人連載・虎宝】D1位・立石正広、バレーボール一家の教え「陰の努力」胸に秘めた甲子園への誓い</a></li>
+    const getCurrentDateFromURL = () => {
+      const match = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(`${yyyy}-${mm}-${dd}`);
+    };
+
+    const formatDate = (date) => {
+      const yyyy = date.getFullYear();
+      const mm = pad(date.getMonth() + 1);
+      const dd = pad(date.getDate());
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) return;
+      baseDate.setDate(baseDate.getDate() + offset);
+      const target = `${formatDate(baseDate)}.html`;
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        location.href = res.ok ? target : "pending.html";
+      } catch {
+        location.href = "pending.html";
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>12月01日</h3>
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/01/0019764895.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・黒原　２・１全快で逆襲開始「マウンドにいたい」５月に左膝手術で戦線離脱　体幹トレでノーモア故障</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/01/0019764900.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・森　３年連続“今永塾”参加「力の入れ方を自分のモノにしたい」関大後輩の中日・金丸も参加予定</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1429566/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス今宮　遊撃手以外で起用も　　小久保監督「一...New</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51208.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】太田椋が“臨時打撃コーチ”に就任　台湾プロ野球選手を指導「自分も再認識」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51004.html" target="_blank" rel="nofollow">【スポーツ報知】日韓ドリームプレーヤーズゲーム　エスコンに元ファイターズ６選手…稲葉は凡打に終わるも「選手の気持ちがよく分かったよ」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51210.html" target="_blank" rel="nofollow">【スポーツ報知】【ソフトバンク】小久保裕紀監督が遊撃一筋の今宮に内野複数ポジションを守る準備指示「勝つ確率が上がると判断」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51215.html" target="_blank" rel="nofollow">【スポーツ報知】巨人育成５位の知念大成　“慎兵器”に手応え「めっちゃ振りやすい…理想のバット」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51214.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・若林晃弘コーチ、同じ９３年８月生まれのＦＡ戦士を全力サポート…中学時代からの戦友</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51222.html" target="_blank" rel="nofollow">【スポーツ報知】大谷翔平のＷＢＣ参戦　原辰徳さんが称賛「すごいメッセージ」世界に広がる影響を指摘</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51213.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・岸田行倫　盗塁阻止率セ界１位返り咲き「目指したい」　キャッチボールから意識高め強化</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51000.html" target="_blank" rel="nofollow">【スポーツ報知】１軍クラスで異例の参戦　巨人・赤星優志、アマ捕手と対話し力投</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51209.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・赤星優志が沖縄で見つけた来季への光…右肩痛から復活へ「ゲームに復帰して終われることが良かった」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51205.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・丸佳浩　反省の１２７万円「しょぼい。非常にしょぼい」…来季は松本剛らと外野先発争い「アピール合戦に負けない」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51251.html" target="_blank" rel="nofollow">【スポーツ報知】ＤｅＮＡドラ１まさかの要望「ブーと呼んでください」　青学大左のスラッガー小田康一郎　愛称定着へ呼びかけ</a></li>
 <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51207.html" target="_blank" rel="nofollow">【スポーツ報知】掛布雅之氏が阪神の来季開幕オーダー「３番・三塁」にドラ１・立石を予想　江川卓氏とトークショー開催</a></li>
 <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251130-OHT1T51211.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】サトテルが地元・西宮で「佐藤輝明カップ」創設プラン　野球人口減少に危機感「西宮で育ったのでね。考えます」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001023.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】山下舜平大、26年こそ最強ボディ「疲れを残さない」リカバリー＆腰痛再発防止へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001290.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】小深田大翔、３年ぶり外野挑戦へ「出場機会を増やす」本職二塁も23年に左翼などで出場</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001278.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】小郷裕哉、超早起きオフ生活「４時半に起きて…」伊藤裕季也は対照的「午前中まで寝て」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001258.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】小久保監督、個人面談で今宮健太に「準備してほしいと」新オプション第２弾説明</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001042.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】来季限りで引退する栗山巧に対して盟友中村剛也は「なんて言うんかな…」と語り出した</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001531.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢「元気もらった」小学生ら20人に野球教室　豊田寛「みんな中野選手ばっかり」</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001233.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今朝丸裕喜「目標は90キロ」体重大幅アップへ「いっぱい食べて」大きくなって来季飛躍</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001651.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢が豊田寛、松原快と野球教室参加「すごく元気もらった」来季へ気持ちも新た</a></li>
@@ -36,24 +117,20 @@
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001628.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】掛布雅之OB会長「自分が監督なら」26年開幕スタメン発表　近本まさかの左翼、理由は</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001147.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明、地元恩返しプラン語る「西宮。やるならね」競技人口拡大へ野球大会開催も示唆</a></li>
 <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202511300001176.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】富田蓮、知名度アップへ誓い「教えてもらったと言われるくらい」佐藤輝の野球教室に参加</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202511270000722.html" target="_blank" rel="nofollow">【日刊スポーツ】【契約更改2025全文・巨人浅野翔吾】「野球人生で一番悔しかった年」守備に思い</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-XLK5CCJAYZI45DVYQWTD2TD5P4/" target="_blank" rel="nofollow">【サンスポ】ソフトバンク・有原航平、FAで争奪戦へ　国内は巨人など5球団…メジャー再挑戦も</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-ZHVVNOCATRMWHPDCPZ2FBLNF5M/" target="_blank" rel="nofollow">【サンスポ】DeNAのD1位・小田康一郎、青学大の新人王系譜受け継ぐ「身近な選手が新人王になって目標にしやすい」　今季パ新人王のロッテ・西川は1学年上</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-DJZKGJJQ35JR3HJE5GRKHUHUJE/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・奥川恭伸「自信になった」25年…来季こそは初の規定投球回到達　故郷・石川の子供たちと約束</a></li>
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-5O3RD3CMHRPT7AEGNXFWUDUI6U/" target="_blank" rel="nofollow">【サンスポ】阪神・伊藤将司「聞かれたらアドバイスする」来季高卒3年目の百崎蒼生の合同トレ参加ウエルカム！</a></li>
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-A3YV5NRDV5IVJJ2XQFASPMFBLE/" target="_blank" rel="nofollow">【サンスポ】阪神育成・嶋村麟士朗「いろんな人に聞いてやっていこうと思っている」支配下目指し、恩師に打撃指導仰ぐ</a></li>
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-PVLHUUBRZZMIXOJD3WLA5QTC2E/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、常時150キロ超へ悲壮覚悟「140は見たくない」フォークも改良で進化の誓い</a></li>
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-QYXR6UKHWVJPFCQDBZLI5TSRXA/" target="_blank" rel="nofollow">【サンスポ】阪神・今朝丸裕喜、オフの目標は体重増「いっぱい食べて大きくしようと思う」12キロ増の90キロ</a></li>
 <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-TYFIKIZQNFJTTGUKY3CM45W72A/" target="_blank" rel="nofollow">【サンスポ】阪神・及川雅貴「充実した秋季練習を過ごせた」12月はじっくり調整</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173358000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・百崎蒼生、朝活でパワーアップ！「体を強くして帰ってきたい」オフは毎日6時起床でトレーニング予定</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173360000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ 及川雅貴　「キャリアハイ調整」　昨オフの取り組み継続し疲労回復最優先</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173375000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智　「ミスターゼロ」継続へ「常時150キロ」目指す「来年は140の数字は見たくない」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173369000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・下村海翔　藤川監督の期待に発奮　同じトミー・ジョン手術から復活「第2の高橋遥人」になる　</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173373000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・今朝丸裕喜　“大増量プラン”　目標1日5食で体重12キロ増の90キロ　「筋肉量も増やす」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173364000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　地元・西宮で“サトテル杯”「考えています」　宮っ子の野球振興のためにひと肌脱ぐ</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173366000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・富田蓮　佐藤輝とともに野球教室に参加「聞く耳を持ってくれて、教えがいがあった」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173368000c.html" target="_blank" rel="nofollow">【スポニチ】阪神、デュプランティエとの交渉継続へ　保留選手名簿2日に公示、外した場合も“必要戦力”の評価変わらず</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173363000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊藤将司　今季採用新フォームを継続　「感覚が凄く良かったのでそこにアプローチを」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173362000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・嶋村麟士朗、攻守両面レベルUP誓う「守れないとダメだけど、打つ方も」来春1軍キャンプから飛躍へ</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019764699.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・石井　来季無双へ　エグいフォーク習得＆体重増で球速アップ　動作解析し「握り変えて練習している」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019764704.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝“サトテル杯”開催プラン「やるならね、もちろん西宮」故郷に恩返しへ　甲東小学校で野球教室</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019764709.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・百崎　岩貞＆伊藤将の合同自主トレ参加へ　先輩左腕コンビから“一流の心得”吸収　１軍出場目指す</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019764711.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・今朝丸　１０キロ超増量計画　現在７８キロ「目標は９０キロくらい」１日５食の食トレ継続</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/01/0019764715.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原　オフは単独自主トレ　同学年森下「自分対自分」助言に決断　ひとりで向き合い“スタイル”確立へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251201-6YEQII76I5JZ5JTT42TZIIRTYI/" target="_blank" rel="nofollow">【サンスポ】巨人・丸佳浩、自らの食事支援プロジェクトで中高生と交流「もっと打たなきゃ駄目だなと」　127万円寄付も反省</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173359000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク・小久保監督　今宮健太を遊撃以外で起用するプラン明かす「準備しておいてくれと話もした」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/01/kiji/20251130s00001173377000c.html" target="_blank" rel="nofollow">【スポニチ】ソフトバンク・山川穂高　オーナー務める那覇市のダイニングバーでファンと食事会開催</a></li>
 </ul>
+  
+</div>
+</body>
+</html>
