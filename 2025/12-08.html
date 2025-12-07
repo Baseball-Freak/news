@@ -43,72 +43,59 @@
       font-size: 1.1em;
       margin-left: 1em;
     }
-    ul {
-      padding-left: 1em;
-    }
-    li.news-icon {
-      margin-bottom: 0.5em;
-    }
   </style>
   <script>
-    // ゼロ埋め用関数 (例: 1 -> "01")
     const pad = (n) => String(n).padStart(2, '0');
 
-    // 現在のURLから日付オブジェクトを取得する関数
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
     const getCurrentDateFromURL = () => {
-      // URLのパス（例: .../2025/12-08.html）を取得
       const path = location.pathname;
-      
-      // 正規表現の修正:
-      // (\d{4}) -> 年フォルダ
-      // \/ -> フォルダ区切りのスラッシュ
-      // (\d{2})-(\d{2}) -> 月-日
-      // \.html$ -> 拡張子
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
       const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
-      
       if (!match) return null;
-      
       const [_, yyyy, mm, dd] = match;
-      // Dateオブジェクトを作成 (月は0始まりなので-1する)
       return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
     };
 
-    // 前日・翌日へ移動する関数
+    // 移動処理
     const goToRelativeDay = async (offset) => {
       const baseDate = getCurrentDateFromURL();
       
-      // URL形式が合わない場合は処理を中断
+      // URL形式が正しくない場合も pending へ
       if (!baseDate) {
-        console.error("URLから日付が取得できませんでした。形式が /yyyy/mm-dd.html であるか確認してください。");
+        location.href = "../pending.html"; 
         return;
       }
 
-      // 日付を加算・減算
+      // 日付計算
       baseDate.setDate(baseDate.getDate() + offset);
 
-      // 移動先のパスを作成
       const nextY = baseDate.getFullYear();
       const nextM = pad(baseDate.getMonth() + 1);
       const nextD = pad(baseDate.getDate());
 
-      // ディレクトリ階層を考慮してパスを作成
-      // "../2025/12-07.html" のように一度階層を上がってから年フォルダを指定することで
-      // 年またぎ（2025年→2026年）の場合も正しく動作します。
+      // 次のファイルのパス (../年/月-日.html)
       const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      // ※現在は /yyyy/ の中にいるため、pending.html がルートにある場合は ../ を付けます
+      const pendingUrl = "../pending.html"; 
 
       try {
-        // ファイルが存在するか確認 (HEADリクエスト)
+        // HEADメソッドでファイルの存在確認を行う
         const res = await fetch(target, { method: 'HEAD' });
-        
+
         if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
           location.href = target;
         } else {
-          // ファイルがない場合（404など）
-          location.href = "pending.html";
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
         }
-      } catch (e) {
-        // 通信エラーなどの場合もpendingへ
-        location.href = "pending.html";
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
       }
     };
   </script>
@@ -120,11 +107,8 @@
   </div>
 <div class="box1">
 
-<!-- 
-  注意: 表示用日付部分は自動更新されません。
-  ここをJavaScriptで自動書き換えしたい場合は別途IDを振って処理する必要があります。
--->
 <h3 class='bar3'><i class="fas fa-calendar-check"></i>yyyy/mm/dd</h3>
+
 </div>
 </body>
 </html>
