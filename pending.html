@@ -4,50 +4,65 @@
   <meta charset="UTF-8">
   <title>準備中</title>
   <style>
-    body { font-family: sans-serif; padding: 2em; }
-    /* メッセージ変更用 */
-    #status-msg { font-weight: bold; color: #333; }
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #fff;
+    }
+    /* メッセージ部分のスタイル */
+    #status-msg {
+      font-weight: bold;
+      color: #333;
+    }
   </style>
+
   <script>
-    // 3秒待ってから処理開始
+    // ---------------------------------------------
+    // 3秒待ってから「今日の記事があるか」チェック
+    // ---------------------------------------------
     setTimeout(async () => {
       const statusMsg = document.getElementById('status-msg');
-      
-      // 1. 今日の日付ファイル名を計算
+
+      // 1️⃣ 今日の日付を取得
       const today = new Date();
       const yyyy = today.getFullYear();
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
-      const targetFile = `${yyyy}-${mm}-${dd}.html`;
+
+      // 2️⃣ 新構成に対応（例: 2025/12-07.html）
+      const targetFile = `${yyyy}/${mm}-${dd}.html`;
 
       try {
-        // 2. 移動前に、そのファイルが存在するかチェック！
+        // 3️⃣ 存在確認（HEADリクエストで軽量チェック）
         const res = await fetch(targetFile, { method: 'HEAD' });
 
         if (res.ok) {
-          // 存在する場合のみ移動
+          // ✅ 記事ファイルが存在 → 自動移動
           statusMsg.innerText = "最新記事へ移動します...";
           location.href = targetFile;
         } else {
-          // 存在しない場合（ループ防止）
-          // ここで止まるか、安全なトップページへ移動させる
+          // ❌ ファイルが存在しない → メッセージのみ表示
           statusMsg.innerText = "本日分の記事はまだ投稿されていません。";
           statusMsg.style.color = "red";
-          
-          // 【オプション】もしトップページ(index.htmlやtoday.html)に戻したいなら下の行のコメントを外す
-          // location.href = "today.html"; 
+
+          // ▼ 必要に応じてトップへ戻す場合はコメント解除
+          // location.href = "today.html";
         }
       } catch (e) {
-        // 通信エラーなどの場合
-        statusMsg.innerText = "エラーが発生しました。";
+        // ⚠ 通信エラー時
+        console.error("Error checking file:", e);
+        statusMsg.innerText = "通信エラーが発生しました。";
+        statusMsg.style.color = "red";
       }
-    }, 3000); 
+    }, 3000);
   </script>
 </head>
+
 <body>
-  <!-- IDを付与して、JavaScriptから文字を変えられるようにする -->
+  <!-- ID付き要素：ここに動的メッセージを出す -->
   <p id="status-msg">本日分の記事はまだ準備中です。確認しています...</p>
-  
+
+  <!-- トップページへの戻りリンク -->
   <p style="font-size:0.8em; margin-top:20px;">
     <a href="today.html">トップへ戻る</a>
   </p>
