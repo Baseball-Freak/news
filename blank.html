@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>News Summary</title>
+  <title>News Summary | 準備中</title>
   <style>
     body {
       font-family: sans-serif;
@@ -10,29 +10,24 @@
       line-height: 1.4;
       padding: 2em;
       position: relative;
+      background-color: #fafafa;
     }
 
-    /* .nav-buttons のスタイルを、時刻表示用に調整 */
+    /* 上部の日付・時刻表示欄 */
     .nav-buttons {
       position: absolute;
       top: 1em;
       left: 1em;
-      /* flex設定は時刻表示には不要ですが、位置調整のため維持 */
-      display: flex; 
+      display: flex;
       flex-direction: row;
       gap: 0.5em;
-      
-      /* 時刻表示のスタイル */
-      font-size: 1.1em; /* ボタンよりも少し大きく */
+      font-size: 1.1em;
       font-weight: bold;
       color: #333;
     }
-    
-    /* 以前のボタン関連のスタイルは削除または無視 */
-    /* .nav-buttons button, .nav-buttons button:hover のスタイルは不要 */
 
+    /* メインコンテンツ */
     .box1 {
-      /* nav-buttonsの高さに合わせて box1 のマージンを調整 */
       margin-left: -1em;
       margin-top: 3em;
     }
@@ -49,126 +44,121 @@
     li.news-icon {
       margin-bottom: 0.5em;
     }
+
+    hr {
+      border: none;
+      border-top: 2px dashed green;
+      margin: 20px 0;
+    }
+
+    a {
+      color: #0645ad;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 
   <script>
-    // ゼロ埋め関数（例: 5 -> "05"）
+    // ゼロ埋め関数
     const pad = (n) => String(n).padStart(2, '0');
 
-    // 曜日を日本語で取得する関数
-    const getJapaneseDayOfWeek = (dayIndex) => {
-      const days = ["日", "月", "火", "水", "木", "金", "土"];
-      return days[dayIndex];
-    };
-    
-    // 現在時刻を指定されたフォーマットで取得し、表示を更新する関数
+    // 曜日を日本語で返す関数
+    const getJapaneseDayOfWeek = (i) => ["日", "月", "火", "水", "木", "金", "土"][i];
+
+    // 日付＋時刻表示の更新
     const updateCurrentDateTime = () => {
-        const now = new Date();
-        
-        const yyyy = now.getFullYear();
-        const mm = pad(now.getMonth() + 1);
-        const dd = pad(now.getDate());
-        const dayOfWeek = getJapaneseDayOfWeek(now.getDay()); // 0=日, 1=月...
-        
-        const hh = pad(now.getHours());
-        const mi = pad(now.getMinutes());
-        
-        // 例: 2025/12/06(土) 08:26
-        const formattedDateTime = `${yyyy}/${mm}/${dd}(${dayOfWeek}) ${hh}:${mi}`;
-        
-        const datetimeElement = document.getElementById('current-datetime');
-        if (datetimeElement) {
-            datetimeElement.textContent = formattedDateTime;
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = pad(now.getMonth() + 1);
+      const dd = pad(now.getDate());
+      const day = getJapaneseDayOfWeek(now.getDay());
+      const hh = pad(now.getHours());
+      const mi = pad(now.getMinutes());
+      document.getElementById('current-datetime').textContent = `${yyyy}/${mm}/${dd}(${day}) ${hh}:${mi}`;
+    };
+
+    // --- 記事自動遷移チェック ---
+    window.onload = async () => {
+      updateCurrentDateTime();
+
+      // チェック対象ファイル（yyyy-mm-dd.html）
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = pad(now.getMonth() + 1);
+      const dd = pad(now.getDate());
+      const targetFile = `${yyyy}-${mm}-${dd}.html`;
+
+      try {
+        // 該当ファイルが存在するか確認
+        const res = await fetch(targetFile, { method: 'HEAD' });
+
+        if (res.ok) {
+          // 存在する → 最新記事へ即移動
+          location.href = targetFile;
+        } else {
+          // 存在しない → 準備中メッセージを表示
+          document.getElementById('status-msg').textContent = "本日分の記事はまだ投稿されていません。";
+          document.getElementById('status-msg').style.color = "red";
         }
-    };
-
-
-    // ページのロード時に時刻表示を初期化し、毎分更新する（任意）
-    window.onload = () => {
-        // 初回表示
-        updateCurrentDateTime();
-        
-        // 毎分更新する場合（オプション）
-        // 厳密な毎分更新ではなく、1分間隔のタイマーとして実装します
-        // setInterval(updateCurrentDateTime, 60000); 
-    };
-
-    // --- 既存の未使用の関数はコメントアウトまたは削除します ---
-    
-    /*
-    // 日付を "MM-DD" 形式の文字列にする関数
-    const formatDateMMDD = (date) => {
-      const mm = pad(date.getMonth() + 1);
-      const dd = pad(date.getDate());
-      return `${mm}-${dd}`;
-    };
-
-    // ページ内の見出しから日付（月・日）を取得する補助関数
-    const getDateFromHeading = () => {
-      const heading = document.querySelector('h3.bar3');
-      if (heading) {
-        const match = heading.textContent.match(/(\d{1,2})月(\d{1,2})日/);
-        if (match) {
-          return { mm: parseInt(match[1]), dd: parseInt(match[2]) };
-        }
+      } catch {
+        document.getElementById('status-msg').textContent = "通信エラーが発生しました。";
+        document.getElementById('status-msg').style.color = "red";
       }
-      return null;
     };
-
-    // メインの移動処理関数 (削除されたボタン用のため、現在は不要)
-    const goToRelativeDay = async (offset) => {
-      // 削除されたため、機能は不要
-    };
-    */
   </script>
-
 </head>
 
 <body>
-
+  <!-- 日付・時刻表示 -->
   <div class="nav-buttons">
     <div id="current-datetime">日付と時刻を読み込み中...</div>
   </div>
 
   <div class="box1">
+    <!-- ▼ ここに「記事未公開時の案内メッセージ」が表示されます ▼ -->
+    <p id="status-msg">本日分の記事はまだ準備中です。確認しています...</p>
 
+    <hr>
 
-    <p>本日分の記事はまだ準備中です。後ほどご確認ください。</p>
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-
+    <!-- ▼ 広告ブロック開始（必要に応じて維持 or 編集）▼ -->
     <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+40OCS2+348+686ZL" 
-      rel="nofollow noopener noreferrer" 
-      target="_blank">
+      rel="nofollow noopener noreferrer" target="_blank">
       <img border="0" width="120" height="60" alt="" 
-          src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
+           src="https://www20.a8.net/svt/bgt?aid=251121213243&wid=001&eno=01&mid=s00000000404001046000&mc=1">
     </a>
     <img border="0" width="1" height="1" 
-          src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+         src="https://www15.a8.net/0.gif?a8mat=45IED9+40OCS2+348+686ZL" alt="">
+    <hr>
 
     <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+7KOJUA+348+1BQR01" 
-      rel="nofollow noopener noreferrer" 
-      target="_blank">
+      rel="nofollow noopener noreferrer" target="_blank">
       <img border="0" width="100" height="60" alt="" 
-          src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
+           src="https://www29.a8.net/svt/bgt?aid=220826274458&wid=001&eno=01&mid=s00000000404008019000&mc=1">
     </a>
     <img border="0" width="1" height="1" 
-          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
-
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
+         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+7KOJUA+348+1BQR01" alt="">
+    <hr>
 
     <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" 
-      rel="nofollow noopener noreferrer" 
-      target="_blank">
+      rel="nofollow noopener noreferrer" target="_blank">
       https://www.xserver.ne.jp/lp/service01/
     </a>
     <img border="0" width="1" height="1" 
-          src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
+         src="https://www10.a8.net/0.gif?a8mat=3NH2N6+J1W4Y+CO4+6LWTE" alt="">
+    <hr>
+    <!-- ▲ 広告ブロックここまで ▲ -->
 
-    <hr style="border:none; border-top:2px dashed green; margin:20px 0;">
-    </div>
+    <!-- ▼ 記事を貼り付ける場所（記事が公開される場合） ▼
+         例: <div id="article-content"> ... 記事HTML ... </div>
+         ここに自動生成された記事を追加してもOK -->
+    <!-- ★ 記事貼付位置 ★ -->
 
+    <p style="font-size:0.8em; margin-top:20px;">
+      <a href="today.html">トップへ戻る</a>
+    </p>
+  </div>
 </body>
 </html>
