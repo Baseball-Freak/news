@@ -2,10 +2,11 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <title>Daily Page</title>
   <style>
     body {
       font-family: sans-serif;
-      font-size: 0.8em; /* フォントサイズを小さく */
+      font-size: 0.8em;
       line-height: 1.4;
       padding: 2em;
       position: relative;
@@ -19,63 +20,82 @@
       gap: 0.5em;
     }
     .nav-buttons button {
-      width: 80px; /* ボタンの幅を調整 */
-      height: 30px; /* ボタンの高さを調整 */
-      font-size: 0.7em; /* ボタンのフォントサイズを調整 */
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
       padding: 0;
       border: 1px solid #333;
-      border-radius: 4px; /* 角を丸く */
-      background-color: #f0f0f0; /* 背景色を追加 */
+      border-radius: 4px;
+      background-color: #f0f0f0;
       color: #333;
       cursor: pointer;
       text-align: center;
-      transition: background-color 0.2s, color 0.2s; /* ホバーエフェクト */
+      transition: background-color 0.2s, color 0.2s;
     }
     .nav-buttons button:hover {
       background-color: #ddd;
     }
     .box1 {
-      margin-left: -1em; /* 記事部分を左端から表示するために調整 */
-      margin-top: 3em; /* ボタンとの間にスペース */
+      margin-left: -1em;
+      margin-top: 3em;
     }
     h3.bar3 {
-      font-size: 1.1em; /* 見出しのフォントサイズを調整 */
-      margin-left: 1em; /* 見出しの位置を調整 */
-    }
-    ul {
-      padding-left: 1em; /* リストのインデントを調整 */
-    }
-    li.news-icon {
-      margin-bottom: 0.5em; /* リスト項目の間隔を調整 */
+      font-size: 1.1em;
+      margin-left: 1em;
     }
   </style>
   <script>
     const pad = (n) => String(n).padStart(2, '0');
 
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
     const getCurrentDateFromURL = () => {
-      const match = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
       if (!match) return null;
       const [_, yyyy, mm, dd] = match;
-      return new Date(`${yyyy}-${mm}-${dd}`);
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
     };
 
-    const formatDate = (date) => {
-      const yyyy = date.getFullYear();
-      const mm = pad(date.getMonth() + 1);
-      const dd = pad(date.getDate());
-      return `${yyyy}-${mm}-${dd}`;
-    };
-
+    // 移動処理
     const goToRelativeDay = async (offset) => {
       const baseDate = getCurrentDateFromURL();
-      if (!baseDate) return;
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
       baseDate.setDate(baseDate.getDate() + offset);
-      const target = `${formatDate(baseDate)}.html`;
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      // ※現在は /yyyy/ の中にいるため、pending.html がルートにある場合は ../ を付けます
+      const pendingUrl = "../pending.html"; 
+
       try {
+        // HEADメソッドでファイルの存在確認を行う
         const res = await fetch(target, { method: 'HEAD' });
-        location.href = res.ok ? target : "pending.html";
-      } catch {
-        location.href = "pending.html";
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
       }
     };
   </script>
@@ -87,51 +107,8 @@
   </div>
 <div class="box1">
 
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-<h3 class='bar3'><i class="fas fa-calendar-check"></i>12月02日</h3>
-<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51247.html" target="_blank" rel="nofollow">【スポーツ報知】ロッテが技巧派左腕・カスティーヨ獲得　サブロー監督「大谷キラーとしても知られているので楽しみ」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51249.html" target="_blank" rel="nofollow">【スポーツ報知】楽天、本拠地の名称を「楽天モバイル　最強パーク宮城」に変更　外野フェンスも新設で改革進む</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51263.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】佐野皓大が現役引退を正式表明…投手から野手転向の苦労人「チームメートやスタッフと離れたくない」来季は球団スタッフへ転身</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51262.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】太田椋が初の選手会役員入りへ…来季８年目　右肘手術で育成契約の小木田に代わり</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51235.html" target="_blank" rel="nofollow">【スポーツ報知】入院中の子どもたちにプロ１号誓った日本ハム・山崎福也「ピッチャーなんですけどね。練習します」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51268.html" target="_blank" rel="nofollow">【スポーツ報知】【広島】菊池涼介、レギュラー死守へ「全試合出場」が理想…「全部出たいという気持ちは当然持っている」８０００万円減で更改</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51267.html" target="_blank" rel="nofollow">【スポーツ報知】【広島】“仲良しバッテリー”が結婚報告　森翔平、石原貴規がともに一般女性と「明るく楽しい家庭を」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51228.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・浅野翔吾「１番・中堅」いただきます！　ＢＥ：ＦＩＲＳＴのＬＥＯ考案「うどんパフォーマンス」と飛躍誓う</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51227.html" target="_blank" rel="nofollow">【スポーツ報知】【仙ペン】我が軍、今年もノミネートなし</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51233.html" target="_blank" rel="nofollow">【スポーツ報知】どうなる巨人先発左腕争い　プロ０勝の又木鉄平も名乗り「自分という商品を売り出していく」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51238.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・坂本勇人「代打の神様」と呼ばないで　岡本メジャー移籍で三塁「チャンス」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51236.html" target="_blank" rel="nofollow">【スポーツ報知】爆食トレ完了　巨大化した巨人・石川達也が進化へ”第２段階”</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51269.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】グリフィン退団へ　右膝痛で１０月帰国も再来日ならず　ヘルナンデスやケラー、フルプも</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51226.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】キャベッジ残留！チームトップの１７発５１打点「新４番」候補　２年目来季も「ファンのため」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51265.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ジョン・デュプランティエが保留選手名簿外れる　ソフトバンクなどＮＰＢの複数球団が興味か</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251201-OHT1T51260.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】「佐藤輝明賞」来年「３０発」未達なら森下丸刈り！？　ノルマ達成でご褒美「頑張ってほしい」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202511280000655.html" target="_blank" rel="nofollow">【日刊スポーツ】【ロッテ鈴木昭汰】フル回転2024年､苦戦2025年…完全復活へ｢開幕は100｣％に</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001148.html" target="_blank" rel="nofollow">【日刊スポーツ】【ロッテ】「大谷キラー」198センチ111キロの左腕ホセ・カスティーヨの入団発表「情熱的」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001515.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】「ネタ」ではありません…荘司康誠、大内誠弥が新愛称に興味津々「男は最強に憧れる」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001478.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】荘司康誠、大内誠弥は少年時代２人とも“岸カーブ”研究していた「ずっとまねして…」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001185.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】メジャー挑戦の則本昂大「ご縁ある球団で」年内決着望む「野球人生長くない。悔いなく」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001135.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】親知らず一気３本抜きの若き勇者が誕生…！かの強打者と印象重なるその名は「谷口朝陽」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001454.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】佐野恵太が「珍プレー好プレー大賞」共演の楽天宗山に対抗心!?「僕もどうにか…」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001045.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】“イリタケ”コンビ竹田祐＆入江大生が来年１月に沖縄で合同自主トレを予定</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001223.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】西勇輝、オリックス時代の同僚・伏見寅威の加入は「心の支え」現状維持３億円</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001303.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明と坂本誠志郎、FM COCOLOとスカイＡの番組公開収録に出演　来年１月放送</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001201.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】デュプランティエ、ヘルナンデス、ネルソンが保留者名簿から外れる　ドリスは残留濃厚</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010001108.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】湯浅京己、2300万増の6000万円も「満足いかない」来季は病魔克服し完全復活だ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512010000827.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】来季育成３年目迎える松原快が新球で支配下入りへ「やらないと。危機感あります」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202511270000089.html" target="_blank" rel="nofollow">【日刊スポーツ】【契約更改2025全文・広島堂林翔太】「もう１回野球に対する情熱を」背水の覚悟</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-HP6UH46RDZL2PNLYLWIYOTBHXA/" target="_blank" rel="nofollow">【サンスポ】オリックス・若月健矢「お手本のような存在」　3年ぶり関西ダービーへ阪神移籍の伏見寅威と対戦熱望</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-T5D7NLL6ORLYFK5MJTILB7WYGU/" target="_blank" rel="nofollow">【サンスポ】DeNA・佐野恵太、高校＆大学の後輩、楽天・宗山を絶賛「実力がある。僕もどうにか目立っていかないと」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-PEIKJTNQHVLEVGES4LHTR44PKU/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・下川隼佑、青柳晃洋に学ぶ〝高速クイック〟　球界で希少なアンダースロー　課題克服へ同僚右腕に弟子入り</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-VCUH25XC6FJKPACH4Q4NRU6ZS4/" target="_blank" rel="nofollow">【サンスポ】広島・菊池涼介、チームに喝「ぬるくなってきている」　8000万円減でサイン</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-DDDBQTEXXRMJHD4C4TZ5BDNNC4/" target="_blank" rel="nofollow">【サンスポ】阪神・湯浅京己「来年は開幕からチームにいて、シーズン通して」　難病克服、2300万円増6000万円更改</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-GS6HVE3GOBLI7PDMH52VI4GYMI/" target="_blank" rel="nofollow">【サンスポ】阪神育成・松原快、3年目に向け「変えないといけないところもたくさんある」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-OFKGSEK4I5PADNGE4UYF3ZZMNQ/" target="_blank" rel="nofollow">【サンスポ】阪神2軍本拠地SGLで工事開始　照明塔パネルの角度変更「近隣住民にご迷惑が掛からない範囲でプレーしやすい環境に」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-SFO5VCD4ZFOSTFBO5RINLWB2JA/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、森下翔太との「佐藤輝明賞」の存在明かす　後輩の来季ノルマは「30本塁打」未達なら罰則？「それもアリっすね」30発か散髪か…</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-SWWMBOUYSVIWPBNAFRFWPFZTRI/" target="_blank" rel="nofollow">【サンスポ】【星野伸之　緩急自在】阪神は「西勇輝不在」でもリーグ優勝…ベテランでもキャンプで結果が必要</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251202-FXMCFUJKDRINZJ4FVILIQUGCEM/" target="_blank" rel="nofollow">【サンスポ】『新語・流行語大賞』特別賞に「ミスタープロ野球」　1996年には「メークドラマ」で大賞、長嶋茂雄さん名言も永久に不滅です</a></li>
-</ul>
-
-  
 </div>
 </body>
 </html>
