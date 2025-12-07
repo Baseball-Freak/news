@@ -1,151 +1,185 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baseball Freak News</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baseball Freak News</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'メイリオ', Meiryo, sans-serif;
-      background-color: #ffffff;
-    }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      background-color: #ffffff;
+    }
 
-    .sidebar-content {
-      font-size: 9pt;
-      line-height: 1.6;
-      width: 95%;
-      margin: 0 auto;
-      padding: 8px 10px;
-      box-sizing: border-box;
-    }
+    .sidebar-content {
+      font-size: 9pt;
+      line-height: 1.6;
+      width: 95%;
+      margin: 0 auto;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
 
-    .sidebar-content h3 {
-      margin-top: 5px;
-      margin-bottom: 8px;
-      font-size: 10pt;
-      font-weight: bold;
-    }
+    .sidebar-content h3 {
+      margin-top: 5px;
+      margin-bottom: 8px;
+      font-size: 10pt;
+      font-weight: bold;
+    }
 
-    /* --- ナビゲーションボタン部分 --- */
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 80%;              /* 全体の幅を8割に */
-      margin: 10px auto 14px auto;
-      gap: 10px;               /* ボタンの間隔を確保 */
-    }
+    /* --- ナビゲーションボタン部分 --- */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 80%;
+      margin: 10px auto 14px auto;
+      gap: 10px;
+    }
 
-    .nav-btn {
-      flex: 1;                 /* 均等に幅を分配 */
-      font-size: 8pt;
-      padding: 6px 0;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      font-family: 'メイリオ', Meiryo, sans-serif;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+    .nav-btn {
+      flex: 1;
+      font-size: 8pt;
+      padding: 6px 0;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      font-family: 'メイリオ', Meiryo, sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-    /* 左右の色分け */
-    .nav-btn.prev {
-      background: #e1f0ff;         /* 淡いブルー */
-    }
+    /* 左右の色分け */
+    .nav-btn.prev {
+      background: #e1f0ff;
+    }
 
-    .nav-btn.next {
-      background: #e8ffe1;         /* 淡いグリーン */
-    }
+    .nav-btn.next {
+      background: #e8ffe1;
+    }
 
-    .nav-btn:hover {
-      filter: brightness(0.95);
-    }
+    .nav-btn:hover {
+      filter: brightness(0.95);
+    }
 
-    .article-body a {
-      color: #0044cc;
-      text-decoration: none;
-    }
+    .article-body a {
+      color: #0044cc;
+      text-decoration: none;
+    }
 
-    .article-body a:hover {
-      text-decoration: underline;
-    }
+    .article-body a:hover {
+      text-decoration: underline;
+    }
 
-    .article-body ul {
-      padding-left: 16px;
-      margin: 0;
-    }
+    .article-body ul {
+      padding-left: 16px;
+      margin: 0;
+    }
 
-    .article-body li {
-      margin-bottom: 6px;
-    }
-  </style>
+    .article-body li {
+      margin-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="sidebar-content">
+  <div class="sidebar-content">
 
 
-    <!-- ▼ 日付け更新部分 -->  
-    
-    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
+      
+    
+    <h3 class="bar3"><i class="fas fa-calendar-check"></i>2025/12/06</h3>
 
-    <!-- ▼ デザイン調整後ナビボタン -->
-    <div class="nav-buttons">
-      <button class="nav-btn prev" onclick="goToPrev()">Previous</button>
-      <button class="nav-btn next" onclick="goToNext()">Next</button>
-    </div>
+        <div class="nav-buttons">
+      <button class="nav-btn prev" onclick="goToPrev()">Previous</button>
+      <button class="nav-btn next" onclick="goToNext()">Next</button>
+    </div>
 
-    <div class="article-body">
-   
-      
-    <!-- ▼ 記事本文 ここから-->      
-      
-
-     <!-- ▼ 記事本文 ここまで -->          
-    </div>
+    <div class="article-body">
+   
+      
+          
 
 
-  </div>
 
-  <script>
-    // ▼ 自動日付チェック
-    (function() {
-      const h3 = document.querySelector(".bar3");
-      const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
-      const fileName = location.pathname.split("/").pop();  // ex: 12-06.html
+               
+    </div>
+
+
+  </div>
+
+  <script>
+    // --- ユーティリティ関数 ---
+
+    /**
+     * 指定された日付からオフセット（日数）を計算し、「MM-DD.html」形式のファイル名を返します。
+     * @param {Date} date - 基準となる日付オブジェクト
+     * @param {number} offset - 日数の増減（前日なら-1、翌日なら+1）
+     * @returns {string} - 「MM-DD.html」形式のファイル名
+     */
+    function getFormattedDate(date, offset) {
+        const targetDate = new Date(date);
+        targetDate.setDate(targetDate.getDate() + offset); // 日付を増減させる
+
+        const mm = ("0" + (targetDate.getMonth() + 1)).slice(-2);
+        const dd = ("0" + targetDate.getDate()).slice(-2);
+        return `${mm}-${dd}.html`;
+    }
+
+    // --- メイン処理 ---
+    let currentDate = null; // 現在のファイルに対応する日付
+
+    // ▼ 自動日付チェック (ここでは、現在のファイル名から日付を取得する役割も持たせる)
+    (function() {
+      const h3 = document.querySelector(".bar3");
+      const dateText = h3 ? h3.textContent.match(/\d{4}\/\d{2}\/\d{2}/) : null;
+      const fileName = location.pathname.split("/").pop();  // ex: 12-07.html
+      
+      if (!dateText || fileName === "") {
+        // 日付テキストがない、またはファイル名がない場合は blank.html に移動（元のロジックを維持）
+        location.href = "blank.html";
+        return;
+      }
+
+      // 現在のファイル名から日付オブジェクトを作成 (ナビゲーションボタンのために使用)
       const [fileMonth, fileDay] = fileName.replace(".html", "").split("-");
+      // 注意: JavaScriptの月は 0 (1月) から始まるため、-1 する
+      currentDate = new Date(dateText[0].split("/")[0], fileMonth - 1, fileDay);
 
-      if (!dateText) {
-        location.href = "blank.html";
-        return;
+
+      // 元の自動チェックロジック: ファイル名とHTMLの日付が一致しない、または今日の日付と一致しない
+      const [yyyy, mm, dd] = dateText[0].split("/");
+      const thisYear = new Date().getFullYear().toString();
+      const todayMonth = ("0" + (new Date().getMonth() + 1)).slice(-2);
+      const todayDay = ("0" + new Date().getDate()).slice(-2);
+
+      if (
+        yyyy !== thisYear ||
+        mm !== fileMonth ||
+        dd !== fileDay ||
+        (mm !== todayMonth || dd !== todayDay)
+      ) {
+        // location.href = "blank.html"; // 必要に応じてコメントアウト
+      }
+    })();
+
+    // Previousボタン (前日)
+    function goToPrev() {
+      // 現在の日付 (currentDate) から 1日戻った日付のファイル名を生成
+      if (currentDate) {
+        location.href = getFormattedDate(currentDate, -1);
       }
+    }
 
-      const [yyyy, mm, dd] = dateText[0].split("/");
-      const today = new Date();
-      const thisYear = today.getFullYear().toString();
-      const todayMonth = ("0" + (today.getMonth() + 1)).slice(-2);
-      const todayDay = ("0" + today.getDate()).slice(-2);
-
-      if (
-        yyyy !== thisYear ||
-        mm !== fileMonth ||
-        dd !== fileDay ||
-        (mm !== todayMonth || dd !== todayDay)
-      ) {
-        location.href = "blank.html";
+    // Nextボタン (翌日)
+    function goToNext() {
+      // 現在の日付 (currentDate) から 1日進んだ日付のファイル名を生成
+      if (currentDate) {
+        location.href = getFormattedDate(currentDate, 1);
       }
-    })();
-
-    function goToPrev() {
-      location.href = "12-05.html";
-    }
-
-    function goToNext() {
-      location.href = "12-07.html";
-    }
-  </script>
+    }
+  </script>
 
 </body>
 </html>
