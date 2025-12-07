@@ -2,48 +2,73 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today’s Baseball Freak News</title>
+
+  <style>
+    body {
+      font-family: "メイリオ", sans-serif;
+      font-size: 9pt;
+      line-height: 1.5;
+      padding: 2em;
+      text-align: center;
+      color: #333;
+    }
+
+    #status {
+      margin-top: 2em;
+      font-weight: bold;
+      color: #555;
+    }
+
+    #loading {
+      font-size: 10pt;
+      color: #888;
+      margin-top: 1em;
+    }
+  </style>
 
   <script>
-    (async () => {
-      // -------------------------------
-      // ✅ 今日の日付を取得
-      // -------------------------------
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
+    // --- 自動リダイレクトスクリプト ---
+    window.onload = async () => {
+      const status = document.getElementById("status");
+      const loading = document.getElementById("loading");
 
-      // -------------------------------
-      // ✅ 対象ファイルパスを生成
-      // 例: 2025/12-07.html
-      // -------------------------------
-      const dateStr = `${mm}-${dd}`;
-      const targetURL = `${yyyy}/${dateStr}.html`;
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+
+      // yyyy/mm-dd.html 形式を構築
+      const folder = `${yyyy}`;
+      const file = `${mm}-${dd}.html`;
+      const targetURL = `${folder}/${file}`;
+
+      status.textContent = `Checking for today’s article: ${targetURL}`;
 
       try {
-        // -------------------------------
-        // ✅ ファイル存在チェック（HEADリクエスト）
-        // -------------------------------
-        const response = await fetch(targetURL, { method: 'HEAD' });
-
-        if (response.ok) {
-          // ファイルが存在する → そのページへ遷移
-          location.href = targetURL;
+        const res = await fetch(targetURL, { method: "HEAD" });
+        if (res.ok) {
+          // 存在すれば移動
+          loading.textContent = "記事を読み込んでいます...";
+          setTimeout(() => (location.href = targetURL), 1000);
         } else {
-          // ファイルが存在しない → pending.html へ
-          location.href = "pending.html";
+          // 存在しなければ blank.html へ
+          loading.textContent = "記事が見つかりません。";
+          setTimeout(() => (location.href = "blank.html"), 1500);
         }
-      } catch (error) {
-        // 通信エラー時も pending.html へ
-        console.error("Error checking file:", error);
-        location.href = "pending.html";
+      } catch (e) {
+        // エラー時も blank.html へ
+        loading.textContent = "通信エラーが発生しました。";
+        setTimeout(() => (location.href = "blank.html"), 1500);
       }
-    })();
+    };
   </script>
 </head>
 
 <body>
-  <p>Redirecting to today's article...</p>
+  <h2>Baseball Freak - Today’s News</h2>
+  <div id="status">記事を確認しています...</div>
+  <div id="loading"></div>
 </body>
 </html>
