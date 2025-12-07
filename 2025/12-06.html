@@ -1,209 +1,114 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baseball Freak News</title>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'メイリオ', Meiryo, sans-serif; /* 💡 フォントの指定を維持 */
-      background-color: #ffffff;
-      color: #333;
-    }
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
 
-    /* コンテンツ全体のラッパー（中央寄せ・幅調整） */
-    .container {
-      width: 95%;
-      max-width: 800px; /* PCで見やすくするための最大幅 */
-      margin: 0 auto;
-      padding: 10px;
-      box-sizing: border-box;
-    }
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
 
-    /* 日付表示 */
-    .date {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1em; /* 💡 サイズの指定を維持 */
-      margin-top: 10px;
-      color: #555;
-    }
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
 
-    /* --- ナビゲーションボタン部分 --- */
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin: 15px auto 20px auto;
-      gap: 10px;
-    }
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
 
-    .nav-btn, .nav-buttons a {
-      flex: 1;
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      color: #333;
-      font-size: 9pt; /* 💡 サイズの指定を維持 */
-      padding: 8px 0;
-      border: 1px solid #bbb; /* 💡 ボタンの枠線（罫線）を維持 */
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      transition: all 0.2s ease;
-    }
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      // ※現在は /yyyy/ の中にいるため、pending.html がルートにある場合は ../ を付けます
+      const pendingUrl = "../pending.html"; 
 
-    /* 左右の色分け */
-    #prev-day {
-      background: #e1f0ff; /* 淡いブルー */
-    }
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
 
-    #next-day {
-      background: #e8ffe1; /* 淡いグリーン */
-    }
-
-    .nav-buttons a:hover {
-      filter: brightness(0.95);
-      font-weight: bold;
-    }
-
-    /* --- ニュース記事リスト部分 --- */
-    .news {
-      font-size: 9.5pt; /* 💡 サイズの指定を維持 */
-      line-height: 1.6;
-    }
-
-    .nb-list {
-      list-style: none; /* ドットを消す */
-      padding: 0;
-      margin: 0;
-    }
-
-    .nb-list li {
-      margin-bottom: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px dotted #ccc;
-    }
-
-    .nb-list li:last-child {
-      border-bottom: none;
-    }
-
-    .nb-list a {
-      color: #0044cc;
-      text-decoration: none;
-      display: block; /* クリック領域を広げる */
-    }
-
-    .nb-list a:hover {
-      text-decoration: underline;
-      color: #0066ff;
-    }
-
-    /* アイコン代わりの簡易スタイル（画像がない場合用） */
-    .news-icon::before, .teams-icon::before {
-      content: '■';
-      font-size: 0.8em;
-      margin-right: 5px;
-      color: #999;
-    }
-    
-    /* サイトごとの色分け例（必要に応じて） */
-    .news-ssp::before { color: #f5a623; } /* サンスポっぽい色 */
-    .news-snc::before { color: #4a90e2; } /* スポニチっぽい色 */
-    .news-nsp::before { color: #d0021b; } /* 日刊スポーツっぽい色 */
-    .teams-g::before  { color: #f97306; } /* 巨人 */
-    .teams-t::before  { color: #ffe800; } /* 阪神 */
-
-    footer {
-      text-align: center;
-      font-size: 8pt;
-      color: #888;
-      margin-top: 30px;
-      margin-bottom: 20px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
-    }
-  </style>
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+  </script>
 </head>
-
 <body>
-  <div class="container">
-        <div class="date"></div>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
 
-        <div class="nav-buttons">
-      <a id="prev-day" href="#">&laquo; Previous</a>
-      <a id="next-day" href="#">Next &raquo;</a>
-    </div>
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>yyyy/mm/dd</h3>
 
-        <div class="news">
-      
-       まだ
-          </div>
-
-    <footer>© 2025 Baseball Freak</footer>
-  </div>
-
-  <script>
-    // --- 日付ナビゲーション（前日／翌日への移動）と日付表示の制御 ---
-    // ※このスクリプトは、URLパス（例: /2025/12-07.html）から日付を解析し、表示とナビゲーションに利用します。
-    (() => {
-      const pathParts = location.pathname.split('/');
-      let filename = pathParts.pop();       // 例: 12-07.html
-      let folder = pathParts.pop();         // 例: 2025
-
-      // ファイル名が日付形式でない場合は処理を終了
-      if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
-        return; 
-      }
-
-      // ファイル名から月と日を抽出し、数値に変換
-      const [mm_num, dd_num] = filename.replace('.html', '').split('-').map(Number);
-      // フォルダ名から年を抽出し、失敗したら現在の年をフォールバックとして使用
-      const currentYear = parseInt(folder) || new Date().getFullYear();
-      
-      // URLから抽出した日付（mm_num, dd_num, currentYear）を使用してDateオブジェクトを作成（これが記事の日付）
-      const currentDate = new Date(currentYear, mm_num - 1, dd_num);
-
-      // 1. 抽出した記事の日付を画面に表示する
-      const dateElement = document.querySelector('.date');
-      if (dateElement) {
-        const yyyy = currentDate.getFullYear();
-        const mm_display = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const dd_display = String(currentDate.getDate()).padStart(2, '0');
-        // YYYY/MM/DD形式で表示
-        dateElement.textContent = `${yyyy}/${mm_display}/${dd_display}`;
-      }
-
-      // 2. ナビゲーションリンクの計算のためのヘルパー関数
-      const formatDate = (date) => {
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${m}-${d}.html`;
-      };
-
-      // 前日の日付を計算し、URLを構築
-      const prev = new Date(currentDate);
-      prev.setDate(currentDate.getDate() - 1);
-      const prevYear = prev.getFullYear();
-      const prevURL = `../${prevYear}/${formatDate(prev)}`;
-
-      // 翌日の日付を計算し、URLを構築
-      const next = new Date(currentDate);
-      next.setDate(currentDate.getDate() + 1);
-      const nextYear = next.getFullYear();
-      const nextURL = `../${nextYear}/${formatDate(next)}`;
-
-      // ボタンにリンクを設定
-      const prevBtn = document.getElementById('prev-day');
-      const nextBtn = document.getElementById('next-day');
-
-      if(prevBtn) prevBtn.href = prevURL;
-      if(nextBtn) nextBtn.href = nextURL;
-    })();
-  </script>
+</div>
 </body>
 </html>
