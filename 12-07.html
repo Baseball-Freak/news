@@ -147,16 +147,22 @@
 
   </div>
 
- <script>
-  // ▼ 日付チェックロジック（過去OK版）
+<script>
+  // ▼ 厳密日付チェック版（未来日や不一致時は blank.html へ）
   (function() {
     const h3 = document.querySelector(".bar3");
     const dateText = h3 ? h3.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/) : null;
     const fileName = location.pathname.split("/").pop();  
     const fileMatch = fileName.match(/(\d{2})-(\d{2})\.html/);
 
-    // 日付が正しく取得できない場合だけ blank.html へ
+    // h3 から日付を取得できない場合は blank.html へ
     if (!dateText) {
+      location.href = "blank.html";
+      return;
+    }
+
+    // ファイル名から日付を取得できない場合も blank.html へ
+    if (!fileMatch) {
       location.href = "blank.html";
       return;
     }
@@ -164,8 +170,16 @@
     const yyyy = parseInt(dateText[1]);
     const mm   = parseInt(dateText[2]);
     const dd   = parseInt(dateText[3]);
+    const fileMonth = parseInt(fileMatch[1]);
+    const fileDay   = parseInt(fileMatch[2]);
 
-    // 記事日付 > 今日 → 未来なので blank.html へ
+    // ▼ ファイル名の日付と <h3> の日付が一致しなければ blank.html
+    if (mm !== fileMonth || dd !== fileDay) {
+      location.href = "blank.html";
+      return;
+    }
+
+    // ▼ 未来日なら blank.html（今日より先の日付は禁止）
     const articleDate = new Date(yyyy, mm - 1, dd);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -198,6 +212,7 @@
     if (window.nextLink) location.href = window.nextLink;
   }
 </script>
+
 
 </body>
 </html>
