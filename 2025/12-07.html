@@ -1,235 +1,130 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baseball Freak News</title>
-
-  <style>
-    /* ====================================================================== */
-    /* 【CSS: スタイル定義】 ここにデザイン（色、サイズ、配置）の設定をします */
-    /* ====================================================================== */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'メイリオ', Meiryo, sans-serif;
-      background-color: #ffffff;
-      color: #333;
-    }
-
-    /* コンテンツ全体のラッパー（中央寄せ・幅調整） */
-    .container {
-      width: 95%;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-    
-    /* ヘッダーのタイトル (緑文字の「Baseball Freak News」部分) */
-    .title-header {
-        font-size: 1.5em;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 20px;
-        color: #008000;
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
     }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+    ul {
+      padding-left: 1em;
+    }
+    li.news-icon {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    // ゼロ埋め用関数 (例: 1 -> "01")
+    const pad = (n) => String(n).padStart(2, '0');
 
-    /* 日付表示 (例: 2025/12/07) */
-    .date {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      color: #333;
-    }
-
-    /* --- ナビゲーションボタン部分 --- */
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin: 0 auto 20px auto;
-      gap: 10px;
-    }
-
-    .nav-btn, .nav-buttons a {
-      flex: 1;
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      color: #333;
-      font-size: 10pt;
-      padding: 8px 0;
-      border: 1px solid #bbb; /* ボタンの枠線 */
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      transition: all 0.2s ease;
-    }
-
-    /* 前日ボタンの背景色（淡いブルー） */
-    #prev-day {
-      background: #e1f0ff;
-    }
-
-    /* 翌日ボタンの背景色（淡いグリーン） */
-    #next-day {
-      background: #e8ffe1;
-    }
-    
-    /* --- ニュース記事リスト部分の共通設定 --- */
-    .news {
-      font-size: 10pt;
-      line-height: 1.6;
-    }
-
-    /* リストのスタイル（ulタグ） */
-    .nb-list {
-      list-style: none; /* デフォルトのリストマーク（ドット）を削除 */
-      padding: 0;
-      margin: 0;
-    }
-
-    /* リストの各項目（liタグ）*/
-    .nb-list li {
-      margin-bottom: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px dotted #ccc; /* 各記事の下に点線 */
-    }
-
-    .nb-list li:last-child {
-      border-bottom: none; /* 最後だけ点線を削除 */
-    }
-
-    /* 記事リンクのスタイル（aタグ）*/
-    .nb-list a {
-      color: #0044cc;
-      text-decoration: none;
-      display: block;
-    }
-
-    /* アイコン代わりの簡易スタイル（記事タイトルの先頭の「■」） */
-    .news-icon::before, .teams-icon::before {
-      content: '■'; /* 黒い四角のアイコン */
-      font-size: 0.8em;
-      margin-right: 5px;
-      color: #333;
-    }
-    
-    /* サイトごとの色分け例（アイコンの色を変更したい場合に使用） */
-    .news-ssp::before { color: #f5a623; } 
-    .news-snc::before { color: #4a90e2; } 
-    .news-nsp::before { color: #d0021b; } 
-    .teams-g::before  { color: #f97306; } 
-    .teams-t::before  { color: #ffe800; } 
-
-    footer {
-      text-align: center;
-      font-size: 8pt;
-      color: #888;
-      margin-top: 30px;
-      margin-bottom: 20px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="container">
-    <div class="title-header">Baseball Freak News</div>
-        <div class="date"></div>
-
-        <div class="nav-buttons">
-      <a id="prev-day" href="#">&laquo; Previous</a>
-      <a id="next-day" href="#">Next &raquo;</a>
-    </div>
-
-        <div class="news">
-      
-                        <ul class="nb-list">
-                <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-EARWQNP4XJFENAIZ5INZSZ2NWY/" target="_blank" rel="nofollow">【サンスポ】DeNA・度会隆輝らがトークショーでファンと交流　来季の目標は「横浜ファミリーと必ず優勝」</a></li>
-        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-MRWOGRM6LBBWBA4LVDDEFKG2LE/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、小野ハーフマラソンで1・2キロ快走「自分の中ではリスペクトする方の中にマラソンランナーが入っている」</a></li>
-        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173191000c.html" target="_blank" rel="nofollow">【スポニチ】ロッテ・上田、フリースロー3本決めた河村に「大人げない」　千葉ジェッツ戦にゲストで登場</a></li>
-      </ul>
-                      </div>
-
-    <footer>© 2025 Baseball Freak</footer>
-  </div>
-
-  <script>
-    /* ====================================================================== */
-    /* 【JavaScript: 日付処理とナビゲーション制御】ここから処理が始まります */
-    /* ====================================================================== */
-    (() => {
-      // 1. 現在のURLから年(YYYY)と月日(MM-DD)を抽出する
-      const pathParts = location.pathname.split('/');
-      let filename = pathParts.pop();       // 例: 12-07.html
-      let folder = pathParts.pop();         // 例: 2025
-
-      // ファイル名が「MM-DD.html」形式でない場合は処理を中断
-      if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
-        return; 
-      }
-
-      // 2. 抽出した情報から記事の正確な日付オブジェクトを作成する
-      const [mm_num, dd_num] = filename.replace('.html', '').split('-').map(Number);
-      const currentYear = parseInt(folder) || new Date().getFullYear();
-      const currentDate = new Date(currentYear, mm_num - 1, dd_num); // 記事の日付
+    // 現在のURLから日付オブジェクトを取得する関数
+    const getCurrentDateFromURL = () => {
+      // URLのパス（例: .../2025/12-08.html）を取得
+      const path = location.pathname;
       
-      // 比較のために「今日」の日付（時間を切り捨てたもの）を取得
-      const now = new Date();
-      const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-      const articleDate = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()));
+      // 正規表現の修正:
+      // (\d{4}) -> 年フォルダ
+      // \/ -> フォルダ区切りのスラッシュ
+      // (\d{2})-(\d{2}) -> 月-日
+      // \.html$ -> 拡張子
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
       
-      // 3. 記事の日付をページに表示する (例: 2025/12/07)
-      const dateElement = document.querySelector('.date');
-      if (dateElement) {
-        const yyyy = currentDate.getFullYear();
-        const mm_display = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const dd_display = String(currentDate.getDate()).padStart(2, '0');
-        dateElement.textContent = `${yyyy}/${mm_display}/${dd_display}`;
-      }
+      if (!match) return null;
+      
+      const [_, yyyy, mm, dd] = match;
+      // Dateオブジェクトを作成 (月は0始まりなので-1する)
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
 
-      // 4. ナビゲーションリンク生成のためのヘルパー関数
-      const formatDate = (date) => {
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${m}-${d}.html`;
-      };
-
-      // 5. 前日の日付とURLを計算し、ボタンに設定
-      const prev = new Date(currentDate);
-      prev.setDate(currentDate.getDate() - 1);
-      const prevYear = prev.getFullYear();
-      const prevURL = `../${prevYear}/${formatDate(prev)}`;
+    // 前日・翌日へ移動する関数
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
       
-      const prevBtn = document.getElementById('prev-day');
-      if(prevBtn) prevBtn.href = prevURL;
-
-      // 6. 翌日の日付とURLを計算し、ボタンに設定（「Blank.html」への制御を含む）
-      const next = new Date(currentDate);
-      next.setDate(currentDate.getDate() + 1);
-      const nextYear = next.getFullYear();
-      const nextURL_Normal = `../${nextYear}/${formatDate(next)}`;
-      
-      const nextBtn = document.getElementById('next-day');
-      
-      // 💡 【Blank.htmlへの制御】
-      // 記事の日付が「今日」の日付と等しいか、それ以降の場合、翌日は「未来」となりファイルが存在しないと判断
-      if (articleDate.getTime() >= today.getTime()) {
-          // 翌日のリンクを Blank.html に設定
-          if (nextBtn) {
-              nextBtn.href = "Blank.html";
-          }
-      } else {
-          // 翌日の記事が存在するはずなので、通常のリンクを設定
-          if(nextBtn) nextBtn.href = nextURL_Normal;
+      // URL形式が合わない場合は処理を中断
+      if (!baseDate) {
+        console.error("URLから日付が取得できませんでした。形式が /yyyy/mm-dd.html であるか確認してください。");
+        return;
       }
-      
-    })();
-  </script>
+
+      // 日付を加算・減算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      // 移動先のパスを作成
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // ディレクトリ階層を考慮してパスを作成
+      // "../2025/12-07.html" のように一度階層を上がってから年フォルダを指定することで
+      // 年またぎ（2025年→2026年）の場合も正しく動作します。
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+
+      try {
+        // ファイルが存在するか確認 (HEADリクエスト)
+        const res = await fetch(target, { method: 'HEAD' });
+        
+        if (res.ok) {
+          location.href = target;
+        } else {
+          // ファイルがない場合（404など）
+          location.href = "pending.html";
+        }
+      } catch (e) {
+        // 通信エラーなどの場合もpendingへ
+        location.href = "pending.html";
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+<!-- 
+  注意: 表示用日付部分は自動更新されません。
+  ここをJavaScriptで自動書き換えしたい場合は別途IDを振って処理する必要があります。
+-->
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>yyyy/mm/dd</h3>
+</div>
 </body>
 </html>
