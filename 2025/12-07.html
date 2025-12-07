@@ -11,22 +11,25 @@
       padding: 0;
       font-family: 'メイリオ', Meiryo, sans-serif;
       background-color: #ffffff;
+      color: #333;
     }
 
-    .sidebar-content {
-      font-size: 9pt;
-      line-height: 1.6;
+    /* コンテンツ全体のラッパー（中央寄せ・幅調整） */
+    .container {
       width: 95%;
+      max-width: 800px; /* PCで見やすくするための最大幅 */
       margin: 0 auto;
-      padding: 8px 10px;
+      padding: 10px;
       box-sizing: border-box;
     }
 
-    .sidebar-content h3 {
-      margin-top: 5px;
-      margin-bottom: 8px;
-      font-size: 10pt;
+    /* 日付表示 */
+    .date {
+      text-align: center;
       font-weight: bold;
+      font-size: 1.1em;
+      margin-top: 10px;
+      color: #555;
     }
 
     /* --- ナビゲーションボタン部分 --- */
@@ -34,54 +37,98 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 80%;              /* 全体の幅を8割に */
-      margin: 10px auto 14px auto;
-      gap: 10px;               /* ボタンの間隔を確保 */
+      width: 100%;
+      margin: 15px auto 20px auto;
+      gap: 10px;
     }
 
-    .nav-btn {
-      flex: 1;                 /* 均等に幅を分配 */
-      font-size: 8pt;
-      padding: 6px 0;
+    .nav-btn, .nav-buttons a {
+      flex: 1;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 9pt;
+      padding: 8px 0;
       border: 1px solid #bbb;
       border-radius: 8px;
-      font-family: 'メイリオ', Meiryo, sans-serif;
-      cursor: pointer;
+      background-color: #f9f9f9;
       transition: all 0.2s ease;
     }
 
     /* 左右の色分け */
-    .nav-btn.prev {
-      background: #e1f0ff;         /* 淡いブルー */
+    #prev-day {
+      background: #e1f0ff; /* 淡いブルー */
     }
 
-    .nav-btn.next {
-      background: #e8ffe1;         /* 淡いグリーン */
+    #next-day {
+      background: #e8ffe1; /* 淡いグリーン */
     }
 
-    .nav-btn:hover {
+    .nav-buttons a:hover {
       filter: brightness(0.95);
+      font-weight: bold;
     }
 
-    .article-body a {
-      color: #0044cc;
-      text-decoration: none;
+    /* --- ニュース記事リスト部分 --- */
+    .news {
+      font-size: 9.5pt;
+      line-height: 1.6;
     }
 
-    .article-body a:hover {
-      text-decoration: underline;
-    }
-
-    .article-body ul {
-      padding-left: 16px;
+    .nb-list {
+      list-style: none; /* ドットを消す */
+      padding: 0;
       margin: 0;
     }
 
-    .article-body li {
-      margin-bottom: 6px;
+    .nb-list li {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    .nb-list li:last-child {
+      border-bottom: none;
+    }
+
+    .nb-list a {
+      color: #0044cc;
+      text-decoration: none;
+      display: block; /* クリック領域を広げる */
+    }
+
+    .nb-list a:hover {
+      text-decoration: underline;
+      color: #0066ff;
+    }
+
+    /* アイコン代わりの簡易スタイル（画像がない場合用） */
+    .news-icon::before, .teams-icon::before {
+      content: '■';
+      font-size: 0.8em;
+      margin-right: 5px;
+      color: #999;
+    }
+    
+    /* サイトごとの色分け例（必要に応じて） */
+    .news-ssp::before { color: #f5a623; } /* サンスポっぽい色 */
+    .news-snc::before { color: #4a90e2; } /* スポニチっぽい色 */
+    .news-nsp::before { color: #d0021b; } /* 日刊スポーツっぽい色 */
+    .teams-g::before  { color: #f97306; } /* 巨人 */
+    .teams-t::before  { color: #ffe800; } /* 阪神 */
+
+    footer {
+      text-align: center;
+      font-size: 8pt;
+      color: #888;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
     }
   </style>
-</head>
+
   <script>
     // 日付の自動挿入
     window.onload = () => {
@@ -90,82 +137,98 @@
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
-      dateElement.textContent = `${yyyy}/${mm}/${dd}`;
+      
+      // 既に日付が入っていなければ現在日付を入れる
+      if(dateElement && !dateElement.textContent) {
+        dateElement.textContent = `${yyyy}/${mm}/${dd}`;
+      }
     };
   </script>
 </head>
 
 <body>
-  <!-- 日付 -->
-  <div class="date"></div>
+  <div class="container">
+    <!-- 日付 -->
+    <div class="date"></div>
 
-  <!-- 前日・翌日ボタン -->
-  <div class="nav-buttons">
-    <a id="prev-day" href="#">Previous</a>
-    <a id="next-day" href="#">Next</a>
+    <!-- 前日・翌日ボタン -->
+    <div class="nav-buttons">
+      <a id="prev-day" href="#">&laquo; Previous</a>
+      <a id="next-day" href="#">Next &raquo;</a>
+    </div>
+
+    <!-- 記事を貼り付ける場所 -->
+    <div class="news">
+      <!-- ▼▼▼ ここにNews記事を貼り付けてください ▼▼▼ -->
+      <ul class="nb-list">
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-EARWQNP4XJFENAIZ5INZSZ2NWY/" target="_blank" rel="nofollow">【サンスポ】DeNA・度会隆輝らがトークショーでファンと交流　来季の目標は「横浜ファミリーと必ず優勝」</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-MRWOGRM6LBBWBA4LVDDEFKG2LE/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、小野ハーフマラソンで1・2キロ快走「自分の中ではリスペクトする方の中にマラソンランナーが入っている」</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173191000c.html" target="_blank" rel="nofollow">【スポニチ】ロッテ・上田、フリースロー3本決めた河村に「大人げない」　千葉ジェッツ戦にゲストで登場</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173190000c.html" target="_blank" rel="nofollow">【スポニチ】杉谷拳士氏　試合中、体に突如起きた“異変”とは　恐怖の“海賊”に怯えて…</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173120000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智「マラソンが苦手なので…」も気迫の走り！赤星氏大会アンバサダーの小野ハーフマラソン参加</a></li>
+        <li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/07/post1874547/" target="_blank" rel="nofollow">【Full-count】ベッキーが突然の“報告”　WBC戦士なのに…46文字の珍紹介にツッコミ殺到「旦那や」</a></li>
+        <li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682371/" target="_blank" rel="nofollow">【ベースボールキング】ロッテ、河村と上田が千葉ジェッツのホームゲームでフリースローチャレンジ！「希由翔に1本は決めて欲しかった」</a></li>
+        <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788148.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　石井が小野ハーフマラソンに参加「競技としてやられている方はすごい」</a></li>
+        <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51087.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】松本剛が札幌市内で野球教室「楽しさは忘れずにいてほしい」野球少年・少女にメッセージ</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060000918.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】今宮健太「どうぞとはならない」内野全ポジ準備も開幕遊撃ゆずらん　１億減更改</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000528.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】清宮幸太郎、中田翔氏のお疲れさま会に参加　特製ケーキ手に笑顔の集合写真など公開</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000424.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人、同じドラ１左腕への意識を問われ「してないと言えばうそ。会ったら…」</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000421.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人がトークショー　今季は森下モデルバットで４安打、来季は「絶対ホームラン」</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000396.html" target="_blank" rel="nofollow">【日刊スポーツ】元阪神・関本賢太郎氏が忘れられない今成亮太氏の言葉「先輩を喜ばせるのは…」杉谷拳士氏も同調</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-4OT46EABUZFW5GZICLOIAHMFGQ/" target="_blank" rel="nofollow">【サンスポ】阪神・前川右京、仲のいい人は「岡田前監督です！」　豊田寛らと兵庫・姫路市で野球教室に参加</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-JEWE3TDMOFNWZK4JAIPDSL6VXA/" target="_blank" rel="nofollow">【サンスポ】阪神・伊原陵人、トークショーで「来年は絶対にホームランを打ちます」</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-AKVC62XS3BBLRNO7ZBJ4ZMHDFQ/" target="_blank" rel="nofollow">【サンスポ】巨人・阿部慎之助監督、中大若手OBOGゴルフでヤクルトD6位・石井巧らとラウンド</a></li>
+        <li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/07/post1874549/" target="_blank" rel="nofollow">【Full-count】突如公開された“豪華すぎる1枚”　阪神ファン感涙…奇跡の再会に「偉人しかいない」</a></li>
+        <li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28230/" target="_blank" rel="nofollow">【公式サイト】６選手が登場！よみうりランドでイベント開催</a></li>
+        <li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670102.html" target="_blank" rel="nofollow">【公式サイト】12月21日（日）バファローブル＆ベルイベント出演情報</a></li>
+        <li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670479.html" target="_blank" rel="nofollow">【公式サイト】テレビ大阪「オリックス、ちょっといいですか？」で新入団選手が紹介されます！</a></li>
+        <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788075.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　「第４回はりま少年少女野球教室」で前川、豊田、江草投手コーチらが少年野球チームへ指導</a></li>
+        <li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788043.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原陵人　後半戦の失速を自虐トークで沸かせる　「海外初めて」のハワイ旅行では親孝行</a></li>
+        <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51045.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】西舘勇陽が中大野球部ＯＢＯＧゴルフコンペで同級生のＤｅＮＡ・石田裕太郎と同組</a></li>
+        <li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51037.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】阿部監督が中大野球部ＯＢＯＧゴルフに出席　ヤクルト６位の石井巧と同組でラウンド</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000290.html" target="_blank" rel="nofollow">【日刊スポーツ】「なめてるんですよ！」平石洋介氏がPL学園の後輩の今江敏晃氏にクレーム？「理由があるんです…」</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001581.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人がトークショーで来季の目標問われ「タイトル総どりです」今季は最優秀防御率</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000268.html" target="_blank" rel="nofollow">【日刊スポーツ】元広島・西山秀二氏、金本知憲氏と飲みにいくワケとは「広島のマンションを１個、丸々買える…」</a></li>
+        <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-DALVE5RKDRNE7JGFGG4VUWEJ6E/" target="_blank" rel="nofollow">【サンスポ】【球界ここだけの話（3984）】オリックス・寺西成騎、ルーキーイヤーで直面した1軍の壁「中6日でローテーションを回る難しさを感じた」</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173098000c.html" target="_blank" rel="nofollow">【スポニチ】「来年はホームラン打ちます」阪神・伊原陵人が甲子園歴史館でトークショー、グラブの色のこだわりも明かす</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173092000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督「選手の感情とかは…」　選手との付き合い方に“虎党”有働アナも衝撃！</a></li>
+        <li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173091000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督「自分の責任」　日本シリーズの勝負を分けた1球…「申し訳ないことをした」</a></li>
+        <li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500903637.html" target="_blank" rel="nofollow">【公式サイト】【チャリティーオークション】祝勝会グッズ出品月間！</a></li>
+        <li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670441.html" target="_blank" rel="nofollow">【公式サイト】【BPB DX】動画『【バファローズトレカ】クリスマスver.撮影の裏側』公開！</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060002180.html" target="_blank" rel="nofollow">【日刊スポーツ】元楽天監督の平石洋介氏、PL学園の後輩・今江敏晃氏が１年で退任した“理由”を告白</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000209.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】三浦大輔氏「お幸せに～ヨ・ロ・シ・ク！！」結婚した伊勢大夢を祝福</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001461.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】和田ヘッド「かわいい後輩と思ったら…金本さんの６番だった」後輩のドラ２谷端イジる</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001374.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ２谷端将伍「2000安打を目指します」日大出身初の記録へ　和田ヘッドと握手</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001963.html" target="_blank" rel="nofollow">【日刊スポーツ】元広島の佐々岡真司氏「スライダーの投げ方忘れた」地獄の17敗シーズン裏話を元女房役が明かす</a></li>
+        <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512070000211.html" target="_blank" rel="nofollow">【日刊スポーツ】ブルージェイズの元中日ジャリエル・ロドリゲス、40人枠を外れ3A降格　今季66試合登板</a></li>
+      </ul>
+      <!-- ▲▲▲ ここまで ▼▼▼ -->
+    </div>
+
+    <footer>© 2025 Baseball Freak</footer>
   </div>
-
-  <!-- 記事を貼り付ける場所 -->
-  <div class="news">
-    <!-- ▼▼▼ ここにNews記事を貼り付けてください ▼▼▼ -->
-
-<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-EARWQNP4XJFENAIZ5INZSZ2NWY/" target="_blank" rel="nofollow">【サンスポ】DeNA・度会隆輝らがトークショーでファンと交流　来季の目標は「横浜ファミリーと必ず優勝」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-MRWOGRM6LBBWBA4LVDDEFKG2LE/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、小野ハーフマラソンで1・2キロ快走「自分の中ではリスペクトする方の中にマラソンランナーが入っている」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173191000c.html" target="_blank" rel="nofollow">【スポニチ】ロッテ・上田、フリースロー3本決めた河村に「大人げない」　千葉ジェッツ戦にゲストで登場</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173190000c.html" target="_blank" rel="nofollow">【スポニチ】杉谷拳士氏　試合中、体に突如起きた“異変”とは　恐怖の“海賊”に怯えて…</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173120000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智「マラソンが苦手なので…」も気迫の走り！赤星氏大会アンバサダーの小野ハーフマラソン参加</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/07/post1874547/" target="_blank" rel="nofollow">【Full-count】ベッキーが突然の“報告”　WBC戦士なのに…46文字の珍紹介にツッコミ殺到「旦那や」</a></li>
-<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682371/" target="_blank" rel="nofollow">【ベースボールキング】ロッテ、河村と上田が千葉ジェッツのホームゲームでフリースローチャレンジ！「希由翔に1本は決めて欲しかった」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788148.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　石井が小野ハーフマラソンに参加「競技としてやられている方はすごい」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51087.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】松本剛が札幌市内で野球教室「楽しさは忘れずにいてほしい」野球少年・少女にメッセージ</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060000918.html" target="_blank" rel="nofollow">【日刊スポーツ】【ソフトバンク】今宮健太「どうぞとはならない」内野全ポジ準備も開幕遊撃ゆずらん　１億減更改</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000528.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】清宮幸太郎、中田翔氏のお疲れさま会に参加　特製ケーキ手に笑顔の集合写真など公開</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000424.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人、同じドラ１左腕への意識を問われ「してないと言えばうそ。会ったら…」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000421.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人がトークショー　今季は森下モデルバットで４安打、来季は「絶対ホームラン」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000396.html" target="_blank" rel="nofollow">【日刊スポーツ】元阪神・関本賢太郎氏が忘れられない今成亮太氏の言葉「先輩を喜ばせるのは…」杉谷拳士氏も同調</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-4OT46EABUZFW5GZICLOIAHMFGQ/" target="_blank" rel="nofollow">【サンスポ】阪神・前川右京、仲のいい人は「岡田前監督です！」　豊田寛らと兵庫・姫路市で野球教室に参加</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-JEWE3TDMOFNWZK4JAIPDSL6VXA/" target="_blank" rel="nofollow">【サンスポ】阪神・伊原陵人、トークショーで「来年は絶対にホームランを打ちます」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-AKVC62XS3BBLRNO7ZBJ4ZMHDFQ/" target="_blank" rel="nofollow">【サンスポ】巨人・阿部慎之助監督、中大若手OBOGゴルフでヤクルトD6位・石井巧らとラウンド</a></li>
-<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/07/post1874549/" target="_blank" rel="nofollow">【Full-count】突如公開された“豪華すぎる1枚”　阪神ファン感涙…奇跡の再会に「偉人しかいない」</a></li>
-<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28230/" target="_blank" rel="nofollow">【公式サイト】６選手が登場！よみうりランドでイベント開催</a></li>
-<li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670102.html" target="_blank" rel="nofollow">【公式サイト】12月21日（日）バファローブル＆ベルイベント出演情報</a></li>
-<li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670479.html" target="_blank" rel="nofollow">【公式サイト】テレビ大阪「オリックス、ちょっといいですか？」で新入団選手が紹介されます！</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788075.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　「第４回はりま少年少女野球教室」で前川、豊田、江草投手コーチらが少年野球チームへ指導</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/07/0019788043.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原陵人　後半戦の失速を自虐トークで沸かせる　「海外初めて」のハワイ旅行では親孝行</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51045.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】西舘勇陽が中大野球部ＯＢＯＧゴルフコンペで同級生のＤｅＮＡ・石田裕太郎と同組</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251207-OHT1T51037.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】阿部監督が中大野球部ＯＢＯＧゴルフに出席　ヤクルト６位の石井巧と同組でラウンド</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000290.html" target="_blank" rel="nofollow">【日刊スポーツ】「なめてるんですよ！」平石洋介氏がPL学園の後輩の今江敏晃氏にクレーム？「理由があるんです…」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001581.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人がトークショーで来季の目標問われ「タイトル総どりです」今季は最優秀防御率</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000268.html" target="_blank" rel="nofollow">【日刊スポーツ】元広島・西山秀二氏、金本知憲氏と飲みにいくワケとは「広島のマンションを１個、丸々買える…」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251207-DALVE5RKDRNE7JGFGG4VUWEJ6E/" target="_blank" rel="nofollow">【サンスポ】【球界ここだけの話（3984）】オリックス・寺西成騎、ルーキーイヤーで直面した1軍の壁「中6日でローテーションを回る難しさを感じた」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173098000c.html" target="_blank" rel="nofollow">【スポニチ】「来年はホームラン打ちます」阪神・伊原陵人が甲子園歴史館でトークショー、グラブの色のこだわりも明かす</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173092000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督「選手の感情とかは…」　選手との付き合い方に“虎党”有働アナも衝撃！</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/07/kiji/20251207s00001173091000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督「自分の責任」　日本シリーズの勝負を分けた1球…「申し訳ないことをした」</a></li>
-<li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500903637.html" target="_blank" rel="nofollow">【公式サイト】【チャリティーオークション】祝勝会グッズ出品月間！</a></li>
-<li class="teams-icon teams-bs"><a href="http://www.buffaloes.co.jp/news/detail/202500670441.html" target="_blank" rel="nofollow">【公式サイト】【BPB DX】動画『【バファローズトレカ】クリスマスver.撮影の裏側』公開！</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060002180.html" target="_blank" rel="nofollow">【日刊スポーツ】元楽天監督の平石洋介氏、PL学園の後輩・今江敏晃氏が１年で退任した“理由”を告白</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512070000209.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】三浦大輔氏「お幸せに～ヨ・ロ・シ・ク！！」結婚した伊勢大夢を祝福</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001461.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】和田ヘッド「かわいい後輩と思ったら…金本さんの６番だった」後輩のドラ２谷端イジる</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001374.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ２谷端将伍「2000安打を目指します」日大出身初の記録へ　和田ヘッドと握手</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512060001963.html" target="_blank" rel="nofollow">【日刊スポーツ】元広島の佐々岡真司氏「スライダーの投げ方忘れた」地獄の17敗シーズン裏話を元女房役が明かす</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512070000211.html" target="_blank" rel="nofollow">【日刊スポーツ】ブルージェイズの元中日ジャリエル・ロドリゲス、40人枠を外れ3A降格　今季66試合登板</a></li>
-</ul>
-    
-    <!-- ▲▲▲ ここまで ▼▼▼ -->
-  </div>
-
-  <footer>© 2025 Baseball Freak</footer>
 
   <script>
     // --- 日付ナビゲーション（前日／翌日への移動） ---
+    // ※サーバー上のファイル構造（例: ../2025/12-07.html）に依存します
     (() => {
       // 現在ページのパスから "yyyy/mm-dd.html" を解析
+      // URLの例: http://example.com/2025/12-07.html
       const pathParts = location.pathname.split('/');
-      const filename = pathParts.pop();       // 例: 12-07.html
-      const folder = pathParts.pop();         // 例: 2025
+      let filename = pathParts.pop();       // 例: 12-07.html
+      let folder = pathParts.pop();         // 例: 2025
+
+      // ファイル名が日付形式でない場合のフォールバック（テスト用）
+      if (!filename.match(/^\d{2}-\d{2}\.html$/)) {
+        // 通常はここで処理を中断するか、デフォルト値を設定します
+        // console.warn("ファイル名が日付形式ではありません");
+        return; 
+      }
 
       const [mm, dd] = filename.replace('.html', '').split('-').map(Number);
-      const currentDate = new Date(folder, mm - 1, dd);
+      // folderが年でない場合は現在の年を使用する等の処理が必要ですが、ここではそのまま使用
+      const currentYear = parseInt(folder) || new Date().getFullYear();
+      const currentDate = new Date(currentYear, mm - 1, dd);
 
       const formatDate = (date) => {
         const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -176,17 +239,22 @@
       // 前日
       const prev = new Date(currentDate);
       prev.setDate(currentDate.getDate() - 1);
-      const prevURL = `../${prev.getFullYear()}/${formatDate(prev)}`;
+      // 年が変わる場合の考慮（フォルダ階層の変更）
+      const prevYear = prev.getFullYear();
+      const prevURL = `../${prevYear}/${formatDate(prev)}`;
 
       // 翌日
       const next = new Date(currentDate);
       next.setDate(currentDate.getDate() + 1);
-      const nextURL = `../${next.getFullYear()}/${formatDate(next)}`;
+      const nextYear = next.getFullYear();
+      const nextURL = `../${nextYear}/${formatDate(next)}`;
 
-      document.getElementById('prev-day').href = prevURL;
-      document.getElementById('next-day').href = nextURL;
+      const prevBtn = document.getElementById('prev-day');
+      const nextBtn = document.getElementById('next-day');
+
+      if(prevBtn) prevBtn.href = prevURL;
+      if(nextBtn) nextBtn.href = nextURL;
     })();
   </script>
 </body>
 </html>
-
