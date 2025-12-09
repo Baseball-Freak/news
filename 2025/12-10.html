@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
 
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      // ※現在は /yyyy/ の中にいるため、pending.html がルートにある場合は ../ を付けます
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  
+  <!-- 当日News入力　ここから -->
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2025/12/10</h3>
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/10/0019797670.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島ドラ３・勝田　３つのゼロの誓い「失策０」「故障０」「背番号０といったら勝田」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/10/0019797673.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・久保の決断 打撃フォーム固めへ単独トレ敢行　新井監督の助言が決め手、ヤクルト・山田らとの合同トレ参加辞退</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1433227/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス佐藤直が現役ドラフトで楽天へ　「レギュラー...New</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51256.html" target="_blank" rel="nofollow">【スポーツ報知】今井達也、ドジャース入り否定「あれだけピッチャーいたら（自分は）いらないでしょって思います」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51214.html" target="_blank" rel="nofollow">【スポーツ報知】【現役ドラフト】オリックスが「オリキラー」の西武・平沼翔太を獲得「プレーできることが楽しみ」敦賀気比出身のユーティリティー</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51209.html" target="_blank" rel="nofollow">【スポーツ報知】【現役ドラフト】楽天移籍のソフトバンク・佐藤直樹がラウンド中に球団から電話連絡「結構、たたいた」ゴルフウェアのまま球団へ直行</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51182.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】小木田敦也は帰省なしの「完全無休」で復活へ…５日に右肘の骨片除去手術　育成から再出発「大阪に残って練習します」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51208.html" target="_blank" rel="nofollow">【スポーツ報知】【現役ドラフト】家族のため「がんばらないといけない」　佐渡島出身プロ１号、巨人・菊地大稀を支えた思い…日本ハム移籍</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51207.html" target="_blank" rel="nofollow">【スポーツ報知】【現役ドラフト】「僕にとって大きなチャンス」巨人・菊地大稀が日本ハム移籍で決意　育成入団から２３年は救援５０登板</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51213.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・増田陸が「殻を破る」をテーマに打撃改革…シーズン終盤２軍で過ごし「今までの感覚を一度取っ払う」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51211.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・坂本勇人が制限いっぱい４０パーセント減…２億円減でも見せるギラギラの契約更改「まだまだ終わりたくない」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51205.html" target="_blank" rel="nofollow">【スポーツ報知】【現役ドラフト】巨人獲得の日本ハム・松浦慶斗は新庄監督から直接指導受けた数少ない投手…期待の表れ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51260.html" target="_blank" rel="nofollow">【スポーツ報知】巨人が最速１６０キロ右腕マタを本格調査　ＷＬでメジャー金の卵斬り　高い奪三振率が魅力</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51204.html" target="_blank" rel="nofollow">【スポーツ報知】【現役ドラフト】巨人また新庄ハムから　１５５キロ左腕、松浦慶斗獲得…”田中瑛斗ドリーム“つかむ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251209-OHT1T51206.html" target="_blank" rel="nofollow">【スポーツ報知】【ゴールデンスピリット賞】阪神・近本光司「（長嶋茂雄さんの）思いを理解した人がつないで」社会貢献活動の生涯現役誓った</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202512040000271.html" target="_blank" rel="nofollow">【日刊スポーツ】【ロッテ再建論３】走塁の鬼､ノックの鬼､パフォーマンスの鬼…地獄に降臨 3鬼コーチ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001261.html" target="_blank" rel="nofollow">【日刊スポーツ】【現役ドラフト】ロッテ移籍の井上広大に履正社の恩師・岡田龍生氏がエール　安田との主軸期待</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001231.html" target="_blank" rel="nofollow">【日刊スポーツ】【現役ドラフト】楽天加入の佐藤直樹「僕、浅村さんがめっちゃ好き」ソフトバンクの19年ドラ１</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202512100000003.html" target="_blank" rel="nofollow">【日刊スポーツ】代理人スコット・ボラス氏、今井達也＆岡本和真の交渉経過語る　WM後にも複数球団と直接交渉へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001173.html" target="_blank" rel="nofollow">【日刊スポーツ】【西武】メジャー目指す今井達也が「160キロ級」の驚きの告白！「ドジャース以外」に強い意欲</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202512090001014.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】現役ドラフト　次は誰を候補に　覚悟して臨むオフに</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001242.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】竹内球団副本部長「できれば年内に」ドリス＆デュプランティエと交渉まとめたい意向</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001255.html" target="_blank" rel="nofollow">【日刊スポーツ】【現役ドラフト】阪神、過去３度の現ドラ“成功”左翼争い起爆剤へ浜田太貴獲得「活躍で恩返し」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001356.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】桐敷拓馬は優勝旅行に参加せず練習へ「他にやることがあるかなと…」年内に東京の施設へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001236.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】近本光司が作る不滅の架け橋「いずれ僕は死ぬ。でも思いは続く」長嶋スピリットも継承</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512090001292.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】及川雅貴が高卒同期井上と交流戦再会を熱望「楽しみにしています」来季は地元千葉で対戦</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/premium/baseball/news/202512050001552.html" target="_blank" rel="nofollow">【日刊スポーツ】【契約更改2025全文・広島大瀬良大地】前田健太の日本球界復帰へ思い語る／2億円</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251210-TULZX2RETBP5BF2ZQILQN3N2BU/" target="_blank" rel="nofollow">【サンスポ】日本ハム戦力外の石川直也、来季オイシックス入団へ　ファームでアピールしNPB復帰目指す</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251210-7JGDGKD6XFJDZIUSMZ4LIBJUO4/" target="_blank" rel="nofollow">【サンスポ】【現役ドラフト】DeNAに浜将乃介　中日から強肩＆俊足の左打ち外野手　3年目の今季、DeNA戦でプロ初安打初打点</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251210-HCNWH7P5AZPWBNS4GTTHLA2MKY/" target="_blank" rel="nofollow">【サンスポ】DeNAが両打ち外野手と契約合意か　米記者報じる…今季オリオールズとアストロズでプレーしたクーパー・ハメル</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251210-X6KOJNXXKZOX5J3H3N7AQONJ3M/" target="_blank" rel="nofollow">【サンスポ】DeNA・竹田祐、目指すは開幕ローテ　ケイ、バウアー抜け「弱くなったと言われたくない」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251210-56V5AHNLUNIALDL2TLM763CWLQ/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・高橋奎二、来季は「フル回転」　開幕投手目指し1200万円減で更改</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251210-I5KI6JNE2ZP63PFQJZU5EYAL6Y/" target="_blank" rel="nofollow">【サンスポ】【現役ドラフト】ヤクルトに大道温貴　昨年の矢崎に続き広島から、懸念の投手陣しっかり強化　指名12選手〝師走の大移動〟</a></li>
+</ul>
+
+
+    <!-- 当日News入力　ここまで -->
+
+  
+</div>
+</body>
+</html>
