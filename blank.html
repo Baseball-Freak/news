@@ -90,6 +90,71 @@
     <p>記事が公開され次第、自動で反映されます。</p>
     <p>しばらく時間をおいて再度アクセスしてください。</p>
 
+<style>
+/* 広告エリア全体を囲むコンテナ */
+.vertical-ad-container {
+    max-width: 300px; /* 広告の最大幅に合わせて調整可能 */
+    margin: 20px auto; /* 中央寄せと上下の余白 */
+    padding: 0;
+    border: 1px solid #eee; /* 任意：全体の枠線 */
+    background-color: #fff;
+}
+
+/* 各広告ブロックのスタイル */
+.ad-item {
+    padding: 15px 10px;
+    text-align: center; /* 広告コンテンツを中央寄せ */
+    /* 区切り線（細い破線）の追加 */
+    border-bottom: 1px dashed #ccc; 
+    overflow: hidden; /* float要素などがあった場合に対応 */
+}
+
+/* 最後の広告ブロックには区切り線が不要なため除去 */
+.ad-item:last-child {
+    border-bottom: none;
+}
+
+/* テキスト広告のフォントサイズを調整（任意） */
+.ad-item a {
+    font-size: 1.1em;
+    line-height: 1.5;
+    display: inline-block;
+}
+
+/* A8ネットの計測用1x1画像を非表示に（レイアウト崩れを防ぐため） */
+.ad-item img[width="1"][height="1"] {
+    display: none;
+}
+
+</style>
+
+<div class="vertical-ad-container">
+    
+    <div class="ad-item">
+        <a href="https://px.a8.net/svt/ejp?a8mat=3NH2N5+1MCI2A+1WP2+674EP" rel="nofollow" target="_blank">
+            <img border="0" width="120" height="60" alt="" src="https://www27.a8.net/svt/bgt?aid=220826273098&wid=001&eno=01&mid=s00000008903001041000&mc=1">
+        </a>
+        <img border="0" width="1" height="1" src="https://www12.a8.net/0.gif?a8mat=3NH2N5+1MCI2A+1WP2+674EP" alt="">
+    </div>
+
+    <div class="ad-item">
+        <a href="https://px.a8.net/svt/ejp?a8mat=45IHGZ+9DKSS2+47AY+61Z82" rel="nofollow" target="_blank">
+            競馬予想なら！<b>競馬最強の法則WEB</b>
+        </a>
+        <img border="0" width="1" height="1" src="https://www15.a8.net/0.gif?a8mat=45IHGZ+9DKSS2+47AY+61Z82" alt="">
+    </div>
+
+    <div class="ad-item">
+        <a href="https://px.a8.net/svt/ejp?a8mat=45IED9+490F8Y+ONS+TTTEP" rel="nofollow" target="_blank">
+            <img border="0" width="120" height="60" alt="" src="https://www28.a8.net/svt/bgt?aid=251121213257&wid=001&eno=01&mid=s00000003196005010000&mc=1">
+        </a>
+        <img border="0" width="1" height="1" src="https://www13.a8.net/0.gif?a8mat=45IED9+490F8Y+ONS+TTTEP" alt="">
+    </div>
+
+</div>
+
+
+    
     <button onclick="retry()">再読み込み</button>
   </div>
 </body>
