@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+
+    // ▼▼▼ 追加機能: ファイル名と記事日付の不一致チェック ▼▼▼
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. ファイル名から mm-dd を取得 (例: .../11-01.html)
+      // pathの末尾が 数字2桁-数字2桁.html かどうかを判定
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      // もしこのファイル名規則に合致しない場合（index.html等）はチェックを行わない
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1]; // 例: 11
+      const fileDD = pathMatch[2]; // 例: 01
+
+      // 2. HTML内の <h3 class='bar3'> から日付テキストを取得
+      const h3Element = document.querySelector('h3.bar3');
+      
+      let isDateMatched = false;
+
+      if (h3Element) {
+        // テキスト内容（例: "2025/11/01" やアイコンコード含むテキスト）
+        const textContent = h3Element.textContent;
+        
+        // テキスト内に含まれる /mm/dd 部分を抽出
+        // 正規表現: /数字2桁/数字2桁
+        const contentMatch = textContent.match(/\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const contentMM = contentMatch[1];
+          const contentDD = contentMatch[2];
+
+          // ファイル名の mm, dd と、記事内の mm, dd が一致するか比較
+          if (contentMM === fileMM && contentDD === fileDD) {
+            isDateMatched = true;
+          }
+        }
+      }
+
+      // 3. 不一致の場合、blank.html を表示（リダイレクト）
+      if (!isDateMatched) {
+        // 階層構造に合わせてパスは適宜調整してください。ここでは親階層と仮定します。
+        location.href = "../blank.html";
+      }
+    });
+    // ▲▲▲ 追加機能ここまで ▲▲▲
+
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2025/12/14</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251214-UXHI46WXKNKHXEWOGYKM6TEC5U/" target="_blank" rel="nofollow">【サンスポ】【球界ここだけの話（3991）】阪神は石井大智が2億円、及川雅貴が1億円に〝爆上がり〟　「先発が無理だから中継ぎに」は過去の話</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251214-HYEUM6ESFNC4TOUGR3TIEXSZ6M/" target="_blank" rel="nofollow">【サンスポ】阪神、2026年新スローガン「熱覇」を発表</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2025/12/14/kiji/20251214s00001173103000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　チームスローガン「熱覇」に決定　情熱と熱い思いで1年間戦う</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/14/post1877603/" target="_blank" rel="nofollow">【Full-count】楽天、新助っ人マッカスカー獲得を発表　203センチの“大型”野手…マイナー55発</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682967/" target="_blank" rel="nofollow">【ベースボールキング】楽天、今季メジャー16試合出場のマッカスカーと契約合意を発表「多くのことを学べるのを楽しみ」</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682962/" target="_blank" rel="nofollow">【ベースボールキング】巨人・阿部監督「エンドランなんかは1回も成功しなかった」…岡本不在の来季は「細かいことで点を取っていくしかない」</a></li>
+<li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_10593.html" target="_blank" rel="nofollow">【公式サイト】2026年チームスローガンについて</a></li>
+<li class="teams-icon teams-f"><a href="http://www.fighters.co.jp/news/detail/202500807454.html" target="_blank" rel="nofollow">【公式サイト】《みんなのXmas音楽祭》の施設・店舗営業時間およびアクセスのお知らせ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/14/0019813099.shtml" target="_blank" rel="nofollow">【デイリースポーツ】糸井嘉男氏が陥った「究極のイップス」３０秒フリーズ「指先じゃない」共演者も驚き「初めて聞いた！」打者転向決断の一因に</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2025/12/14/0019813006.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　２６年チームスローガンは「熱覇（ねっぱ）」に決定　球団が発表　連覇を目指し、情熱と熱い思いを持って１年間を戦う思い込める</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251214-OHT1T51033.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】来季のスローガンを発表　熱覇（ねっぱ）　情熱と熱い気持ちで連覇を目指す強い思いを表現</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512140000246.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】26年スローガン「熱覇（ねっぱ）」を発表　セ連覇を目指し情熱と熱い思いを持って戦う</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512140000146.html" target="_blank" rel="nofollow">【日刊スポーツ】【巨人】阿部慎之助監督「エンドラン１回も成功しなかった…」来季巻き返しへ「細かいこと徹底」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/14/post1877553/" target="_blank" rel="nofollow">【Full-count】阪神、来季スローガンは「熱覇」　日本一奪還へ…球団発表「情熱と熱い思いを持って」</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682951/" target="_blank" rel="nofollow">【ベースボールキング】ロッテ・横山陸人「ずっと目標にしていました」長年掲げていた50試合登板を達成「来シーズンとかは自然と50試合いけるよう」</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682948/" target="_blank" rel="nofollow">【ベースボールキング】巨人・阿部監督が挙げた今年成長したと思う若手は？</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682946/" target="_blank" rel="nofollow">【ベースボールキング】巨人・阿部監督「素晴らしい野球脳を持っている」石井琢朗二軍監督の復帰を喜ぶ</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682944/" target="_blank" rel="nofollow">【ベースボールキング】巨人・阿部監督、ドラ1・竹丸は「まずキャンプを見て判断」、「無理はさせられない」慎重に起用法を見極める方針</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682958/" target="_blank" rel="nofollow">【ベースボールキング】阪神、26年のチームスローガンは『熱覇』に決定！</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/14/0019812547.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・斉藤　覚悟の単独トレ　勝負の４年目へ大瀬良塾卒業を決断「何か変えないと」　テーマは再現性の向上</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512140000136.html" target="_blank" rel="nofollow">【日刊スポーツ】【巨人】阿部慎之助監督「人間性を見て次世代のジャイアンツを…」松本剛獲得の意図を明かす</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512140000132.html" target="_blank" rel="nofollow">【日刊スポーツ】【巨人】阿部監督「育てるって言ったら多分最下位。そういう場所ではない」若手の突き上げ期待</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251214-TADNQHJGLFPWRLJIZASIFDDCWY/" target="_blank" rel="nofollow">【サンスポ】【阪神新人連載・虎宝】D2位・谷端将伍、コロナで高3夏出場辞退　毎日1000スイング！汗と涙の星稜中・高6年間</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20251214-TD62J6OLUFP7FMENSOEXAIY7RU/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】ベテラン虎番もビックリな〝暖冬ぶり〟　その筆頭格・村上頌樹は「ホノルルの休日」を満喫予定！？</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/14/post1876813/" target="_blank" rel="nofollow">【Full-count】“パンパン”の広島支配下…浮上した枠問題　助っ人はすでに3人、身動きとれぬオフ</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/14/post1877404/" target="_blank" rel="nofollow">【Full-count】巨人19歳は「バケモンやんけ」　異国で放った豪快弾…岡本流出も「新たなる希望」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2025/12/14/post1877356/" target="_blank" rel="nofollow">【Full-count】週末のお昼…阪神から届いた“朗報”「本当に嬉しい」　戦力外でも用意された居場所</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682942/" target="_blank" rel="nofollow">【ベースボールキング】巨人・丸佳浩の来季の起用法はどうなる？阿部監督「困った時のベテランとしていてもらいたい」</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/682940/" target="_blank" rel="nofollow">【ベースボールキング】巨人・阿部監督「素晴らしい数字」と泉口を評価も「来年はもっと警戒される」、「それ以上に研究しないといけない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2025/12/14/0019812552.shtml" target="_blank" rel="nofollow">【デイリースポーツ】先発転向の広島・栗林　来季の誓いはバント成功率１００％　打席でも“失敗しない男”に</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1434968/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス大津「2桁勝利は絶対。通過点だと思っている...New</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51106.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】山田陽翔がゴールデングラブ賞獲得に意欲「他の人より守備うまい方がかっこいい」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51289.html" target="_blank" rel="nofollow">【スポーツ報知】カンテレ・橋本和花子アナウンサー「多くの女性が実況する世の中になれば…」入社５年目でオリックス戦実況に初挑戦　来季にも意欲</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51310.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】ドラフト３位は左肘のトミー・ジョン手術を乗り越えた佐藤龍月「３人でローテに」藤川、森陽と「ワクワクプラン」実現に意欲</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51307.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】ドラフト２位・森陽樹の目標は最速１６０キロ「将来的に一番、活躍できるように」１９０センチの大型右腕が決意</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51294.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】ドラフト１位・藤川敦也「お母さんが周りに自慢できる選手に」小学４年時に父が他界　ＷＥＳＴ報知「Ｈｏ！ットルーキーズ」第１回</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51170.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】頓宮裕真が来季へ「殊勲打量産」を宣言「やっぱり勝負強さだったり、打つこと」ソフトバンク・山川と限界突破トレ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51281.html" target="_blank" rel="nofollow">【スポーツ報知】【日本ハム】水谷が今季最も印象に残った試合は…ＣＳでもエスコンでもない逆転サヨナラ勝ちの一戦</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51305.html" target="_blank" rel="nofollow">【スポーツ報知】巨人“Ｗ俊輔”の誓い「来年、絶対に日本一に貢献」新加入・松本剛らとの定位置バトル挑む</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251213-OHT1T51302.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・阿部慎之助監督「僕の我慢と…」ラジオ出演で語ったＶ奪回へ２つのカギ</a></li>
+</ul>
+
+    <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
