@@ -1,88 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>New Year’s Greeting</title>
+  <title>Daily Page</title>
   <style>
-    /* 全体の背景とフォント */
     body {
-      margin: 0;
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
       padding: 0;
-      background-color: #f4f4f4;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #333333;
-    }
-
-    /* 中央のカード */
-    .card {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 32px 28px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-      box-sizing: border-box;
-    }
-
-    /* タイトル（Happy New Year!） */
-    .card h1 {
-      margin-top: 0;
-      margin-bottom: 16px;
-      font-size: 28px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
       text-align: center;
-      letter-spacing: 0.05em;
-      color: #c62828; /* 少し和風の赤 */
+      transition: background-color 0.2s, color 0.2s;
     }
-
-    /* 段落 */
-    .card p {
-      line-height: 1.7;
-      font-size: 15px;
-      margin: 0 0 16px;
+    .nav-buttons button:hover {
+      background-color: #ddd;
     }
-
-    /* 署名部分のスタイル */
-    .signature {
-      margin-top: 24px;
-      text-align: right;
-      font-weight: 600;
-      color: #444444;
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
     }
-
-    /* フッターメッセージ（オプション） */
-    .footer-note {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #888888;
-      text-align: right;
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
     }
   </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+
+    // ▼▼▼ 追加機能: ファイル名と記事日付の不一致チェック ▼▼▼
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. ファイル名から mm-dd を取得 (例: .../11-01.html)
+      // pathの末尾が 数字2桁-数字2桁.html かどうかを判定
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      // もしこのファイル名規則に合致しない場合（index.html等）はチェックを行わない
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1]; // 例: 11
+      const fileDD = pathMatch[2]; // 例: 01
+
+      // 2. HTML内の <h3 class='bar3'> から日付テキストを取得
+      const h3Element = document.querySelector('h3.bar3');
+      
+      let isDateMatched = false;
+
+      if (h3Element) {
+        // テキスト内容（例: "2025/11/01" やアイコンコード含むテキスト）
+        const textContent = h3Element.textContent;
+        
+        // テキスト内に含まれる /mm/dd 部分を抽出
+        // 正規表現: /数字2桁/数字2桁
+        const contentMatch = textContent.match(/\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const contentMM = contentMatch[1];
+          const contentDD = contentMatch[2];
+
+          // ファイル名の mm, dd と、記事内の mm, dd が一致するか比較
+          if (contentMM === fileMM && contentDD === fileDD) {
+            isDateMatched = true;
+          }
+        }
+      }
+
+      // 3. 不一致の場合、blank.html を表示（リダイレクト）
+      if (!isDateMatched) {
+        // 階層構造に合わせてパスは適宜調整してください。ここでは親階層と仮定します。
+        location.href = "../blank.html";
+      }
+    });
+    // ▲▲▲ 追加機能ここまで ▲▲▲
+
+  </script>
 </head>
 <body>
-  <div class="card">
-        <p>2026/01/02</p>
-
-    <h1>Happy New Year!</h1>
-
-    <p>
-      Thank you very much for all your kindness and support over the past year.
-      I truly appreciate the connection we share across countries and cultures.
-    </p>
-
-    <p>
-      May the new year bring you and your loved ones good health, happiness, and many new opportunities.
-      I look forward to staying in touch and continuing our relationship in the coming year.
-    </p>
-
-    <p class="signature">
-      Best wishes,<br>
-      Baseball Freak Echoes
-    </p>
-
-    <!-- 不要ならこの行は削除してください -->
-    <p class="footer-note">
-      Thank you for supporting baseball culture.
-    </p>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
   </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/01/02</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20251229-OHT1T51201.html" target="_blank" rel="nofollow">【スポーツ報知】平松政次さんに憧れのミスターから驚きの直電ラブコール「君が欲しい！」…巨人が恐れた男たち【再録】</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251229-OHT1T51156.html" target="_blank" rel="nofollow">【スポーツ報知】なぜ星野仙一は「巨人監督」にならなかったのか　「オレは巨人のガラじゃない」涙で断念「いい夢見させてもらった」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251229-OHT1T51152.html" target="_blank" rel="nofollow">【スポーツ報知】なぜ星野仙一は「巨人監督」にならなかったのか　初めて明かされる真実　渡辺恒雄氏から極秘要請「ションベンちびるかと…」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251231-OHT1T51097.html" target="_blank" rel="nofollow">【スポーツ報知】三浦大輔氏、馬主になったきっかけ＆収支を明かす「話を聞いてると野球には支障はないと思ったので…」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601020000011.html" target="_blank" rel="nofollow">【日刊スポーツ】今井達也　アストロズと３年総額84億円で電撃合意　21年から４年連続地区優勝の強豪が大逆転</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260102-K3UC6DC7AJJZZCQDQ7SZ4JLDJU/" target="_blank" rel="nofollow">【サンスポ】【MLB】西武・今井達也、アストロズと合意　3年84億円超、米報道</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/02/post1885339/" target="_blank" rel="nofollow">【Full-count】西武が手にする最大18億円　今井移籍の譲渡金…異例契約で「3分の1」になる可能性も</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260102-FVXXTSGFIJP5ZODFTOGQSRLRIA/" target="_blank" rel="nofollow">【サンスポ】ポスティングの今井達也にアストロズと合意報道</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/02/post1874796/" target="_blank" rel="nofollow">【Full-count】今井達也、アストロズと電撃契約　米記者報道…交渉期限迫る中で決着</a></li>
+</ul>
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>01月01日</h3>
+<ul class="nb-list"><li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1885064/" target="_blank" rel="nofollow">【Full-count】現役ドラフトの厳しい現実　戦力外、引退…楽天から“消えた”「5/6」の現在地</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1884982/" target="_blank" rel="nofollow">【Full-count】助っ人は不発も…金銭トレードの36歳が“お宝”　力量示したFA右腕、オリ2025補強</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1885102/" target="_blank" rel="nofollow">【Full-count】現ドラ移籍から2年…西武30歳が自己最速→衝撃“1.04”　加入した26歳に期待される成長曲線</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251229-OHT1T51119.html" target="_blank" rel="nofollow">【スポーツ報知】【YouTube】高橋由伸さんが“ヨシトラダムス”の大予言で打順構想！中山礼都と泉口友汰が変化の要？日本一奪還へ【コラボ報知】</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1884968/" target="_blank" rel="nofollow">【Full-count】1軍出場は2人だけ…ドラ1はプロの“洗礼”　2軍打率.391もTJ手術、鷹ルーキー激動の1年</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1884948/" target="_blank" rel="nofollow">【Full-count】「2/3」が1年で戦力外、“放出”の大砲は3年連続20HRの覚醒　DeNA現ドラ移籍の明暗</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/683807/" target="_blank" rel="nofollow">【ベースボールキング】原辰徳氏「ジャイアンツは非常にスタートが重要」今季の開幕戦は阪神</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/683809/" target="_blank" rel="nofollow">【ベースボールキング】原辰徳氏、昨季リーグVの阪神は「バランスのとれた素晴らしいチーム」、「非常に安定感があった」と評価</a></li>
+<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1187377" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】中日1位、中西聖輝投手が早くもプロ1年目始動、地元・奈良で正月返上キャッチボール「シーズン中と変わらない感じで投げられている」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260101-KGPKNDRKFFMOTPE5GL5IOP7GZI/" target="_blank" rel="nofollow">【サンスポ】【野村note】「橋上のファインプレーの大殊勲あり」との記載　元ヤクルト・橋上秀樹氏</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260101-AS5RTYMC7JK7TFETUXTMAVVKAU/" target="_blank" rel="nofollow">【サンスポ】【野村note】ノムさんが遺した野球を探る　西武を打ち砕いた〝ラッキーボーイ〟元ヤクルト・橋上秀樹氏　</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1884978/" target="_blank" rel="nofollow">【Full-count】戦力整理が生んだ楽天の“変化”　カギ握る辰己の去就…4番は「13/67」の助っ人か、スタメン予想</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1885101/" target="_blank" rel="nofollow">【Full-count】阪神戦力外も…中日で再起、リーグNo.1「12.6」　32歳が示した“GG級”の異能</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1885122/" target="_blank" rel="nofollow">【Full-count】250Sまであと「2」も保証されぬ立場　若手ひしめく外野…最下位ロッテの“嬉し悲鳴”？</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1884971/" target="_blank" rel="nofollow">【Full-count】2度の戦力外から“帰還”の33歳、タイトルから4年も…防御率16点台　復活期待の日本ハム戦士</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/01/01/post1884855/" target="_blank" rel="nofollow">【Full-count】育成出身21歳が衝撃“0000000000”…正念場迎える「山本由伸2世」　豊富な広島の“逸材”たち</a></li>
+<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28298/" target="_blank" rel="nofollow">【公式サイト】CLUB GIANTS 新年のクイズ企画を開催！</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251221-OHT1T51219.html" target="_blank" rel="nofollow">【スポーツ報知】【ヤクルト】村上宗隆、驚異の本塁打ペースは１４３試合換算５６発…１０・２打席に１本</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260101-PHWCCP7PKBPHBEFQNQITNPNWII/" target="_blank" rel="nofollow">【サンスポ】【記録の泉（8）】落合博満（後編）「年俸で折り合いがつかなければ他球団でやってもいい」日本選手初の年俸1億円プレーヤー誕生の前に…</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/683802/" target="_blank" rel="nofollow">【ベースボールキング】巨人、26年のチームスローガンは『前進 ～GIANTS CHALLENGE～』に決定</a></li>
+<li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_10614.html" target="_blank" rel="nofollow">【公式サイト】14選手の直筆年賀状を一挙公開します！</a></li>
+<li class="teams-icon teams-g"><a href="https://www.giants.jp/news/28301/" target="_blank" rel="nofollow">【公式サイト】2026年のチームスローガンは「前進  ～GIANTS   CHALLENGE～」</a></li>
+<li class="teams-icon teams-h"><a href="http://www.softbankhawks.co.jp/news/detail/202500902931.html" target="_blank" rel="nofollow">【公式サイト】1月生まれの選手にお誕生日のエールを送ろう！</a></li>
+<li class="teams-icon teams-e"><a href="http://www.rakuteneagles.jp/news/detail/202500967505.html" target="_blank" rel="nofollow">【公式サイト】【Eプレ30】2026年1月は「月刊ムラバヤシイツキ」をプレゼント!</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251222-OHT1T51254.html" target="_blank" rel="nofollow">【スポーツ報知】広島の小園海斗、球団打者初の快挙…左打者では２１年吉田正尚に次ぎ史上５人目</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251223-OHT1T51191.html" target="_blank" rel="nofollow">【スポーツ報知】【中日】岡林の全イニング出場で最多安打は…長嶋茂雄、イチローに次ぐ若さでの達成</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251224-OHT1T51229.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人】最強コンビで驚異の勝率・８９４　データで振り返る２０２５シーズン</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251225-OHT1T51205.html" target="_blank" rel="nofollow">【スポーツ報知】【ＤｅＮＡ】ケイが次々と塗り替えた球団助っ人投手記録…ウィックは６月ロッテ戦でセ外国人初の快挙</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20251226-OHT1T51224.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】タイトルなしもシーズン歴代１位防御率０・１７…中日・浅尾＆大魔神を超えた石井大智</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202512290001301.html" target="_blank" rel="nofollow">【日刊スポーツ】【契約更改】阪神佐藤輝明、広島小園海斗ら６選手が越年／未更改選手＆年俸一覧</a></li>
+</ul>
+
+
+
+
+
+
+    <!-- 当日News入力　ここまで -->
+  
+</div>
 </body>
 </html>
