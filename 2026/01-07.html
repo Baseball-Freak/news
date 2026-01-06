@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+
+    // ▼▼▼ 追加機能: ファイル名と記事日付の不一致チェック ▼▼▼
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. ファイル名から mm-dd を取得 (例: .../11-01.html)
+      // pathの末尾が 数字2桁-数字2桁.html かどうかを判定
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      // もしこのファイル名規則に合致しない場合（index.html等）はチェックを行わない
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1]; // 例: 11
+      const fileDD = pathMatch[2]; // 例: 01
+
+      // 2. HTML内の <h3 class='bar3'> から日付テキストを取得
+      const h3Element = document.querySelector('h3.bar3');
+      
+      let isDateMatched = false;
+
+      if (h3Element) {
+        // テキスト内容（例: "2025/11/01" やアイコンコード含むテキスト）
+        const textContent = h3Element.textContent;
+        
+        // テキスト内に含まれる /mm/dd 部分を抽出
+        // 正規表現: /数字2桁/数字2桁
+        const contentMatch = textContent.match(/\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const contentMM = contentMatch[1];
+          const contentDD = contentMatch[2];
+
+          // ファイル名の mm, dd と、記事内の mm, dd が一致するか比較
+          if (contentMM === fileMM && contentDD === fileDD) {
+            isDateMatched = true;
+          }
+        }
+      }
+
+      // 3. 不一致の場合、blank.html を表示（リダイレクト）
+      if (!isDateMatched) {
+        // 階層構造に合わせてパスは適宜調整してください。ここでは親階層と仮定します。
+        location.href = "../blank.html";
+      }
+    });
+    // ▲▲▲ 追加機能ここまで ▲▲▲
+
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/01/07</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2026/01/07/0019886379.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・栗林　球種そのまま！強弱や球速帯で先発勝負　大瀬良や床田を参考に「先発に必要な要素」　ほぼ無休トレで超速調整</a></li>
+<li class="news-icon news-cnc"><a href="https://www.chunichi.co.jp/article/1189334" data-click-type = "click_articlelist_pc" target="_blank" rel="nofollow">【中日スポーツ】愛称は『ゴリラ』、中日獲得発表のサノー「私のことを信じ、このようなチャンスをいただけたことに感謝」</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1443019/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス稲川、春季キャンプA組スタートに照準New</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1442976/" target="_blank" rel="nofollow">【西日本スポーツ】元ソフトバンクホークス笠谷、古里から再起へ　独立リーグ・大分B...New</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51135.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】才木海翔がレスキュー隊のような「失敗しない男」を目指す「負けなしでいきたい」…２年連続で出初め式に参加</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51239.html" target="_blank" rel="nofollow">【スポーツ報知】初対決は１０年センバツ準決勝　ついに共闘する日本ハム・山崎福也と有原航平の不思議な縁</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51238.html" target="_blank" rel="nofollow">【スポーツ報知】日本ハム・山崎福也が新加入“ライバル”有原航平を大歓迎「まさか一緒のチームになるとは思ってなかった」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51184.html" target="_blank" rel="nofollow">【スポーツ報知】【ソフトバンク】育成２位の江崎歩は身長１６８センチ「牧原大２世」を目指す「自分も首位打者を」　ＷＥＳＴ報知の「Ｈｏ！ットルーキーズ」で決意</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51182.html" target="_blank" rel="nofollow">【スポーツ報知】【ソフトバンク】長崎蓮汰は急成長中…育成からエースへ「偉大な選手」　ＷＥＳＴ報知の「Ｈｏ！ットルーキーズ」でメッツ・千賀への憧れ明かす</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51180.html" target="_blank" rel="nofollow">【スポーツ報知】【ソフトバンク】ドラフト３位・鈴木豪太は新人王へフル回転…球団記録の７２試合「超えてみたい」　ＷＥＳＴ報知「Ｈｏ！ットルーキーズ」第５回</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51142.html" target="_blank" rel="nofollow">【スポーツ報知】【広島】栗林良吏が“今井の思考”で開幕ローテつかむ「一人ひとりの積み重ね」６年目で先発転向「ルーキーの気持ちで」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51164.html" target="_blank" rel="nofollow">【スポーツ報知】【中日】藤嶋健人が２６年初の本格投球　球団の高卒投手では初の５年連続５０試合登板へ「自分が抑えれば、チームの成績も良くなる」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51244.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・松浦慶斗、「ほぼルーキーの気持ちで」最遅新人王狙う…日ハム１軍で通算６登板、５年目も資格保持</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51229.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・吉川尚輝の照準は「開幕」　昨年１０月両股関節手術から復活へリハビリ中「間に合うよう」焦らず逆算</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51226.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・リチャードが岡本和真の英語の先生に「これを頼む場合はなんて言います？」…「結構英語できていた」と太鼓判</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51152.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】新人合同自主トレで大売り出し！ドラ１立石正広の門出にＳＧＬ客席を無料開放＆ショップ初売り</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51138.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】中野拓夢、選手会長退任も「自分が引っ張っていく立場は変わらない」坂本主将の代理役も担う</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260106-OHT1T51133.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】伊原陵人、通算１８８勝左腕の金言また聞きで２年目飛躍誓う「まずは連覇できるように、チームの一員になれるように」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001267.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】才木海翔がチームを救う「火消しだけでなくレスキューも」消防出初式で新年の誓い</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060000969.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】岡島豪郎アンバサダーの今季イチオシ選手は誰？「彼が躍動すればチームが劇的に変わる」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/tamura/news/202601060001032.html" target="_blank" rel="nofollow">【日刊スポーツ】【田村藤夫】田宮裕涼が伏見寅威から受けた学びにかぶる、かつての若菜嘉晴さんからの恩義</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001098.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】沖縄出身・平良拳太郎も横浜の暑さには苦労「息苦しい気が」対策の秘密兵器は…</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001108.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】木下里都「体重多い方が球速出てたんで」体重アップで球速160キロへ…とにかく食べる</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001151.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢が“裏番長”に　主将の坂本誠志郎支える「野手陣をまず引っ張っていく」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001172.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】粟井一夫球団社長ら来社「年明けたらギア入ってると思います」藤川監督に変わらぬ信頼</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001169.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊原陵人「焦らないこと」先輩から聞いたレジェンドの金言で２年目ジンクスも怖くない</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001140.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】早くも立石フィーバー？SGLで新人合同自主トレ公開、立石正広「いいインパクトを」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001050.html" target="_blank" rel="nofollow">【日刊スポーツ】【広島】森浦大輔は抑えより自分超え「まだ行けたなという感覚があった」自己最多試合登板目指す</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202601060001353.html" target="_blank" rel="nofollow">【日刊スポーツ】【ヤクルト】大西広樹が宣言「とりあえずフル回転。抑え狙って」３年連続の防御率１点台へ順調</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202601070000022.html" target="_blank" rel="nofollow">【日刊スポーツ】ブルージェイズ岡本和真「カズ、と呼んで頂ければ」トロントの本拠地で入団会見／主な一問一答</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-67LGXWKI4RMDXPRZAHNI2SY7IM/" target="_blank" rel="nofollow">【サンスポ】牧さん森下さん目指して…楽天D3位・繁永晟、新人合同自主トレへ準備しっかり</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-KZYVZJAFQZI2TD467HIREBTJHE/" target="_blank" rel="nofollow">【サンスポ】日本ハム・山崎福也「この年齢で同じチームになるとは」高校時代から切磋琢磨…有原との〝運命の再会〟に「楽しみ」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-GIOMDEHK5RN43J4N3S6UQV5JQ4/" target="_blank" rel="nofollow">【サンスポ】〝オリックスの消防士〟才木海翔、火消し任せろ！　救援失敗せずチーム救う</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-OHHLFK7SVFOBVICIQLKSE5Q37Y/" target="_blank" rel="nofollow">【サンスポ】DeNA・中川颯「濃い2カ月」豪州武者修行で「3、4キロ瘦せました」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-PHIWFCSAZZI4RDTLIW73ZE5MQI/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・大西、守護神奪取へ「フル回転」宣言！　阪神・伊原には〝石川からの言葉〟伝授</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-SKQ5TO3NWJIDFLPCX4USGNY25A/" target="_blank" rel="nofollow">【サンスポ】ヤクルト・中村悠平「スタメン」で「100試合」正捕手奪回シーズンへ練習始め</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-OYH7PBD2UFOWTBLRDIIRGVF73E/" target="_blank" rel="nofollow">【サンスポ】広島・栗林良吏、〝今井の考え〟で挑む　先発転向元年「1イニングを全力で」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-BJLTKLCIIBISRN2HI63477J6AM/" target="_blank" rel="nofollow">【サンスポ】阪神・井坪陽生「八王子会」入会熱望　「ヒロミさんに認めてもらえるように、しっかり結果を残したい」　ファンキー加藤「ウエルカム！」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260107-LCE4M5DZRRLW5I7DBPXYMOHTXQ/" target="_blank" rel="nofollow">【サンスポ】阪神・木下里都「今年は何か結果出さないといけない」目標体重90キロまで、あと2キロ</a></li>
+</ul>
+
+
+
+
+
+
+
+    <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
