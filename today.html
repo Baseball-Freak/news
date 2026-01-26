@@ -1,75 +1,102 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today’s Baseball Freak News</title>
-
-  <style>
-    body {
-      font-family: "メイリオ", sans-serif;
-      font-size: 9pt;
-      line-height: 1.5;
-      padding: 2em;
-      text-align: center;
-      color: #333;
-    }
-
-    #status {
-      margin-top: 2em;
-      font-weight: bold;
-      color: #555;
-    }
-
-    #loading {
-      font-size: 10pt;
-      color: #888;
-      margin-top: 1em;
-    }
-  </style>
-
-  <script>
-    window.onload = async () => {
-      const status = document.getElementById("status");
-      const loading = document.getElementById("loading");
-
-      // 1. 現在の日付を取得
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, "0"); // 月を2桁(01-12)に
-      const dd = String(now.getDate()).padStart(2, "0");      // 日を2桁(01-31)に
-
-      // 2. URLパスを構築 (yyyy/mm/dd.html)
-      // 例: 2026年1月26日の場合 -> 2026/01/26.html
-      const targetURL = `${yyyy}/${mm}/${dd}.html`;
-
-      status.textContent = `今日の記事を確認中: ${targetURL}`;
-
-      try {
-        // 3. ファイルの存在確認 (HEADリクエスト)
-        const res = await fetch(targetURL, { method: "HEAD" });
-
-        if (res.ok) {
-          // 記事が存在する場合
-          loading.textContent = "最新の記事が見つかりました。移動します...";
-          setTimeout(() => (location.href = targetURL), 1000);
-        } else {
-          // 記事が存在しない（404など）場合
-          loading.textContent = "本日の記事はまだ準備中か、存在しません。";
-          setTimeout(() => (location.href = "blank.html"), 1500);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記事詳細 - Baseball Freak News</title>
+    <style>
+        body {
+            font-family: "メイリオ", sans-serif;
+            line-height: 1.6;
+            text-align: center;
+            padding: 2em;
+            color: #333;
         }
-      } catch (e) {
-        // 通信エラー時の処理
-        loading.textContent = "アクセス中にエラーが発生しました。";
-        setTimeout(() => (location.href = "blank.html"), 1500);
-      }
-    };
-  </script>
+        .navigation {
+            margin-top: 3em;
+            padding-top: 1em;
+            border-top: 1px solid #eee;
+        }
+        .nav-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #f4f4f4;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        .nav-button:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
-
 <body>
-  <h2>Baseball Freak - Today’s News</h2>
-  <div id="status">日付を確認しています...</div>
-  <div id="loading"></div>
+
+    <!-- 記事の内容エリア -->
+    <article>
+        <h2 id="article-date-display">記事を読み込み中...</h2>
+        <p>ここに野球ニュースの本文が入ります。</p>
+    </article>
+
+    <!-- ナビゲーションリンク（JSで自動書き換え） -->
+    <div class="navigation">
+        <a id="prev-link" class="nav-button" href="#">← 前日の記事</a>
+        <a id="home-link" class="nav-button" href="../../index.html">一覧へ</a>
+        <a id="next-link" class="nav-button" href="#">翌日の記事 →</a>
+    </div>
+
+    <script>
+        window.onload = function() {
+            try {
+                // 1. 現在のURLパスを取得 (例: /2026/01/26.html)
+                const path = window.location.pathname;
+                const pathParts = path.split('/').filter(p => p !== "");
+                
+                // URLの末尾から「日」「月」「年」を特定
+                // GitHub Pagesの場合、リポジトリ名が含まれることがあるため末尾から数える
+                const filePart = pathParts[pathParts.length - 1]; // "26.html"
+                const day = parseInt(filePart);
+                const month = parseInt(pathParts[pathParts.length - 2]);
+                const year = parseInt(pathParts[pathParts.length - 3]);
+
+                if (isNaN(year) || isNaN(month) || isNaN(day)) {
+                    console.error("URLから日付を取得できませんでした。");
+                    return;
+                }
+
+                // 表示用のタイトル更新
+                document.getElementById('article-date-display').textContent = `${year}年${month}月${day}日のニュース`;
+
+                // 2. Dateオブジェクトを作成（月は0から始まるので-1する）
+                const currentData = new Date(year, month - 1, day);
+
+                // 3. リンク先を生成する関数
+                function generateLink(baseDate, offset) {
+                    const target = new Date(baseDate);
+                    target.setDate(baseDate.getDate() + offset);
+
+                    const y = target.getFullYear();
+                    const m = String(target.getMonth() + 1).padStart(2, '0');
+                    const d = String(target.getDate()).padStart(2, '0');
+
+                    // 階層構造「../../年/月/日.html」
+                    // 2026/01/26.html から見て、2つ上の階層がルート
+                    return `../../${y}/${m}/${d}.html`;
+                }
+
+                // 4. 各ボタンにURLをセット
+                const prevLink = document.getElementById('prev-link');
+                const nextLink = document.getElementById('next-link');
+
+                prevLink.href = generateLink(currentData, -1);
+                nextLink.href = generateLink(currentData, 1);
+
+            } catch (e) {
+                console.error("ナビゲーション生成中にエラーが発生しました:", e);
+            }
+        };
+    </script>
 </body>
 </html>
