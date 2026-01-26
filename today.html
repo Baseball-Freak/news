@@ -29,37 +29,38 @@
   </style>
 
   <script>
-    // --- 自動リダイレクトスクリプト ---
     window.onload = async () => {
       const status = document.getElementById("status");
       const loading = document.getElementById("loading");
 
+      // 1. 現在の日付を取得
       const now = new Date();
       const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const dd = String(now.getDate()).padStart(2, "0");
+      const mm = String(now.getMonth() + 1).padStart(2, "0"); // 月を2桁(01-12)に
+      const dd = String(now.getDate()).padStart(2, "0");      // 日を2桁(01-31)に
 
-      // yyyy/mm-dd.html 形式を構築
-      const folder = `${yyyy}`;
-      const file = `${mm}-${dd}.html`;
-      const targetURL = `${folder}/${file}`;
+      // 2. URLパスを構築 (yyyy/mm/dd.html)
+      // 例: 2026年1月26日の場合 -> 2026/01/26.html
+      const targetURL = `${yyyy}/${mm}/${dd}.html`;
 
-      status.textContent = `Checking for today’s article: ${targetURL}`;
+      status.textContent = `今日の記事を確認中: ${targetURL}`;
 
       try {
+        // 3. ファイルの存在確認 (HEADリクエスト)
         const res = await fetch(targetURL, { method: "HEAD" });
+
         if (res.ok) {
-          // 存在すれば移動
-          loading.textContent = "記事を読み込んでいます...";
+          // 記事が存在する場合
+          loading.textContent = "最新の記事が見つかりました。移動します...";
           setTimeout(() => (location.href = targetURL), 1000);
         } else {
-          // 存在しなければ blank.html へ
-          loading.textContent = "記事が見つかりません。";
+          // 記事が存在しない（404など）場合
+          loading.textContent = "本日の記事はまだ準備中か、存在しません。";
           setTimeout(() => (location.href = "blank.html"), 1500);
         }
       } catch (e) {
-        // エラー時も blank.html へ
-        loading.textContent = "通信エラーが発生しました。";
+        // 通信エラー時の処理
+        loading.textContent = "アクセス中にエラーが発生しました。";
         setTimeout(() => (location.href = "blank.html"), 1500);
       }
     };
@@ -68,7 +69,7 @@
 
 <body>
   <h2>Baseball Freak - Today’s News</h2>
-  <div id="status">記事を確認しています...</div>
+  <div id="status">日付を確認しています...</div>
   <div id="loading"></div>
 </body>
 </html>
