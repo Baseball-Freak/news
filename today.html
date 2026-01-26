@@ -1,64 +1,74 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Today's Baseball Freak News</title>
-    <style>
-        body { font-family: "メイリオ", sans-serif; font-size: 9pt; line-height: 1.5; padding: 2em; text-align: center; color: #333; }
-        /* タイトルをリンクらしく見せる設定 */
-        h2.title { cursor: pointer; color: #000; transition: 0.3s; }
-        h2.title:hover { opacity: 0.6; }
-        
-        .navigation { margin-top: 2em; }
-        .nav-link { margin: 0 15px; text-decoration: none; color: #555; font-weight: bold; }
-        .nav-link:hover { text-decoration: underline; }
-    </style>
-</head>
-<body>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today’s Baseball Freak News</title>
 
-    <!-- タイトル：クリックすると当日（index.html）へ移動 -->
-    <h2 class="title" onclick="location.href='../../index.html'">Baseball Freak - Today's News</h2>
+  <style>
+    body {
+      font-family: "メイリオ", sans-serif;
+      font-size: 9pt;
+      line-height: 1.5;
+      padding: 2em;
+      text-align: center;
+      color: #333;
+    }
 
-    <div id="article-content">
-        <h3 id="display-date">読み込み中...</h3>
-        <p>ここに野球ニュースの本文が入ります。</p>
-    </div>
+    #status {
+      margin-top: 2em;
+      font-weight: bold;
+      color: #555;
+    }
 
-    <!-- 前日・翌日のリンク -->
-    <div class="navigation">
-        <a id="prev-btn" class="nav-link" href="#">← 前日</a>
-        <a id="next-btn" class="nav-link" href="#">翌日 →</a>
-    </div>
+    #loading {
+      font-size: 10pt;
+      color: #888;
+      margin-top: 1em;
+    }
+  </style>
 
-    <script>
-        // 1. URLから現在の日付を特定する (例: /2026/01/26.html)
-        const pathParts = window.location.pathname.split('/');
-        const fileName = pathParts.pop();      // "26.html"
-        const currentD = parseInt(fileName);   // 26
-        const currentM = parseInt(pathParts.pop()); // 01
-        const currentY = parseInt(pathParts.pop()); // 2026
+  <script>
+    // --- 自動リダイレクトスクリプト ---
+    window.onload = async () => {
+      const status = document.getElementById("status");
+      const loading = document.getElementById("loading");
 
-        // 2. 表示用の日付をセット
-        document.getElementById('display-date').textContent = `${currentY}年${currentM}月${currentD}日の記事`;
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
 
-        // 3. 前日・翌日の計算関数
-        function setLink(offset, elementId) {
-            // JavaScriptのDate機能を使って、単純な+1/-1の計算を行う
-            // これにより、31日の次を「32日」ではなく「翌月1日」に自動変換できる
-            const date = new Date(currentY, currentM - 1, currentD + offset);
-            
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
+      // yyyy/mm-dd.html 形式を構築
+      const folder = `${yyyy}`;
+      const file = `${mm}-${dd}.html`;
+      const targetURL = `${folder}/${file}`;
 
-            // リンク先を「../../年/月/日.html」の形で作る
-            document.getElementById(elementId).href = `../../${y}/${m}/${d}.html`;
+      status.textContent = `Checking for today’s article: ${targetURL}`;
+
+      try {
+        const res = await fetch(targetURL, { method: "HEAD" });
+        if (res.ok) {
+          // 存在すれば移動
+          loading.textContent = "記事を読み込んでいます...";
+          setTimeout(() => (location.href = targetURL), 1000);
+        } else {
+          // 存在しなければ blank.html へ
+          loading.textContent = "記事が見つかりません。";
+          setTimeout(() => (location.href = "blank.html"), 1500);
         }
+      } catch (e) {
+        // エラー時も blank.html へ
+        loading.textContent = "通信エラーが発生しました。";
+        setTimeout(() => (location.href = "blank.html"), 1500);
+      }
+    };
+  </script>
+</head>
 
-        // 実行
-        setLink(-1, 'prev-btn'); // 前日リンク作成
-        setLink(1, 'next-btn');  // 翌日リンク作成
-    </script>
+<body>
+  <h2>Baseball Freak - Today’s News</h2>
+  <div id="status">記事を確認しています...</div>
+  <div id="loading"></div>
 </body>
 </html>
