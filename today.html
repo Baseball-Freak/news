@@ -3,100 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>記事詳細 - Baseball Freak News</title>
+    <title>Today's Baseball Freak News</title>
     <style>
-        body {
-            font-family: "メイリオ", sans-serif;
-            line-height: 1.6;
-            text-align: center;
-            padding: 2em;
-            color: #333;
-        }
-        .navigation {
-            margin-top: 3em;
-            padding-top: 1em;
-            border-top: 1px solid #eee;
-        }
-        .nav-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 0 10px;
-            background-color: #f4f4f4;
-            color: #333;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-        .nav-button:hover {
-            background-color: #ddd;
-        }
+        body { font-family: "メイリオ", sans-serif; font-size: 9pt; line-height: 1.5; padding: 2em; text-align: center; color: #333; }
+        /* タイトルをリンクらしく見せる設定 */
+        h2.title { cursor: pointer; color: #000; transition: 0.3s; }
+        h2.title:hover { opacity: 0.6; }
+        
+        .navigation { margin-top: 2em; }
+        .nav-link { margin: 0 15px; text-decoration: none; color: #555; font-weight: bold; }
+        .nav-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <!-- 記事の内容エリア -->
-    <article>
-        <h2 id="article-date-display">記事を読み込み中...</h2>
-        <p>ここに野球ニュースの本文が入ります。</p>
-    </article>
+    <!-- タイトル：クリックすると当日（index.html）へ移動 -->
+    <h2 class="title" onclick="location.href='../../index.html'">Baseball Freak - Today's News</h2>
 
-    <!-- ナビゲーションリンク（JSで自動書き換え） -->
+    <div id="article-content">
+        <h3 id="display-date">読み込み中...</h3>
+        <p>ここに野球ニュースの本文が入ります。</p>
+    </div>
+
+    <!-- 前日・翌日のリンク -->
     <div class="navigation">
-        <a id="prev-link" class="nav-button" href="#">← 前日の記事</a>
-        <a id="home-link" class="nav-button" href="../../index.html">一覧へ</a>
-        <a id="next-link" class="nav-button" href="#">翌日の記事 →</a>
+        <a id="prev-btn" class="nav-link" href="#">← 前日</a>
+        <a id="next-btn" class="nav-link" href="#">翌日 →</a>
     </div>
 
     <script>
-        window.onload = function() {
-            try {
-                // 1. 現在のURLパスを取得 (例: /2026/01/26.html)
-                const path = window.location.pathname;
-                const pathParts = path.split('/').filter(p => p !== "");
-                
-                // URLの末尾から「日」「月」「年」を特定
-                // GitHub Pagesの場合、リポジトリ名が含まれることがあるため末尾から数える
-                const filePart = pathParts[pathParts.length - 1]; // "26.html"
-                const day = parseInt(filePart);
-                const month = parseInt(pathParts[pathParts.length - 2]);
-                const year = parseInt(pathParts[pathParts.length - 3]);
+        // 1. URLから現在の日付を特定する (例: /2026/01/26.html)
+        const pathParts = window.location.pathname.split('/');
+        const fileName = pathParts.pop();      // "26.html"
+        const currentD = parseInt(fileName);   // 26
+        const currentM = parseInt(pathParts.pop()); // 01
+        const currentY = parseInt(pathParts.pop()); // 2026
 
-                if (isNaN(year) || isNaN(month) || isNaN(day)) {
-                    console.error("URLから日付を取得できませんでした。");
-                    return;
-                }
+        // 2. 表示用の日付をセット
+        document.getElementById('display-date').textContent = `${currentY}年${currentM}月${currentD}日の記事`;
 
-                // 表示用のタイトル更新
-                document.getElementById('article-date-display').textContent = `${year}年${month}月${day}日のニュース`;
+        // 3. 前日・翌日の計算関数
+        function setLink(offset, elementId) {
+            // JavaScriptのDate機能を使って、単純な+1/-1の計算を行う
+            // これにより、31日の次を「32日」ではなく「翌月1日」に自動変換できる
+            const date = new Date(currentY, currentM - 1, currentD + offset);
+            
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
 
-                // 2. Dateオブジェクトを作成（月は0から始まるので-1する）
-                const currentData = new Date(year, month - 1, day);
+            // リンク先を「../../年/月/日.html」の形で作る
+            document.getElementById(elementId).href = `../../${y}/${m}/${d}.html`;
+        }
 
-                // 3. リンク先を生成する関数
-                function generateLink(baseDate, offset) {
-                    const target = new Date(baseDate);
-                    target.setDate(baseDate.getDate() + offset);
-
-                    const y = target.getFullYear();
-                    const m = String(target.getMonth() + 1).padStart(2, '0');
-                    const d = String(target.getDate()).padStart(2, '0');
-
-                    // 階層構造「../../年/月/日.html」
-                    // 2026/01/26.html から見て、2つ上の階層がルート
-                    return `../../${y}/${m}/${d}.html`;
-                }
-
-                // 4. 各ボタンにURLをセット
-                const prevLink = document.getElementById('prev-link');
-                const nextLink = document.getElementById('next-link');
-
-                prevLink.href = generateLink(currentData, -1);
-                nextLink.href = generateLink(currentData, 1);
-
-            } catch (e) {
-                console.error("ナビゲーション生成中にエラーが発生しました:", e);
-            }
-        };
+        // 実行
+        setLink(-1, 'prev-btn'); // 前日リンク作成
+        setLink(1, 'next-btn');  // 翌日リンク作成
     </script>
 </body>
 </html>
