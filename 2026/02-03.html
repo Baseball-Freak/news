@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 0.8em;
+      line-height: 1.4;
+      padding: 2em;
+      position: relative;
+    }
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #ddd;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    h3.bar3 {
+      font-size: 1.1em;
+      margin-left: 1em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // URLから日付を取得 (/yyyy/mm-dd.html 形式)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      // 正規表現: /数字4桁/数字2桁-数字2桁.html
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 移動処理
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      
+      // URL形式が正しくない場合も pending へ
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+
+      // 日付計算
+      baseDate.setDate(baseDate.getDate() + offset);
+
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+
+      // 次のファイルのパス (../年/月-日.html)
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      
+      // エラー時の移動先 (../pending.html)
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        // HEADメソッドでファイルの存在確認を行う
+        const res = await fetch(target, { method: 'HEAD' });
+
+        if (res.ok) {
+          // ファイル(およびフォルダ)が存在すれば移動
+          location.href = target;
+        } else {
+          // 404 Not Found (フォルダがない、ファイルがない) などの場合は pending へ
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        // 通信エラーなどの場合も pending へ
+        console.error("Fetch error:", error);
+        location.href = pendingUrl;
+      }
+    };
+
+    // ▼▼▼ 追加機能: ファイル名と記事日付の不一致チェック ▼▼▼
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. ファイル名から mm-dd を取得 (例: .../11-01.html)
+      // pathの末尾が 数字2桁-数字2桁.html かどうかを判定
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      
+      // もしこのファイル名規則に合致しない場合（index.html等）はチェックを行わない
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1]; // 例: 11
+      const fileDD = pathMatch[2]; // 例: 01
+
+      // 2. HTML内の <h3 class='bar3'> から日付テキストを取得
+      const h3Element = document.querySelector('h3.bar3');
+      
+      let isDateMatched = false;
+
+      if (h3Element) {
+        // テキスト内容（例: "2025/11/01" やアイコンコード含むテキスト）
+        const textContent = h3Element.textContent;
+        
+        // テキスト内に含まれる /mm/dd 部分を抽出
+        // 正規表現: /数字2桁/数字2桁
+        const contentMatch = textContent.match(/\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const contentMM = contentMatch[1];
+          const contentDD = contentMatch[2];
+
+          // ファイル名の mm, dd と、記事内の mm, dd が一致するか比較
+          if (contentMM === fileMM && contentDD === fileDD) {
+            isDateMatched = true;
+          }
+        }
+      }
+
+      // 3. 不一致の場合、blank.html を表示（リダイレクト）
+      if (!isDateMatched) {
+        // 階層構造に合わせてパスは適宜調整してください。ここでは親階層と仮定します。
+        location.href = "../blank.html";
+      }
+    });
+    // ▲▲▲ 追加機能ここまで ▲▲▲
+
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/03</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260203-WOL3BBMBJZOWJOJNWBFWWLF4X4/" target="_blank" rel="nofollow">【サンスポ】【江本孟紀　キャンプCHECK】ソフトバンクは今年も主力クラスが15日まで個別調整　強さの秘密は組織力</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260203-J27RZMGW5JI2ZEVSSU2W35WCSM/" target="_blank" rel="nofollow">【サンスポ】【黒田正宏　軍師の断】阪神・伊原は下半身を意識して球にキレがある</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260203-KWS2FSXVZZLEZHY4WL4GJGPQLI/" target="_blank" rel="nofollow">【サンスポ】【高津臣吾　キャンプCHECK】阪神・藤川球児監督は連覇へ慢心なし　「自分にもチームにも厳しくいきます」と言っていた</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260203-VPCCWRDJINK7NM3MYXNE6PTMZE/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】マズイ、コメントを聞き漏れッタ…顔面蒼白の記者たちを救ったモレッタの宜野座移動</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/03/kiji/20260202s00001173376000c.html" target="_blank" rel="nofollow">【スポニチ】【内田雅也の追球】「草」から「土」への挑戦</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/03/kiji/20260202s00001173382000c.html" target="_blank" rel="nofollow">【スポニチ】「怒っているわけじゃない」阪神・桐敷拓馬が鬼気迫る表情で手応えの70球　復調へのカギは体重移動</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/03/post1899717/" target="_blank" rel="nofollow">【Full-count】今井達也を追うドラ1右腕が秘めた“可能性”　指揮官絶賛の豪球「ゴムがパンと弾かれる」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/03/post1899610/" target="_blank" rel="nofollow">【Full-count】TJ手術から1年、吉田輝星の“現在地”　「時間が足りない」も…実感する野球の楽しさ</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/03/post1899674/" target="_blank" rel="nofollow">【Full-count】「こんな顔やっけ？」　退団から10年…元守護神の“近影”に騒然「マジで別人」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/03/post1899373/" target="_blank" rel="nofollow">【Full-count】右肘が「グチュグチュ」　32歳で動かぬ体…失ったエースの座、周囲から“哀れみの目”</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/03/post1899354/" target="_blank" rel="nofollow">【Full-count】教員志望が一転…巨人から2位指名　甲子園が変えた運命、父が告げた「好きにしろ」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/03/post1899386/" target="_blank" rel="nofollow">【Full-count】阪神優勝の実況の裏で「点滴を打って…」　28歳アナの晴れぬ心、救われた“闘将”の言葉</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/685784/" target="_blank" rel="nofollow">【ベースボールキング】5年ぶり帰還の&#8221;北のスピードスター&#8221;　日本ハム・西川遥輝に坂口氏「レギュラーを目指せるところにいる」と太鼓判</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/685808/" target="_blank" rel="nofollow">【ベースボールキング】注目！中日・井上一樹監督の“おじさん力”【白球つれづれ】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2026/02/03/0019978836.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島の侍・小園　近っ！マシン打撃で球速１６０キロ対策　米サイ・ヤング賞の剛腕に慣れる　世界一へ準備余念なし</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2026/02/03/0019978843.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・佐々木　サク越え９発「自分の形で打てたかなと」　バットには繊細な感覚「８５センチと聞くと長く感じて」特注サイズ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2026/02/03/0019978846.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島ドラ１・平川　左で１２０メートルかっ飛ばした防球ネットまで飛んだ　「強さだけじゃなく」新井監督は賛辞惜しまず</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1453422/" target="_blank" rel="nofollow">【西日本スポーツ】【春季キャンプ】ソフトバンクホークス上沢、直球を中心に60球New</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1453421/" target="_blank" rel="nofollow">【西日本スポーツ】ソフトバンクホークス柳田、今宮がWBC壮行試合へ調整　タマスタ...New</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1453420/" target="_blank" rel="nofollow">【西日本スポーツ】【春季キャンプ】ソフトバンクホークス徐若熙、堂々の初ブルペン　...New</a></li>
+<li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1453417/" target="_blank" rel="nofollow">【西日本スポーツ】所沢に「化け物」がいた　工藤公康さん聞き書き「生きる力を身につ...New</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51326.html" target="_blank" rel="nofollow">【スポーツ報知】ロッテ・サブロー監督「めちゃくちゃ打ちづらい」新助っ人左腕のカスティーヨとロングを絶賛</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51327.html" target="_blank" rel="nofollow">【スポーツ報知】「ガッツマン」桑原将志が新天地・西武でも存在感「感情は内側から出る」大声出し守備練習</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51349.html" target="_blank" rel="nofollow">【スポーツ報知】【西武】台湾・統一から移籍の林安可、「おはよう」「おつかれ」日本語の先生は…“西武同期”</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51325.html" target="_blank" rel="nofollow">【スポーツ報知】楽天ドラ１・藤原聡大の衝撃スライダー　受けた捕手が「則本さんのよう」直球はいきなり最速１５３キロ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51329.html" target="_blank" rel="nofollow">【スポーツ報知】大谷翔平の“１枠”どうなる　ＷＢＣ野手専念で侍ジャパン先発に日本ハム・伊藤大海も名乗り</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51257.html" target="_blank" rel="nofollow">【スポーツ報知】【ソフトバンク】秋広優人、すり足から打撃フォーム変更「僕の中では大改造」５００スイング特打で中堅方向へサク越え連発</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51298.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・則本昂大「あ～クソ！」「６０点」「キタ！」２日連続ブルペンで収穫の４３球</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51308.html" target="_blank" rel="nofollow">【スポーツ報知】阿部監督も絶賛　巨人の３６歳ベテラン「体は元気」　ロングティー２００球超＆居残り特打１４３スイングこなす丸佳浩</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51305.html" target="_blank" rel="nofollow">【スポーツ報知】巨人の育成２位・林燦が大先輩・小林誠司と広陵バッテリー…ラスト１球、ゲキを受け成長誓う</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51306.html" target="_blank" rel="nofollow">【スポーツ報知】名参謀が「２０発打てる」と太鼓判　巨人の２３歳外野手がフリー打撃で１５発　「しっかり振る」と中山礼都</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51304.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・阿部監督、３７歳・坂本勇人の動きを大絶賛　若手に負けない２００スイング超＆居残り特打も！</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51303.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・戸郷翔征「なんとか殻を破って」　ドラ１・竹丸和幸の笑顔を引き出す計画明かす</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51301.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・キャベッジが「前進」フラッグ直撃弾…阿部監督の「打点アップ」指令に満点回答</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51295.html" target="_blank" rel="nofollow">【スポーツ報知】「理想的なフォーム」巨人の新外国人ダルベックを高橋由伸氏が高評価「自身の長所を把握している」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51294.html" target="_blank" rel="nofollow">【スポーツ報知】巨人の新外国人ダルベックは「３０本でも４０本でも打てる」広島００７うなった</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51215.html" target="_blank" rel="nofollow">【スポーツ報知】【巨人キャンプルポ】「突然、火が付く」ドラ１・竹丸和幸はまさに実戦型…担当スカウトが証言するプロ向きな性格</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51253.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ディベイニーの意外な行動を巨人スコアラーが称賛「人柄が良くてなじみそう」遊撃奪取なら「１～９番まで全部怖い」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260202-OHT1T51245.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督「選手は自分たちにとって『宝』のようなもの」滞在１時間１０分の具志川キャンプ電撃視察</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602020001268.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】若月健矢、侍ジャパンへ準備着々「ブルペンから練習していけたら」</a></li>
+</ul>
+
+
+
+    <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
