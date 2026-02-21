@@ -7,24 +7,69 @@
 
   <style>
     body {
-      font-family: "メイリオ", sans-serif;
-      font-size: 9pt;
-      line-height: 1.5;
+      /* メイリオは視認性が高く、背景に左右されにくいフォントです */
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
       padding: 2em;
       text-align: center;
+      /* #333は白背景で目に優しく、黒背景でも沈み込みません */
       color: #333;
+      margin: 0;
+    }
+
+    /* リンクの色調整（ここが重要です） */
+    a {
+      /* 明るい・暗い両方の背景で視認性が高い、少し明るめの紺色 */
+      color: #1a5fb4;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #000; /* マウスを乗せた時に少し濃くして反応を伝える */
+    }
+
+    h2 {
+      font-size: 1.4em;
+      margin-bottom: 1em;
+      color: #222;
     }
 
     #status {
       margin-top: 2em;
       font-weight: bold;
-      color: #555;
+      /* 補助テキストは少しだけ薄く */
+      color: #444;
     }
 
     #loading {
       font-size: 10pt;
-      color: #888;
+      color: #666;
       margin-top: 1em;
+    }
+
+    /* 記事リストがある場合のスタイル（埋め込み先用） */
+    .nb-list {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      display: inline-block;
+      max-width: 600px;
+    }
+
+    .nb-list li {
+      margin-bottom: 0.8em;
+      padding-left: 1.2em;
+      position: relative;
+    }
+
+    .nb-list li::before {
+      content: "●";
+      position: absolute;
+      left: 0;
+      color: #666;
+      font-size: 0.8em;
     }
   </style>
 
@@ -49,16 +94,13 @@
       try {
         const res = await fetch(targetURL, { method: "HEAD" });
         if (res.ok) {
-          // 存在すれば移動
           loading.textContent = "記事を読み込んでいます...";
           setTimeout(() => (location.href = targetURL), 1000);
         } else {
-          // 存在しなければ blank.html へ
-          loading.textContent = "記事が見つかりません。";
+          loading.textContent = "本日の記事はまだ準備中です。";
           setTimeout(() => (location.href = "blank.html"), 1500);
         }
       } catch (e) {
-        // エラー時も blank.html へ
         loading.textContent = "通信エラーが発生しました。";
         setTimeout(() => (location.href = "blank.html"), 1500);
       }
