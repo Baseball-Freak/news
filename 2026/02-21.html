@@ -5,31 +5,28 @@
   <title>Daily Page</title>
   <style>
     body {
-      /* フォントと視認性の向上 */
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
       font-size: 10pt;
       line-height: 1.6;
       padding: 2em;
       position: relative;
-      /* 背景に左右されにくい基本文字色 */
-      color: #333;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
     }
 
-    /* ▼▼▼ リンク色の強化（白・黒背景両対応） ▼▼▼ */
+    /* リンク色の強化（白・黒背景両対応） */
     a {
-      /* 視認性の高い紺色。ダークモードでも沈みません */
-      color: #1a5fb4;
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
       text-decoration: underline;
       transition: color 0.2s;
     }
     a:hover {
-      color: #000;
+      color: #fff;
       text-decoration: none;
     }
     a:visited {
-      color: #1a5fb4; /* 訪問後も色を維持 */
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
     }
-    /* ▲▲▲ ここまで ▲▲▲ */
 
     .nav-buttons {
       position: absolute;
@@ -44,26 +41,31 @@
       height: 30px;
       font-size: 0.7em;
       padding: 0;
-      border: 1px solid #333;
+      border: 1px solid #666;
       border-radius: 4px;
-      background-color: #f0f0f0;
-      color: #333;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
       cursor: pointer;
       text-align: center;
       transition: background-color 0.2s, color 0.2s;
     }
     .nav-buttons button:hover {
-      background-color: #ddd;
+      background-color: #555;
     }
     .box1 {
       margin-left: -1em;
       margin-top: 3em;
     }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
     h3.bar3 {
       font-size: 1.2em;
       margin-left: 1em;
-      color: #222;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
     }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
     .nb-list {
       list-style-type: disc;
       margin-left: 2em;
@@ -108,7 +110,6 @@
       }
     };
 
-    // ▼▼▼ 統合機能: 不一致チェック ＆ メタタグ・タイトル自動強化 ▼▼▼
     window.addEventListener('DOMContentLoaded', () => {
       const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
       if (!pathMatch) return;
@@ -116,7 +117,6 @@
       const fileMM = pathMatch[1];
       const fileDD = pathMatch[2];
       const h3Element = document.querySelector('h3.bar3');
-      const firstNewsItem = document.querySelector('.nb-list li');
       
       if (h3Element) {
         const textContent = h3Element.textContent;
@@ -124,36 +124,11 @@
 
         if (contentMatch) {
           const [fullDate, year, contentMM, contentDD] = contentMatch;
-
-          // 1. 日付不一致チェック
           if (contentMM !== fileMM || contentDD !== fileDD) {
             location.href = "../blank.html";
             return;
           }
-
-          // 2. メタ情報・タイトルの自動更新
-          const newsSummary = firstNewsItem ? firstNewsItem.textContent.trim().substring(0, 50) + "..." : "最新ニュース";
-          const pageTitle = `${fullDate} プロ野球ニュースまとめ`;
-          
-          document.title = pageTitle; // タブ名を日付入りに変更
-
-          // メタタグ作成・更新関数
-          const updateMeta = (nameOrProp, content) => {
-            const isProp = nameOrProp.startsWith('og:');
-            const selector = isProp ? `meta[property="${nameOrProp}"]` : `meta[name="${nameOrProp}"]`;
-            let meta = document.querySelector(selector);
-            if (!meta) {
-              meta = document.createElement('meta');
-              if (isProp) meta.setAttribute('property', nameOrProp);
-              else meta.setAttribute('name', nameOrProp);
-              document.head.appendChild(meta);
-            }
-            meta.setAttribute('content', content);
-          };
-
-          updateMeta('description', `${fullDate}のプロ野球最新ニュース：${newsSummary}`);
-          updateMeta('og:title', pageTitle);
-          updateMeta('og:description', newsSummary);
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
         }
       }
     });
@@ -166,51 +141,46 @@
   </div>
 <div class="box1">
 
-  <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/21</h3>
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/21</h3>
 
-  <ul class="nb-list">
-    <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-UUOIII7TC5L6HAZ3RZ2OSSFE7E/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】「鳴尾浜が生んだ」「鳴尾浜で育った」メダリスト　坂本花織とかつての虎2軍施設との意外な関係</a></li>
-    <li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-VIUBUIZQOZMVRGL7LUQC4UIEPI/" target="_blank" rel="nofollow">【サンスポ】【ダンカン】阪神もメダルラッシュ！！　D2位・谷端、浜田、元山、D1位・立石…俺の隠しメダルは西純矢</a></li>
-    <li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/21/post1910503/" target="_blank" rel="nofollow">【Full-count】最終登板で満塁HR浴び「あれが答え」　戦力外→即引退…二木康太が心に決めた“ロッテへの献身”</a></li>
-    <li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/21/post1910169/" target="_blank" rel="nofollow">【Full-count】「巨人はちょっと…」17歳の“本音”　ドラ1候補も確約ナシ、パ球団の指名に困惑</a></li>
-    <li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/21/post1910468/" target="_blank" rel="nofollow">【Full-count】193cmから最速159キロ「デカくて速くて」　育成24歳を首脳陣も太鼓判…新守護神に期待</a></li>
-    <li class="news-icon news-fct"><a href="https://full-count.jp/2026/02/21/post1910577/" target="_blank" rel="nofollow">【Full-count】身長2m逸材が圧倒…村上宗隆のオーラ　広島18歳に焼きつく異様な雰囲気、忘れぬ2球</a></li>
-    <li class="news-icon news-dly"><a href="http://www.daily.co.jp/baseball/carp/2026/02/21/0020046128.shtml" target="_blank" rel="nofollow">【デイリースポーツ】広島・佐々木　新井監督熱血指導！スイング時に右足折れる癖指摘　左足上げ、右足でスッと立って打つドリル伝授「自分のものに」</a></li>
-    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1460957/" target="_blank" rel="nofollow">【西日本スポーツ】【WBC日本代表合宿】ソフトバンクホークス松本裕の「球筋」に侍...New</a></li>
-    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1460954/" target="_blank" rel="nofollow">【西日本スポーツ】【春季キャンプ】ソフトバンクホークス大津が実戦初登板で手応え「...New</a></li>
-    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1460953/" target="_blank" rel="nofollow">【西日本スポーツ】【春季キャンプ】ソフトバンクホークス今宮が二塁手で存在感「新鮮...New</a></li>
-    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1460952/" target="_blank" rel="nofollow">【西日本スポーツ】【春季キャンプ】ソフトバンクホークスのオスナが初ブルペン　変化...New</a></li>
-    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1460951/" target="_blank" rel="nofollow">【西日本スポーツ】【春季キャンプ】ソフトバンクホークスの海野が成長の一発　正捕手...New</a></li>
-    <li class="news-icon news-nis"><a href="https://www.nishinippon.co.jp/item/1460914/" target="_blank" rel="nofollow">【西日本スポーツ】別格だった落合博満さんの神主打法　工藤公康さん聞き書き「生きる...New</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51341.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】吉田輝星が５１１日ぶり実戦復帰へ　過去にトミー・ジョン手術を乗り越えた投手は…</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51339.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】日本ハムからトレード移籍→復活→トミー・ジョン手術５１１日ぶり実戦復帰　吉田輝星の歩みは…</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51335.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】吉田輝星が「大復活」を約束！　右肘トミー・ジョン手術から２・２１紅白戦で５１１日ぶり実戦復帰…独占インタビュー</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51373.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】紅林弘太郎は落合博満、イチローのような「なめらかさ」がテーマ「いい選手は流れるような動きをする」</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51355.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】九里亜蓮が２１日の紅白戦で変化球を「解禁」へ「いろんな球種をしっかり投げられたら」</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51235.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】古田島成龍が宮崎キャンプ合流へ　右肘手術から回復順調　「優勝級」ガッツポーズ再び</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51349.html" target="_blank" rel="nofollow">【スポーツ報知】「引き出しが増えた」２大会連続出場の侍・高橋宏斗　憧れの山本由伸に弟子入りして学んだこと</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51354.html" target="_blank" rel="nofollow">【スポーツ報知】【中日】絶対的守護神・松山晋也は開幕アウトか…左脇腹の筋損傷でキャンプ離脱　名古屋で治療に専念へ</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51304.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・平内龍太が習得目指す“亜細亜ボール”の進化版「今までの球と使い分けができたら最高」</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51303.html" target="_blank" rel="nofollow">【スポーツ報知】「打撃の進歩次第で１、２番に置く選択肢も」巨人・浦田俊輔が秘める可能性　高木豊氏が分析</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51302.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・浦田俊輔の目標はライバル球団の切り込み隊長「本当にすごい」不動の１番打者を理想に</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51296.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・山崎伊織がオープン戦開幕投手　「去年はあまり良くなかったので」今年にかける思いは</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51298.html" target="_blank" rel="nofollow">【スポーツ報知】巨人オープン戦開幕４番はキャベッジ！　「彼のことが大好き」元同僚のヤクルト左腕と対戦心待ち</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51294.html" target="_blank" rel="nofollow">【スポーツ報知】巨人・阿部慎之助監督「期待している４人だから」　ミスター生誕９０年の日に魂継承熱血ノック２６３球　</a></li>
-    <li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51218.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ドラフト２位の谷端将伍が「左キラー」に名乗り　２１日は中日・大野雄大と対戦予定「気合が入ります。とにかく積極的に」</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001214.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】「まだまだ、ガキ」な紅林弘太郎　落合博満氏、イチロー氏のように“エロく”なる</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001406.html" target="_blank" rel="nofollow">【日刊スポーツ】【オリックス】九里亜蓮が21日紅白戦登板へ休日返上　昨季球宴で投じた魔球ナックルも試投</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001458.html" target="_blank" rel="nofollow">【日刊スポーツ】【楽天】２年目の宗山塁、オープン戦はプレーの精度追求「１個１個の質にこだわりたい」　</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001322.html" target="_blank" rel="nofollow">【日刊スポーツ】【日本ハム】ドラ3大塚瑠晏が稲葉監督の助言受け待望のプロ初安打「出てほっとした」</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001104.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】ルイーズ妻は第２子を妊娠中「ファミリーのために」　気に入った日本食は刺し身</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001045.html" target="_blank" rel="nofollow">【日刊スポーツ】【DeNA】相川監督が理想とする「勝てる捕手」とは…即答した選手像はレジェンドOB</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202602200001145.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】阪神“キャムタク”コンビ　中野拓夢とキャム・ディベイニーが本番モードへ</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001302.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】森下翔太、メジャー組の中でも「堂々と」気後れせず東海大相模の先輩・菅野と共闘</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001370.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】坂本誠志郎「菅野さんも雄星さんも」メジャー組と積極コミュニケーションだ</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001283.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人が休日返上でジョギング　オープン戦登板へ着々準備</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001221.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹が明かす「まだまだこんなもんじゃない。物足りない」同学年の選手は／一問一答</a></li>
-    <li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001200.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹の「魔法の指」と貴重ハイタッチ　優しい手から放たれる快速球に驚き／取材後記</a></li>
-  </ul>
+  
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-UUOIII7TC5L6HAZ3RZ2OSSFE7E/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】「鳴尾浜が生んだ」「鳴尾浜で育った」メダリスト　坂本花織とかつての虎2軍施設との意外な関係</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-VIUBUIZQOZMVRGL7LUQC4UIEPI/" target="_blank" rel="nofollow">【サンスポ】【ダンカン】阪神もメダルラッシュ！！　D2位・谷端、浜田、元山、D1位・立石…俺の隠しメダルは西純矢</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260220-OHT1T51218.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ドラフト２位の谷端将伍が「左キラー」に名乗り　２１日は中日・大野雄大と対戦予定「気合が入ります。とにかく積極的に」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202602200001145.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】阪神“キャムタク”コンビ　中野拓夢とキャム・ディベイニーが本番モードへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001302.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】森下翔太、メジャー組の中でも「堂々と」気後れせず東海大相模の先輩・菅野と共闘</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001370.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】坂本誠志郎「菅野さんも雄星さんも」メジャー組と積極コミュニケーションだ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001283.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人が休日返上でジョギング　オープン戦登板へ着々準備</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001221.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹が明かす「まだまだこんなもんじゃない。物足りない」同学年の選手は／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001200.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹の「魔法の指」と貴重ハイタッチ　優しい手から放たれる快速球に驚き／取材後記</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602200001196.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】NPB最高峰・村上頌樹が語る未知の侍ジャパン「もっと圧倒的な成績を。自分次第」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-MM4SZYBNKZFOXLVF72U5GOPAP4/" target="_blank" rel="nofollow">【サンスポ】【予想スタメン】阪神vs中日　沖縄・北谷でオープン戦初陣</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-ZEQZ2DTUZ5J7LFLMQI2T7M7IAA/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人、相手を制圧する投球「スタミナ強化しピンチでギアを上げられるよう」　サンスポ評論家・八木裕氏と対談</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-37QUG6XUAZJMLPRYLBC7SPZ2OY/" target="_blank" rel="nofollow">【サンスポ】阪神D2位・谷端将伍「気合は入ります」　プロ初のオープン戦に挑む</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-BAAHHX4WCJM65KZ2HDXC6GX4RI/" target="_blank" rel="nofollow">【サンスポ】侍ジャパン・森下翔太「堂々とできるように」　東海大相模高の先輩、菅野との共演を心待ち</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260221-CPBIXELUIJI2JMYU5HKVVESHQA/" target="_blank" rel="nofollow">【サンスポ】阪神OP戦開催へ…宜野座大改修計画　収容人数大幅アップへ外野スタンド設置　28年1月完成めど…常勝軍団へ強力バックアップ！！</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173391000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・村上頌樹×伊原陵人　同門対談（1）】智弁学園出身コンビが球団76年ぶりのダブル10勝狙う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173400000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・村上頌樹×伊原陵人　同門対談（2）】智弁学園の3年間　村上「成長」伊原「練習よりご飯」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173432000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・新助っ投のルーカス、ラグズデール、モレッタが一斉実戦デビュー　2・23日本ハム戦で</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173413000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人が休日返上でランニング　21日からのオープン戦・中日戦で“開幕投手”</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173421000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　開幕投手争いがスタート　21日中日戦に才木浩人、22日ヤクルト戦に村上頌樹が登板</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173428000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・西勇輝「ケガもないし動けてるし順調」チーム日本人投手最年長右腕が休日返上で投げ込み</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173422000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・百崎蒼生　長期遠征に欠かせぬ“相棒”は「肌感がいい」着心地最高ジェラートピケのパジャマ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001173427000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・谷端将伍がOP戦でも積極打法でアピール誓う　数少ない打席で持ち味発揮へ意欲</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001004418000c.html" target="_blank" rel="nofollow">【スポニチ】【侍ジャパン】森下翔太　MLB組合流前に「結果でアピール」22日からソフトバンク2連戦</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/21/kiji/20260220s00001004426000c.html" target="_blank" rel="nofollow">【スポニチ】【侍ジャパン】坂本誠志郎　菅野らと共闘心待ち「捕らせてもらったり、会話の機会をたくさんいただけたら」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045912.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹＆高橋が３０歳の誓い「２人で５０試合登板、３００イニング」同学年左腕対談　学生時代の意外な関係性明かす</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045914.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹＆高橋が同学年左腕対談　大竹「（遥人は）鬼滅の善逸みたいな感じ」高橋「（大竹は）何考えてるか分からない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045916.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹「他人と比較して生きたことがない」高橋「僕は結構、左右されるタイプ」　考え方は違えど自分と向き合う姿勢【取材後記】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045919.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神新助っ人ラグズデール　１９０センチ祖父にバスケ薦められるも野球を選択　“日本式”に順応中！本番モード突入</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045922.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・小幡　２１日からのＯＰ戦へ「自然体」強調　理想のスイング再現に焦点　気負わず「継続してやってること出す」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045924.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ２谷端　プロ初のＯＰ戦へ「積極的」アピール誓った　沖縄で積み上げた努力の成果示す</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/21/0020045926.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・西勇　休日返上８０球　実戦見据えてマウンドから投球「自分の間（ま）でできる」最終クールに向けて弾み</a></li>
+</ul>
 
+
+  
 </div>
 </body>
 </html>
