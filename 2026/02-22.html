@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/22</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602210001433.html" target="_blank" rel="nofollow">【日刊スポーツ】【こんな人】手術発表の阪神石井大智「これから何かあっても…」昨季リハビリで語っていた覚悟</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260222-53ROJLELPJJZTAYCPHCCJK6MIE/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】野手4人の宜野座で生まれたレアな光景　中野、熊谷にノックを打った近本、梅ちゃん</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173323000c.html" target="_blank" rel="nofollow">【スポニチ】阪神から移籍の島本浩也が感じた日本ハムの強さと“コミュ力”の高さ「馬力がすごくて」「一生喋ってる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173434000c.html" target="_blank" rel="nofollow">【スポニチ】【内田雅也の追球】相手走者に応じた守備</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260221-OHT1T51353.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】石井大智がアキレス腱断裂の縫合術「侍ジャパンのＷＢＣ連覇、阪神タイガースのリーグ優勝を心から願っています」今季中の復帰は絶望か</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202602210001488.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】「ガリ！」は強い意思表示だ　阪神の新しいかけ声“米国流”で国際化？</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602210001334.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】坂本誠志郎「本来ならここにいてやってるはずだった」手術の石井大智を思いやる</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602210001652.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】“初戦”の４番に佐藤輝明「いいスイングができたら」牧秀悟、森下翔太と強力中軸</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260222-UTLTOWBOYJJ5XMRRDRMGLZSA7E/" target="_blank" rel="nofollow">【サンスポ】【甘口辛口】嚙みあわない阪神・藤川監督と番記者の対話、微妙な言葉のズレもまた一興…</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260222-ATFWER3WN5NWHH5UMGA3OIERHE/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人、オープン戦で3年ぶり無失点発進「（タイトルを）全部取りたいという気持ちで」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260222-PM6YUKWTR5MYBMJMUIIFCCGACI/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、左アキレス腱断裂で今季絶望的「阪神タイガースのリーグ優勝を願っています」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173414000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大山悠輔、今季も5番は任せろ！オープン戦開幕戦いきなり3安打で“スロースターター”返上!?</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智、左アキレス腱“断裂”だった　縫合手術受け退院も今季復帰は微妙「申し訳ない気持ち」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173425000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人は貫禄の仕上がり！オープン戦で2回零封、内角を果敢に攻め“開幕投手争い”強烈アピール</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173437000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・浜田太貴、先発5番起用に応えタイムリー！本人は「ラッキーヒット」と殊勝も…藤川監督は打力を絶賛</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173458000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】ドラ2谷端将伍が1番デビュー「ごあいさつです。健康でここまで来ましたから」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001173459000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人　初の開幕ローテへ大前進　キレキレ5Kでアピール「まだまだ良くなっていくと思う」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260222s00001173010000c.html" target="_blank" rel="nofollow">【スポニチ】阪神OBの山本和行氏が石井大智に“リハビリ3か条”エール　85年にアキレス腱断裂から復帰</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260222s00001173015000c.html" target="_blank" rel="nofollow">【スポニチ】亀山つとむ氏　阪神・大山悠輔は今年も期待していい　最重要課題は6番以降の下位打線固定だ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/22/kiji/20260221s00001004451000c.html" target="_blank" rel="nofollow">【スポニチ】【侍ジャパン】佐藤輝明　壮行試合「4番・三塁」で主軸アピールへ！長打力を評価の井端監督が起用明言</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049521.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・才木　ＯＰ戦初戦から２回ノーヒット　村上との開幕投手争い好発進「（石井と）一緒に戦っているという気持ちで」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049527.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋　２～５番を４連続三振　開幕ローテへまた一歩前進 藤川監督「非常に良く見えました」６年ぶり沖縄で躍動</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049533.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大山３安打　ＯＰ戦初戦から開幕５番の貫禄　佐藤輝と森下不在感じさせず「しっかりやりたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049539.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・石井大智　アキレス腱断裂だった　今季絶望の可能性浮上「長いリハビリ、最善尽くす」縫合術終え退院</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049541.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊藤将　打球直撃の左膝心配なし２回１安打無失点　開幕ローテ入りへ「いいコースに（球が）いっている」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049645.shtml" target="_blank" rel="nofollow">【デイリースポーツ】藤川監督「勝負は本番に、シーズンに取っておこうかな」ＯＰ初戦ドローの阪神「切磋琢磨する期間に」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049545.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【佐藤義則氏の眼】阪神・高橋はいまシーズンに入ってもすぐ投げられる　才木はフォークの安定感がカギ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/22/0020049547.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神ドラ２・谷端　軽快二塁守備　「１番」で無安打も将「ディフェンスができれば出続けることができる」</a></li>
+</ul>
+
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
