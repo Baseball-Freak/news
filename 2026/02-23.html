@@ -10,13 +10,12 @@
       line-height: 1.6;
       padding: 2em;
       position: relative;
-      /* 本文も少し明るいグレーにして沈まないようにします */
       color: #ddd; 
+      background-color: #1a1a1a; /* 背景色を明示的に指定 */
     }
 
-    /* リンク色の強化（白・黒背景両対応） */
     a {
-      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      color: #3b82f6;
       text-decoration: underline;
       transition: color 0.2s;
     }
@@ -25,7 +24,7 @@
       text-decoration: none;
     }
     a:visited {
-      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+      color: #a78bfa;
     }
 
     .nav-buttons {
@@ -43,7 +42,7 @@
       padding: 0;
       border: 1px solid #666;
       border-radius: 4px;
-      background-color: #333; /* ボタンもダークモードに合わせました */
+      background-color: #333;
       color: #eee;
       cursor: pointer;
       text-align: center;
@@ -57,14 +56,12 @@
       margin-top: 3em;
     }
     
-    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
     h3.bar3 {
       font-size: 1.2em;
       margin-left: 1em;
-      color: #eee; /* 黒背景で見えるように明るい色に指定 */
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+      color: #eee;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
-    /* ▲▲▲ 修正ここまで ▲▲▲ */
 
     .nb-list {
       list-style-type: disc;
@@ -77,109 +74,6 @@
   <script>
     const pad = (n) => String(n).padStart(2, '0');
 
+    // 現在の表示ページから日付オブジェクトを取得 (形式: /yyyy/mm/dd.html)
     const getCurrentDateFromURL = () => {
       const path = location.pathname;
-      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
-      if (!match) return null;
-      const [_, yyyy, mm, dd] = match;
-      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    };
-
-    const goToRelativeDay = async (offset) => {
-      const baseDate = getCurrentDateFromURL();
-      if (!baseDate) {
-        location.href = "../pending.html"; 
-        return;
-      }
-      baseDate.setDate(baseDate.getDate() + offset);
-      const nextY = baseDate.getFullYear();
-      const nextM = pad(baseDate.getMonth() + 1);
-      const nextD = pad(baseDate.getDate());
-      const target = `../${nextY}/${nextM}-${nextD}.html`;
-      const pendingUrl = "../pending.html"; 
-
-      try {
-        const res = await fetch(target, { method: 'HEAD' });
-        if (res.ok) {
-          location.href = target;
-        } else {
-          location.href = pendingUrl;
-        }
-      } catch (error) {
-        location.href = pendingUrl;
-      }
-    };
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
-      if (!pathMatch) return;
-
-      const fileMM = pathMatch[1];
-      const fileDD = pathMatch[2];
-      const h3Element = document.querySelector('h3.bar3');
-      
-      if (h3Element) {
-        const textContent = h3Element.textContent;
-        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-
-        if (contentMatch) {
-          const [fullDate, year, contentMM, contentDD] = contentMatch;
-          if (contentMM !== fileMM || contentDD !== fileDD) {
-            location.href = "../blank.html";
-            return;
-          }
-          document.title = `${fullDate} プロ野球ニュースまとめ`;
-        }
-      }
-    });
-  </script>
-</head>
-<body>
-  <div class="nav-buttons">
-    <button onclick="goToRelativeDay(-1)">Previous</button>
-    <button onclick="goToRelativeDay(1)">Next</button>
-  </div>
-<div class="box1">
-
-  <!-- 当日日付け入力　ここから -->
-
-  
-<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/23</h3>
-
-
-　<!-- 当日日付け入力　ここまで -->
-
- <!-- 当日News入力　ここから -->
-  
-<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260222-OHT1T51432.html" target="_blank" rel="nofollow">【スポーツ報知】井端監督を悩ませるポジションかぶり　岡本＆村上の合流前に「長打でアピール」佐藤輝明が３安打５打点　</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260222-OHT1T51431.html" target="_blank" rel="nofollow">【スポーツ報知】大谷翔平の球「捕ってみたい」ＷＢＣ打者専念方針も阪神・坂本誠志郎、“師匠”中村悠平とひそかに狙う</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260222-OHT1T51380.html" target="_blank" rel="nofollow">【スポーツ報知】阪神・ディベイニーは速い真っすぐへの対応が課題「差し込まれている印象」「真面目な性格も…」金村義明氏が指摘</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260222-OHT1T51372.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】村上頌樹、開幕投手最有力　２年連続の大役へ好発進「全球種で空振りも取れた」無敗のＧキラー</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602220001878.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】坂本誠志郎が侍１号２ラン「いいスイング」守備では３投手リードし２失点</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260223-LL3GE7A2PZPNHIBODU2D34XYK4/" target="_blank" rel="nofollow">【サンスポ】阪神・前川右京「自分の悪い時の癖を言ってもらって…」　和田豊ヘッドコーチの指摘受け即結果　左翼レギュラーへ、チームのオープン戦1号アーチ！</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260223-TIBCHBZ4FJP7HMNLYOR62C2OUM/" target="_blank" rel="nofollow">【サンスポ】阪神・小幡竜平、新助っ人2安打に負けじと3安打！　ディベイニーらとの遊撃レギュラー争い白熱</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260223s00001173038000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　好守備魅せた!ストライク送球で本塁生還阻止「毎日勝負ですから」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260223s00001173039000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　今春初の対外試合で2回無失点「いい形でシーズンに入っていけるのかな」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260223s00001173040000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　圧巻の2回無安打無失点「全球種投げられた」 2年連続開幕投手へ準備OK</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260223s00001173041000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・元山飛優　古巣撃ち右前打!好調アピール「自分のしたいことはちょっとできたかな」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260222s00001173479000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ラグズデール「日本の環境にも慣れ始めて、いい調整ができている」23日・日本ハム戦へ万全</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260222s00001173495000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　近本光司＆中野拓夢　不動の1、2番コンビは今年も大きな武器　OP戦初出場でマルチ安打競演</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260222s00001173487000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・小幡竜平　「開幕遊撃」譲らん　今春の対外試合初先発で3安打3打点「続けられるように」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260222s00001173489000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・前川右京　2年連続OP戦チーム1号！左翼獲りへ号砲「久しぶりに振り切れた」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260222s00001173496000c.html" target="_blank" rel="nofollow">【スポニチ】片岡篤史氏　阪神・前川右京の打席には内容があった　危機感と緊張感が表れていた</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/23/kiji/20260222s00001173490000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】12得点の大勝にも一喜一憂せず「まあ、黙って積むとそれだけですね」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053174.shtml" target="_blank" rel="nofollow">【デイリースポーツ】侍に負けへんでぇ阪神２０安打１２得点　開幕スタメン争う前川ＯＰ戦１号含む３安打２打点 一塁で先発「損することはない」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053180.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　開幕争う才木と同じ２回無安打　初実戦で安定感「選ぶのは監督。任されたところでしっかりやりたい」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053183.shtml" target="_blank" rel="nofollow">【デイリースポーツ】今年も健在　阪神恐怖の１、２番　近本「何がらしいんですか！！」内野安打→中野左前打で一挙３得点お膳立て</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053189.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神遊撃争い激化　小幡３安打３打点 ディベイニー２安打１打点「感覚もよくなっている」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053195.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【佐藤義則氏の眼】阪神・石井の穴に面白い存在　中継ぎに必要な制球を見せた石黒</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053197.shtml" target="_blank" rel="nofollow">【デイリースポーツ】爆勝２０安打１２得点の阪神・藤川監督「黙って積むと。それだけですね」「そういう準備の時期」【一問一答】</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053201.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・西勇輝　復肩へ順調１回無失点　昨年４月以来“１軍”マウンド「自分の感覚のズレが若干ある」</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/23/0020053204.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高寺　２日連続レーザー放った　捕殺で失点ピンチ救う「タイミングがアウトだった」「自信にしたい」</a></li>
-</ul>
-
- <!-- 当日News入力　ここまで -->
-  
-</div>
-</body>
-</html>
