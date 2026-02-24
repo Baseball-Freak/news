@@ -2,87 +2,147 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today’s Baseball Freak News</title>
-
+  <title>Daily Page</title>
   <style>
     body {
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
       font-size: 10pt;
       line-height: 1.6;
       padding: 2em;
+      position: relative;
+      color: #ddd; 
+      background-color: #222; /* 背景が黒に近い場合を想定 */
+    }
+
+    a {
+      color: #3b82f6;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333;
+      color: #eee;
+      cursor: pointer;
       text-align: center;
-      color: #333;
-      margin: 0;
+      transition: background-color 0.2s, color 0.2s;
     }
-
-    h2 {
-      font-size: 1.4em;
-      margin-bottom: 1em;
-      color: #222;
+    .nav-buttons button:hover {
+      background-color: #555;
     }
-
-    #status {
-      margin-top: 2em;
-      font-weight: bold;
-      color: #444;
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
     }
-
-    #loading {
-      font-size: 10pt;
-      color: #666;
-      margin-top: 1em;
+    
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
   </style>
-
   <script>
-    // --- 自動リダイレクトスクリプト (yyyy/mm/dd.html 対応) ---
-    window.onload = async () => {
-      const status = document.getElementById("status");
-      const loading = document.getElementById("loading");
+    const pad = (n) => String(n).padStart(2, '0');
 
-      // 今日の日付を取得
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const dd = String(now.getDate()).padStart(2, "0");
+    // URL形式を /yyyy/mm/dd.html として解析
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
 
-      // 修正：ハイフンをスラッシュに変更
-      const targetURL = `${yyyy}/${mm}/${dd}.html`;
-      const fallbackURL = "blank.html";
+    const goToRelativeDay = async (offset) => {
+      let targetDate;
+      
+      if (offset === 0) {
+        targetDate = new Date(); // 当日（今日）
+      } else {
+        targetDate = getCurrentDateFromURL();
+        if (!targetDate) {
+          // パス解析に失敗した場合はルートの待機ページへ
+          location.href = "../../pending.html"; 
+          return;
+        }
+        targetDate.setDate(targetDate.getDate() + offset);
+      }
 
-      status.textContent = `Checking for article: ${targetURL}`;
+      const nextY = targetDate.getFullYear();
+      const nextM = pad(targetDate.getMonth() + 1);
+      const nextD = pad(targetDate.getDate());
+      
+      // 重要：yyyy/mm/dd.html 形式に変更し、2階層上(../../)から指定
+      const target = `../../${nextY}/${nextM}/${nextD}.html`;
+      const pendingUrl = "../../pending.html"; 
 
       try {
-        // HEADリクエストでファイルの存在確認
-        const res = await fetch(targetURL, { method: "HEAD" });
-        
+        const res = await fetch(target, { method: 'HEAD' });
         if (res.ok) {
-          loading.textContent = "記事が見つかりました。移動します...";
-          setTimeout(() => (location.href = targetURL), 800);
+          location.href = target;
         } else {
-          // 404などのエラー時
-          loading.textContent = "本日の記事はまだ準備中です。";
-          setTimeout(() => (location.href = fallbackURL), 1200);
+          location.href = pendingUrl;
         }
-      } catch (e) {
-        // fetch自体が失敗する場合（CORS制限やネットワークエラー）
-        console.warn("Fetch failed, attempting direct redirect as fallback.");
-        loading.textContent = "ページを確認しています...";
-        
-        // fetchが動かない環境（ローカル実行など）を考慮し、
-        // 1.5秒待っても動かなければ強制的に飛ばすか、blankへ
-        setTimeout(() => {
-          location.href = targetURL;
-        }, 1000);
+      } catch (error) {
+        // fetchが使えない環境でもとりあえず移動を試みる
+        location.href = target;
       }
     };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // URLの整合性チェック (yyyy/mm/dd.html)
+      const pathMatch = location.pathname.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileYYYY = pathMatch[1];
+      const fileMM = pathMatch[2];
+      const fileDD = pathMatch[3];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [_, year, contentMM, contentDD] = contentMatch;
+          // 全て一致しない場合は blank へ（2階層上）
+          if (year !== fileYYYY || contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../../blank.html";
+            return;
+          }
+          document.title = `${year}/${contentMM}/${contentDD} プロ野球ニュースまとめ`;
+        }
+      }
+    });
   </script>
 </head>
-
 <body>
-  <h2>Baseball Freak - Today’s News</h2>
-  <div id="status">記事を確認しています...</div>
-  <div id="loading"></div>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(0)">Today</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+  <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/24</h3>
+  </div>
 </body>
 </html>
