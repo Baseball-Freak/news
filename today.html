@@ -11,17 +11,7 @@
       padding: 2em;
       position: relative;
       color: #ddd; 
-      background-color: #222; /* 背景が黒に近い場合を想定 */
-    }
-
-    a {
-      color: #3b82f6;
-      text-decoration: underline;
-      transition: color 0.2s;
-    }
-    a:hover {
-      color: #fff;
-      text-decoration: none;
+      background-color: #222;
     }
 
     .nav-buttons {
@@ -63,27 +53,37 @@
   <script>
     const pad = (n) => String(n).padStart(2, '0');
 
-    // URL形式を /yyyy/mm/dd.html として解析
+    // 現在表示しているページのURLから日付を取得
     const getCurrentDateFromURL = () => {
       const path = location.pathname;
+      // 形式: /yyyy/mm/dd.html
       const match = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
       if (!match) return null;
-      const [_, yyyy, mm, dd] = match;
-      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+      return {
+        y: match[1],
+        m: match[2],
+        d: match[3],
+        dateObj: new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+      };
     };
 
     const goToRelativeDay = async (offset) => {
-      let targetDate;
+      const current = getCurrentDateFromURL();
+      const today = new Date();
       
+      // 今日の日付のパス (戻り先用)
+      const todayPath = `../../${today.getFullYear()}/${pad(today.getMonth() + 1)}/${pad(today.getDate())}.html`;
+
+      let targetDate;
       if (offset === 0) {
-        targetDate = new Date(); // 当日（今日）
+        // 当日ボタンなら今日の日付へ
+        targetDate = today;
       } else {
-        targetDate = getCurrentDateFromURL();
-        if (!targetDate) {
-          // パス解析に失敗した場合はルートの待機ページへ
-          location.href = "../../pending.html"; 
+        if (!current) {
+          location.href = "../../index.html"; // URLが異常ならトップへ
           return;
         }
+        targetDate = new Date(current.dateObj);
         targetDate.setDate(targetDate.getDate() + offset);
       }
 
@@ -91,45 +91,42 @@
       const nextM = pad(targetDate.getMonth() + 1);
       const nextD = pad(targetDate.getDate());
       
-      // 重要：yyyy/mm/dd.html 形式に変更し、2階層上(../../)から指定
-      const target = `../../${nextY}/${nextM}/${nextD}.html`;
-      const pendingUrl = "../../pending.html"; 
+      // yyyy/mm/dd.html 形式。
+      // 現在の階層が /yyyy/mm/dd.html なので、2階層上がルート
+      const targetPath = `../../${nextY}/${nextM}/${nextD}.html`;
 
       try {
-        const res = await fetch(target, { method: 'HEAD' });
+        const res = await fetch(targetPath, { method: 'HEAD' });
         if (res.ok) {
-          location.href = target;
+          location.href = targetPath;
         } else {
-          location.href = pendingUrl;
+          // 2. 記事がない場合は「当日」へ戻る
+          alert("指定された日の記事がありません。当日のページに戻ります。");
+          location.href = todayPath;
         }
       } catch (error) {
-        // fetchが使えない環境でもとりあえず移動を試みる
-        location.href = target;
+        // 通信エラー等の場合も、安全のために今日へ戻るか直接移動を試みる
+        location.href = todayPath;
       }
     };
 
     window.addEventListener('DOMContentLoaded', () => {
-      // URLの整合性チェック (yyyy/mm/dd.html)
-      const pathMatch = location.pathname.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
-      if (!pathMatch) return;
+      const current = getCurrentDateFromURL();
+      if (!current) return;
 
-      const fileYYYY = pathMatch[1];
-      const fileMM = pathMatch[2];
-      const fileDD = pathMatch[3];
       const h3Element = document.querySelector('h3.bar3');
-      
       if (h3Element) {
         const textContent = h3Element.textContent;
         const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
 
         if (contentMatch) {
-          const [_, year, contentMM, contentDD] = contentMatch;
-          // 全て一致しない場合は blank へ（2階層上）
-          if (year !== fileYYYY || contentMM !== fileMM || contentDD !== fileDD) {
+          const [_, year, mm, dd] = contentMatch;
+          // URLの日付と、中身のh3の日付がズレていたらエラーページへ
+          if (year !== current.y || mm !== current.m || dd !== current.d) {
             location.href = "../../blank.html";
             return;
           }
-          document.title = `${year}/${contentMM}/${contentDD} プロ野球ニュースまとめ`;
+          document.title = `${year}/${mm}/${dd} プロ野球ニュースまとめ`;
         }
       }
     });
