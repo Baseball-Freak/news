@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      color: #ddd; 
+    }
 
+    a {
+      color: #3b82f6;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa;
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333;
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // URLから日付オブジェクトを取得する (形式: /yyyy/mm/dd.html)
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    // 指定されたオフセット（日）移動する。offset=0なら今日へ。
+    const goToRelativeDay = async (offset) => {
+      let targetDate;
+      
+      if (offset === 0) {
+        targetDate = new Date(); // 今日
+      } else {
+        targetDate = getCurrentDateFromURL();
+        if (!targetDate) {
+          // 現在のURLから日付が取れない場合は、基準がないためpendingへ
+          location.href = "../../pending.html"; 
+          return;
+        }
+        targetDate.setDate(targetDate.getDate() + offset);
+      }
+
+      const nextY = targetDate.getFullYear();
+      const nextM = pad(targetDate.getMonth() + 1);
+      const nextD = pad(targetDate.getDate());
+      
+      // yyyy/mm/dd.html の形式。階層が深くなったため ../../ で戻る
+      const target = `../../${nextY}/${nextM}/${nextD}.html`;
+      const pendingUrl = "../../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // URLから yyyy, mm, dd を抽出
+      const pathMatch = location.pathname.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileYYYY = pathMatch[1];
+      const fileMM = pathMatch[2];
+      const fileDD = pathMatch[3];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          // 年・月・日が全て一致するかチェック
+          if (year !== fileYYYY || contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(0)">Today</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/24</h3>
+  </div>
+</body>
+</html>
