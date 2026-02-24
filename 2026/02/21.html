@@ -11,6 +11,7 @@
       padding: 2em;
       position: relative;
       color: #ddd; 
+      background-color: #1a1a1a; /* 背景色を明示的に指定 */
     }
 
     a {
@@ -73,123 +74,6 @@
   <script>
     const pad = (n) => String(n).padStart(2, '0');
 
-    // URLから日付オブジェクトを取得する (形式: /yyyy/mm/dd.html)
+    // 現在の表示ページから日付オブジェクトを取得 (形式: /yyyy/mm/dd.html)
     const getCurrentDateFromURL = () => {
       const path = location.pathname;
-      const match = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
-      if (!match) return null;
-      const [_, yyyy, mm, dd] = match;
-      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    };
-
-    // 指定されたオフセット（日）移動する。offset=0なら今日へ。
-    const goToRelativeDay = async (offset) => {
-      let targetDate;
-      
-      if (offset === 0) {
-        targetDate = new Date(); // 今日
-      } else {
-        targetDate = getCurrentDateFromURL();
-        if (!targetDate) {
-          // 現在のURLから日付が取れない場合は、基準がないためpendingへ
-          location.href = "../../pending.html"; 
-          return;
-        }
-        targetDate.setDate(targetDate.getDate() + offset);
-      }
-
-      const nextY = targetDate.getFullYear();
-      const nextM = pad(targetDate.getMonth() + 1);
-      const nextD = pad(targetDate.getDate());
-      
-      // yyyy/mm/dd.html の形式。階層が深くなったため ../../ で戻る
-      const target = `../../${nextY}/${nextM}/${nextD}.html`;
-      const pendingUrl = "../../pending.html"; 
-
-      try {
-        const res = await fetch(target, { method: 'HEAD' });
-        if (res.ok) {
-          location.href = target;
-        } else {
-          location.href = pendingUrl;
-        }
-      } catch (error) {
-        location.href = pendingUrl;
-      }
-    };
-
-    window.addEventListener('DOMContentLoaded', () => {
-      // URLから yyyy, mm, dd を抽出
-      const pathMatch = location.pathname.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
-      if (!pathMatch) return;
-
-      const fileYYYY = pathMatch[1];
-      const fileMM = pathMatch[2];
-      const fileDD = pathMatch[3];
-      const h3Element = document.querySelector('h3.bar3');
-      
-      if (h3Element) {
-        const textContent = h3Element.textContent;
-        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-
-        if (contentMatch) {
-          const [fullDate, year, contentMM, contentDD] = contentMatch;
-          // 年・月・日が全て一致するかチェック
-          if (year !== fileYYYY || contentMM !== fileMM || contentDD !== fileDD) {
-            location.href = "../../blank.html";
-            return;
-          }
-          document.title = `${fullDate} プロ野球ニュースまとめ`;
-        }
-      }
-    });
-  </script>
-</head>
-<body>
-  <div class="nav-buttons">
-    <button onclick="goToRelativeDay(-1)">Previous</button>
-    <button onclick="goToRelativeDay(0)">Today</button>
-    <button onclick="goToRelativeDay(1)">Next</button>
-  </div>
-<div class="box1">
-
-
-　<!-- 当日日付け入力　ここから　-->
-  
-  <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/21</h3>
-
-　<!-- 当日日付け入力　ここまで -->
-
- <!-- 当日News入力　ここから -->
-  
-<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260224-OHT1T51000.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】なぜ今朝丸裕喜を昨季２冠王と対戦させた？　藤川球児監督の真意「シーズンであの形では…」</a></li>
-<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260223-OHT1T51343.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】伏見寅威が古巣から移籍後、実戦初安打　元相棒・達孝太からの挑戦状に「きょうは“餌まき”なので（笑）」</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202602230001254.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】敵将・新庄剛志は猛虎を褒めるけれど</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602230001944.html" target="_blank" rel="nofollow">【日刊スポーツ】【侍ジャパン】「いい勢いつけて名古屋に！」さかもっちゃんが試合前円陣で盛り上げた…けど負けた</a></li>
-<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602230001939.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】予定通り２月は投げません　守護神・岩崎優がブルペン入り「普通に投げました」</a></li>
-<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260224-BPO5BN6Y6ZMNRAV7JV2YLM34NI/" target="_blank" rel="nofollow">【サンスポ】阪神・今朝丸裕喜が歩む〝達ロード〟「自信になります」　藤川球児監督の指令に応えてレイエス斬り</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173403000c.html" target="_blank" rel="nofollow">【スポニチ】亀山つとむ氏　長身の阪神・今朝丸裕喜が駆使する縦割れカーブは大きな武器になる</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173405000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ラグズデール“ハルカス・カーブ”で日本ハム・レイエス斬り！「全体的に良かった」上々実戦デビュー</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173409000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・近本光司、鮮やかプレーボール打！「初球からスイングしたかった」早くも公式戦さながらの積極打法</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173412000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・及川雅貴「もちろん緊張」オープン戦初登板　1回1失点も左手マメは「大丈夫」と強調</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173415000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　古巣・日本ハムに「餌まき」　相手先発・達孝太から投ゴロも　「シーズンで打ちます」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・浜田太貴　タイムリーで存在感発揮！「粘れたのでいい打球が飛んだ」打力&勝負強さ強烈アピール</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260224s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ドリス　右手に打球を受け緊急降板も「大丈夫だ、大丈夫だ」と強調</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260224s00001173002000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】今朝丸裕喜は打者4人に完全投球も「レギュラーシーズンは簡単じゃない」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260224s00001173009000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・能登嵩都 8番手で緊急登板も零封　「ゾーンで勝負するために、フォームを固めてきた」</a></li>
-<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/24/kiji/20260223s00001173399000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　高卒2年目・今朝丸裕喜　レイエスK斬り！1回1/3パーフェクトの花丸OP戦デビュー</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056056.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・今朝丸　ＯＰ戦堂々デビュー　打者４人に完全！１０１キロのカーブで昨季２冠レイエスを空振りＫ</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056079.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・近本　２戦連続初回初球撃ち「例年通りのコンディション」今季も健在！頼れる不動の１番</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056062.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・モレッタ“火の玉”演習　藤川監督の動画見て研究　１８球のうち１７球が直球“八回の男”アピール１回０封</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056067.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ラグズデール　ＯＰ戦初登板初先発で２回１安打１失点「思った通り」　今後は教育リーグで調整へ</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056052.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【佐藤義則氏の眼】阪神・今朝丸が１軍で活躍する条件とは　モレッタは〝昔の外国人投手〟</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056054.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「出てきた選手がいますよね」　今朝丸の好投に「今日はいい四つのアウト」【一問一答】</a></li>
-<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/24/0020056073.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伏見　苦手パ攻略へ古巣の情報収集＆移籍後初安打　元同僚・達との対戦は投ゴロ「シーズンでは打ちます」</a></li>
-</ul>
-
- <!-- 当日News入力　ここまで -->
-
-  
-  </div>
-</body>
-</html>
