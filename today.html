@@ -7,27 +7,13 @@
 
   <style>
     body {
-      /* メイリオは視認性が高く、背景に左右されにくいフォントです */
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
       font-size: 10pt;
       line-height: 1.6;
       padding: 2em;
       text-align: center;
-      /* #333は白背景で目に優しく、黒背景でも沈み込みません */
       color: #333;
       margin: 0;
-    }
-
-    /* リンクの色調整（ここが重要です） */
-    a {
-      /* 明るい・暗い両方の背景で視認性が高い、少し明るめの紺色 */
-      color: #1a5fb4;
-      text-decoration: underline;
-      transition: color 0.2s;
-    }
-
-    a:hover {
-      color: #000; /* マウスを乗せた時に少し濃くして反応を伝える */
     }
 
     h2 {
@@ -39,7 +25,6 @@
     #status {
       margin-top: 2em;
       font-weight: bold;
-      /* 補助テキストは少しだけ薄く */
       color: #444;
     }
 
@@ -48,61 +33,48 @@
       color: #666;
       margin-top: 1em;
     }
-
-    /* 記事リストがある場合のスタイル（埋め込み先用） */
-    .nb-list {
-      list-style: none;
-      padding: 0;
-      text-align: left;
-      display: inline-block;
-      max-width: 600px;
-    }
-
-    .nb-list li {
-      margin-bottom: 0.8em;
-      padding-left: 1.2em;
-      position: relative;
-    }
-
-    .nb-list li::before {
-      content: "●";
-      position: absolute;
-      left: 0;
-      color: #666;
-      font-size: 0.8em;
-    }
   </style>
 
   <script>
-    // --- 自動リダイレクトスクリプト ---
+    // --- 自動リダイレクトスクリプト (yyyy/mm/dd.html 対応) ---
     window.onload = async () => {
       const status = document.getElementById("status");
       const loading = document.getElementById("loading");
 
+      // 今日の日付を取得
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, "0");
       const dd = String(now.getDate()).padStart(2, "0");
 
-      // yyyy/mm-dd.html 形式を構築
-      const folder = `${yyyy}`;
-      const file = `${mm}-${dd}.html`;
-      const targetURL = `${folder}/${file}`;
+      // 修正：ハイフンをスラッシュに変更
+      const targetURL = `${yyyy}/${mm}/${dd}.html`;
+      const fallbackURL = "blank.html";
 
-      status.textContent = `Checking for today’s article: ${targetURL}`;
+      status.textContent = `Checking for article: ${targetURL}`;
 
       try {
+        // HEADリクエストでファイルの存在確認
         const res = await fetch(targetURL, { method: "HEAD" });
+        
         if (res.ok) {
-          loading.textContent = "記事を読み込んでいます...";
-          setTimeout(() => (location.href = targetURL), 1000);
+          loading.textContent = "記事が見つかりました。移動します...";
+          setTimeout(() => (location.href = targetURL), 800);
         } else {
+          // 404などのエラー時
           loading.textContent = "本日の記事はまだ準備中です。";
-          setTimeout(() => (location.href = "blank.html"), 1500);
+          setTimeout(() => (location.href = fallbackURL), 1200);
         }
       } catch (e) {
-        loading.textContent = "通信エラーが発生しました。";
-        setTimeout(() => (location.href = "blank.html"), 1500);
+        // fetch自体が失敗する場合（CORS制限やネットワークエラー）
+        console.warn("Fetch failed, attempting direct redirect as fallback.");
+        loading.textContent = "ページを確認しています...";
+        
+        // fetchが動かない環境（ローカル実行など）を考慮し、
+        // 1.5秒待っても動かなければ強制的に飛ばすか、blankへ
+        setTimeout(() => {
+          location.href = targetURL;
+        }, 1000);
       }
     };
   </script>
