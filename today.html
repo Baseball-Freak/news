@@ -2,106 +2,115 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Daily Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today’s Baseball Freak News</title>
+
   <style>
     body {
+      /* メイリオは視認性が高く、背景に左右されにくいフォントです */
       font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
       font-size: 10pt;
       line-height: 1.6;
       padding: 2em;
+      text-align: center;
+      /* #333は白背景で目に優しく、黒背景でも沈み込みません */
+      color: #333;
+      margin: 0;
+    }
+
+    /* リンクの色調整（ここが重要です） */
+    a {
+      /* 明るい・暗い両方の背景で視認性が高い、少し明るめの紺色 */
+      color: #1a5fb4;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #000; /* マウスを乗せた時に少し濃くして反応を伝える */
+    }
+
+    h2 {
+      font-size: 1.4em;
+      margin-bottom: 1em;
+      color: #222;
+    }
+
+    #status {
+      margin-top: 2em;
+      font-weight: bold;
+      /* 補助テキストは少しだけ薄く */
+      color: #444;
+    }
+
+    #loading {
+      font-size: 10pt;
+      color: #666;
+      margin-top: 1em;
+    }
+
+    /* 記事リストがある場合のスタイル（埋め込み先用） */
+    .nb-list {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      display: inline-block;
+      max-width: 600px;
+    }
+
+    .nb-list li {
+      margin-bottom: 0.8em;
+      padding-left: 1.2em;
       position: relative;
-      color: #ddd; 
-      background-color: #222;
     }
-    .nav-buttons {
+
+    .nb-list li::before {
+      content: "●";
       position: absolute;
-      top: 1em;
-      left: 1em;
-      display: flex;
-      flex-direction: row;
-      gap: 0.5em;
+      left: 0;
+      color: #666;
+      font-size: 0.8em;
     }
-    .nav-buttons button {
-      width: 80px; height: 30px; font-size: 0.7em;
-      border: 1px solid #666; border-radius: 4px;
-      background-color: #333; color: #eee; cursor: pointer;
-    }
-    .nav-buttons button:hover { background-color: #555; }
-    .box1 { margin-top: 3em; }
-    h3.bar3 { font-size: 1.2em; color: #eee; }
   </style>
-  
+
   <script>
-    const pad = (n) => String(n).padStart(2, '0');
+    // --- 自動リダイレクトスクリプト ---
+    window.onload = async () => {
+      const status = document.getElementById("status");
+      const loading = document.getElementById("loading");
 
-    // URLから現在の日付を取得 (例: /2026/02/24.html)
-    const getCurrentDateFromURL = () => {
-      const path = location.pathname;
-      const match = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
-      if (!match) return null;
-      return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
-    };
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
 
-    const goToRelativeDay = async (offset) => {
-      let targetDate;
-      
-      if (offset === 0) {
-        targetDate = new Date(); // 本当の「今日」
-      } else {
-        const baseDate = getCurrentDateFromURL();
-        if (!baseDate) return;
-        targetDate = new Date(baseDate);
-        targetDate.setDate(targetDate.getDate() + offset);
-      }
+      // yyyy/mm-dd.html 形式を構築
+      const folder = `${yyyy}`;
+      const file = `${mm}-${dd}.html`;
+      const targetURL = `${folder}/${file}`;
 
-      const y = targetDate.getFullYear();
-      const m = pad(targetDate.getMonth() + 1);
-      const d = pad(targetDate.getDate());
-      
-      // yyyy/mm/dd.html のパスを生成 (ルートからの絶対パスで指定)
-      const targetPath = `/${y}/${m}/${d}.html`;
+      status.textContent = `Checking for today’s article: ${targetURL}`;
 
       try {
-        const res = await fetch(targetPath, { method: 'HEAD' });
+        const res = await fetch(targetURL, { method: "HEAD" });
         if (res.ok) {
-          location.href = targetPath;
+          loading.textContent = "記事を読み込んでいます...";
+          setTimeout(() => (location.href = targetURL), 1000);
         } else {
-          // 記事がない場合の処理
-          alert(`${y}/${m}/${d} の記事はまだ作成されていません。`);
-          // 404を避けるため、移動せずに現在のページに留まる
+          loading.textContent = "本日の記事はまだ準備中です。";
+          setTimeout(() => (location.href = "blank.html"), 1500);
         }
-      } catch (error) {
-        // ローカル環境等でfetchが使えない場合は直接ジャンプを試みる
-        location.href = targetPath;
+      } catch (e) {
+        loading.textContent = "通信エラーが発生しました。";
+        setTimeout(() => (location.href = "blank.html"), 1500);
       }
     };
-
-    // ページ読み込み時の整合性チェック
-    window.addEventListener('DOMContentLoaded', () => {
-      const pathMatch = location.pathname.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
-      const h3Element = document.querySelector('h3.bar3');
-      
-      if (pathMatch && h3Element) {
-        const fileDateStr = `${pathMatch[1]}/${pathMatch[2]}/${pathMatch[3]}`;
-        const contentMatch = h3Element.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-        
-        if (contentMatch && contentMatch[0] !== fileDateStr) {
-          // URLと中身の日付が違う場合は警告
-          console.error("URLと表示日付が一致しません");
-        }
-        document.title = `${fileDateStr} プロ野球ニュースまとめ`;
-      }
-    });
   </script>
 </head>
+
 <body>
-  <div class="nav-buttons">
-    <button onclick="goToRelativeDay(-1)">Previous</button>
-    <button onclick="goToRelativeDay(0)">Today</button>
-    <button onclick="goToRelativeDay(1)">Next</button>
-  </div>
-  <div class="box1">
-    <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/24</h3>
-  </div>
+  <h2>Baseball Freak - Today’s News</h2>
+  <div id="status">記事を確認しています...</div>
+  <div id="loading"></div>
 </body>
 </html>
