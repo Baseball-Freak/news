@@ -13,7 +13,6 @@
       color: #ddd; 
       background-color: #222;
     }
-
     .nav-buttons {
       position: absolute;
       top: 1em;
@@ -23,111 +22,74 @@
       gap: 0.5em;
     }
     .nav-buttons button {
-      width: 80px;
-      height: 30px;
-      font-size: 0.7em;
-      padding: 0;
-      border: 1px solid #666;
-      border-radius: 4px;
-      background-color: #333;
-      color: #eee;
-      cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s, color 0.2s;
+      width: 80px; height: 30px; font-size: 0.7em;
+      border: 1px solid #666; border-radius: 4px;
+      background-color: #333; color: #eee; cursor: pointer;
     }
-    .nav-buttons button:hover {
-      background-color: #555;
-    }
-    .box1 {
-      margin-left: -1em;
-      margin-top: 3em;
-    }
-    
-    h3.bar3 {
-      font-size: 1.2em;
-      margin-left: 1em;
-      color: #eee;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    }
+    .nav-buttons button:hover { background-color: #555; }
+    .box1 { margin-top: 3em; }
+    h3.bar3 { font-size: 1.2em; color: #eee; }
   </style>
+  
   <script>
     const pad = (n) => String(n).padStart(2, '0');
 
-    // 現在表示しているページのURLから日付を取得
+    // URLから現在の日付を取得 (例: /2026/02/24.html)
     const getCurrentDateFromURL = () => {
       const path = location.pathname;
-      // 形式: /yyyy/mm/dd.html
       const match = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
       if (!match) return null;
-      return {
-        y: match[1],
-        m: match[2],
-        d: match[3],
-        dateObj: new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
-      };
+      return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
     };
 
     const goToRelativeDay = async (offset) => {
-      const current = getCurrentDateFromURL();
-      const today = new Date();
-      
-      // 今日の日付のパス (戻り先用)
-      const todayPath = `../../${today.getFullYear()}/${pad(today.getMonth() + 1)}/${pad(today.getDate())}.html`;
-
       let targetDate;
+      
       if (offset === 0) {
-        // 当日ボタンなら今日の日付へ
-        targetDate = today;
+        targetDate = new Date(); // 本当の「今日」
       } else {
-        if (!current) {
-          location.href = "../../index.html"; // URLが異常ならトップへ
-          return;
-        }
-        targetDate = new Date(current.dateObj);
+        const baseDate = getCurrentDateFromURL();
+        if (!baseDate) return;
+        targetDate = new Date(baseDate);
         targetDate.setDate(targetDate.getDate() + offset);
       }
 
-      const nextY = targetDate.getFullYear();
-      const nextM = pad(targetDate.getMonth() + 1);
-      const nextD = pad(targetDate.getDate());
+      const y = targetDate.getFullYear();
+      const m = pad(targetDate.getMonth() + 1);
+      const d = pad(targetDate.getDate());
       
-      // yyyy/mm/dd.html 形式。
-      // 現在の階層が /yyyy/mm/dd.html なので、2階層上がルート
-      const targetPath = `../../${nextY}/${nextM}/${nextD}.html`;
+      // yyyy/mm/dd.html のパスを生成 (ルートからの絶対パスで指定)
+      const targetPath = `/${y}/${m}/${d}.html`;
 
       try {
         const res = await fetch(targetPath, { method: 'HEAD' });
         if (res.ok) {
           location.href = targetPath;
         } else {
-          // 2. 記事がない場合は「当日」へ戻る
-          alert("指定された日の記事がありません。当日のページに戻ります。");
-          location.href = todayPath;
+          // 記事がない場合の処理
+          alert(`${y}/${m}/${d} の記事はまだ作成されていません。`);
+          // 404を避けるため、移動せずに現在のページに留まる
         }
       } catch (error) {
-        // 通信エラー等の場合も、安全のために今日へ戻るか直接移動を試みる
-        location.href = todayPath;
+        // ローカル環境等でfetchが使えない場合は直接ジャンプを試みる
+        location.href = targetPath;
       }
     };
 
+    // ページ読み込み時の整合性チェック
     window.addEventListener('DOMContentLoaded', () => {
-      const current = getCurrentDateFromURL();
-      if (!current) return;
-
+      const pathMatch = location.pathname.match(/\/(\d{4})\/(\d{2})\/(\d{2})\.html$/);
       const h3Element = document.querySelector('h3.bar3');
-      if (h3Element) {
-        const textContent = h3Element.textContent;
-        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
-
-        if (contentMatch) {
-          const [_, year, mm, dd] = contentMatch;
-          // URLの日付と、中身のh3の日付がズレていたらエラーページへ
-          if (year !== current.y || mm !== current.m || dd !== current.d) {
-            location.href = "../../blank.html";
-            return;
-          }
-          document.title = `${year}/${mm}/${dd} プロ野球ニュースまとめ`;
+      
+      if (pathMatch && h3Element) {
+        const fileDateStr = `${pathMatch[1]}/${pathMatch[2]}/${pathMatch[3]}`;
+        const contentMatch = h3Element.textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+        
+        if (contentMatch && contentMatch[0] !== fileDateStr) {
+          // URLと中身の日付が違う場合は警告
+          console.error("URLと表示日付が一致しません");
         }
+        document.title = `${fileDateStr} プロ野球ニュースまとめ`;
       }
     });
   </script>
@@ -138,8 +100,8 @@
     <button onclick="goToRelativeDay(0)">Today</button>
     <button onclick="goToRelativeDay(1)">Next</button>
   </div>
-<div class="box1">
-  <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/24</h3>
+  <div class="box1">
+    <h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/24</h3>
   </div>
 </body>
 </html>
