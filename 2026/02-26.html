@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/26</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260226-RMWFYENF5ZNEJP52YTD74REUKE/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】「みんなMVPと言いたいところですが」　トラ番サブキャップが選んだのは選手ではなく…</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173326000c.html" target="_blank" rel="nofollow">【スポニチ】【内田雅也の追球】「うりずん」の雨と姿勢</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260225-OHT1T51219.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】右足肉離れから復帰を目指すドラフト１位・立石正広が沖縄・具志川組でキャンプ打ち上げ「レベルアップにつながった」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260225-OHT1T51205.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督、石井大智の離脱に「戦力がダウンしたと思っていない」…キャンプＭＶＰは異例の９選手「全体的には非常に順調」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202602250001116.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】キャンプ打ち上げ“MVP”にスターがいなかったのは当然の阪神</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001061.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人５年ぶり初日からブルペン「昨年より良くなっていると実感」／虎番が選ぶMVP</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001070.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】典型的スラッガー浜田太貴、そつのない外野守備も見逃せない／虎番が選ぶMVP</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001068.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】糸井SA太鼓判！“谷やん”谷端将伍、主力中心の宜野座組で完走／虎番が選ぶMVP</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001049.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伏見寅威「驚きが多い」新天地で球団独特の取材の多さにも丁寧な対応／虎番が選ぶMVP</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001301.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】持ち前の長打力発揮！ドラ１立石正広が笑顔でキャンプ完走「レベルアップにつながった」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001194.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】MVP９人!?藤川監督「いい素材集まってきている」リーグ連覇へ、没頭した濃密な１カ月</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602250001129.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】宜野座キャンプのラストブルペンは工藤泰成　最後に確認したかったこと／虎番が見た</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260226-AUEAGJPLIZII7K3I7BHBLKKS4I/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督「非常に伸びてきた」石黒＆木下　石井の分まで積み上げた宜野座春季キャンプ打ち上げ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260226-L4NI63DMTNIVVGEPF2QIPHLJDA/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、立石は「順調に1カ月過ごせましたか？」今後の方針明言避け「リハビリ中です。はい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260226-JCPQOVF6KNMXJICVZBRF2DQMTQ/" target="_blank" rel="nofollow">【サンスポ】阪神D1位・立石正広、初キャンプ打ち上げ「レベルアップ実感」　本格復帰へ平田2軍監督「SGLで仕上げていく」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173329000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・球児監督　異例のMVP9人選出　筆頭は2年目の伊原「取り組みがプロになった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173332000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊原陵人　チームトップの投げ込みでキャンプMVP「光栄だけど、実力はまだまだ足りない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173336000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人　新フォーク完成宣言　奪三振率アップへ握り改良「凄くいい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173338000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ1立石正広　完全復活へ近々ダッシュ再開　初キャンプは「レベルアップにつながった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173327000c.html" target="_blank" rel="nofollow">【スポニチ】亀山つとむ氏　阪神の最激戦区・左翼争いは高寺望夢が一歩リード　石井代役は木下里都&石黒佑弥</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173325000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　最強二遊間構築を目指す!クセが強いディベイニーと「しっかり話し合いをしていければ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173308000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ2谷端将伍「先輩たちを見ながら充実した練習ができた」新人で唯一宜野座完走</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173310000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】石井大智の離脱ショックを払拭「そういうことはある。あまり気には留めていない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173320000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・元山飛優「めちゃめちゃ充実」　浜田太貴「開幕スタメン狙う」新加入コンビそろってキャンプMVP</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/26/kiji/20260225s00001173313000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・嶋村麟士朗　夢実現へ前進の藤川監督MVP指名「支配下を意識して気負わずにやるだけ」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062444.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　「次のステージにいよいよ行けるなと」伊原「キャンプを見ていて取り組みがプロになった」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062446.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　春季キャンプＭＶＰに９人　石井離脱も「戦力ダウンとは思っていない」石黒＆木下が代役台頭</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062452.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　日本Ｓ雪辱へ新選手会長手締め＆決意のスピーチ「強くなったチームを見て」２年連続開幕投手狙う</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062458.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・浜田　開幕スタメン照準　藤川監督からＭＶＰ指名「ありがたい」空白の左翼争い「どんどん打ってアピール」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062464.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・嶋村　異例の育成選手ＭＶＰ　藤川監督「姿勢」を評価　伏見、梅野、坂本らから学び多く「勉強になった」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062468.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１立石　辛抱の２月「自分自身のレベルアップにつながった」キャンプ打ち上げ　３月で完全復活目指す</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062474.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　坂本に続く２、３番手争いし烈　“３５歳の新入生”伏見の存在感、育成・嶋村は打撃で猛アピ【担当記者総括・捕手】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/26/0020062477.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　注目のディベイニーは土に苦労　新加入の元山＆ドラ２谷端が存在感　一、二、三塁は不動【担当記者総括・内野】</a></li>
+</ul>
+
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
