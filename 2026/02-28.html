@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/02/28</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260227-OHT1T51373.html" target="_blank" rel="nofollow">【スポーツ報知】野手最年少“井端チルドレン”阪神・森下翔太が指揮官へ感謝「すごく縁があるかなと思います」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260227-OHT1T51430.html" target="_blank" rel="nofollow">【スポーツ報知】昨季２冠の虎の主砲がスタメンアピールV３ラン！「いいスイング」佐藤輝明が初球撃ち自身侍１号</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260227-OHT1T51353.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督、開幕投手は発表も通達もゲン担ぎ「村上頌樹投手でいきます」巨人キラーに託したリーグ連覇への初陣</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260227-OHT1T51295.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】石井大智、左アキレス腱断裂からの復活へ決意「やるしかない」　患部固定し松葉づえ姿でリハビリ開始　</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260227-OHT1T51276.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ドラフト３位・岡城快生「起きたと同時に『急きょ甲子園』と電話が…」突然の合流も気負わずサク越え２本</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/samurai/wbc2026/news/202602270001664.html" target="_blank" rel="nofollow">【日刊スポーツ】【WBC】坂本誠志郎、試合中はベンチで大谷翔平と熱い会話　アナリストとも情報共有</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602270001054.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ３岡城快生が藤川監督指名で甲子園練習参加「どんどん慣れて、これから学んで」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602270001132.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】キャンプ恒例の“鉄のカーテン”が甲子園に、ファンも一時退場し非公開練習実施</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602270001080.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ２谷端将伍　打撃好調も土のグラウンドに苦戦「どんなバウンドになるか分からない」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202602270000877.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】3・27　Ｇ倒任せた！虎初のリーグ連覇へ村上頌樹が開幕投手、先発マスクは坂本誠志郎</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260228-3JECMV2LIRJLHBJNUU7OKKOVIM/" target="_blank" rel="nofollow">【サンスポ】阪神・小幡竜平に外野プラン浮上「これからじゃないですか」筒井コーチ「いろんなポジションをやりながら」右翼で打球追う</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260228-5BLAZINYXNKSLCGIZCU3M2JBWM/" target="_blank" rel="nofollow">【サンスポ】阪神・町田隼乙が全体練習参加「しっかりアピールしたい」昨年10月に左人差し指手術</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260228-DVYCSK3UXZKF5H2Z6WBZLM7QTE/" target="_blank" rel="nofollow">【サンスポ】阪神育成・福島圭音が全体練習参加「沖縄でやってきた練習を出していきたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260228-H5XUN57PLBPVBBZDRNDE4B4EVY/" target="_blank" rel="nofollow">【サンスポ】阪神D3位・岡城快生、初甲子園で浜風実感「外野を守っていてもすごい伸びる」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260228-HHMV53PLD5LWVOIRTQMPCBAJEA/" target="_blank" rel="nofollow">【サンスポ】阪神D2位・谷端将伍が初甲子園「ちゃんと足を動かして捕らないと…」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260227s00001173213000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　新外国人モレッタが初の甲子園練習に感激「すごくきれいな球場だ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260227s00001173354000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督　開幕投手・村上頌樹をサプライズ発表「今年もこの2人で」坂本とのコンビで打倒・巨人</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260227s00001173358000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　開幕投手指名の村上頌樹は完投勝利誓う「今年は投げ切れるように」昨季は白星も9回2死で降板</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260228s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智　ともに戦う！「自分にできることをチームに還元」左アキレス腱断裂手術後初対応</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260228s00001173013000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・小幡竜平　右翼でノック受けた　シーズン見据え、ディベイニー遊撃固定時の新オプション</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260228s00001173017000c.html" target="_blank" rel="nofollow">【スポニチ】阪神新助っ人“陽キャ”対談　ルーカス「投げる量にびっくり」　ディベイニー「アップの長さに面食らった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260228s00001173023000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　横田慎太郎さんの顕彰プレートをSGL尼崎の室内練習場に設置　同期の岩貞「懐かしいな…」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260228s00001173026000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・町田隼乙　フリー打撃で回復アピール　OP戦へ向け「しっかり準備したい」昨年10月左人さし指骨折</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/02/28/kiji/20260228s00001173022000c.html" target="_blank" rel="nofollow">【スポニチ】阪神のルーキーコンビ・谷端将伍＆岡城快生　初の甲子園に感激…大観衆の中でのプレーにワクワク</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069809.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　２年連続開幕投手　藤川監督今年もサプライズ発表　信頼不変「頌樹、来年もね」最速Ｖ火付け再現へ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069811.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・石井がリハビリ開始　松葉づえ姿で告白　負傷直後は「戦力」の自覚持てず→岩崎に促され「自分にできることしっかり還元」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069813.shtml" target="_blank" rel="nofollow">【デイリースポーツ】リハビリ再開の阪神・石井が告白　経験者の「伏見さんにお話を聞いて色々とアドバイスしてくださった」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069816.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・谷端＆岡城　ルーキーコンビが甲子園初見参！憧れ聖地に感動「広さにビックリ。圧倒された」アピールへ決意新た</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069819.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督が異例の甲子園“閉鎖”　報道陣やファンも入れずにサインプレー確認「何したんでしょうね」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069821.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・小幡がライトで守備練習「守ってました？」本人は多く語らず　本職・遊撃が基本線も出番機会増やす</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069823.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「東京ドームに乗り込む時は村上、佐藤を先頭に行きたい」サプライズで開幕投手・村上を発表【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/02/28/0020069825.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　横田慎太郎さんの顕影プレートをＳＧＬに設置　功績と精神を後世に伝える</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/samurai/wbc2026/news/202602270001361.html" target="_blank" rel="nofollow">【日刊スポーツ】【WBC】大谷から一瞬で主役奪った！佐藤輝明「いい感触」プロ６年目の侍１号は初回決勝３ラン</a></li>
+</ul>
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
