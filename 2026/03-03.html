@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/03/03</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260302-OHT1T51358.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】才木浩人が初回に４安打集中されて２失点「僕に対して真っすぐを１、２、３で振ってくるのはあまりない」…藤川球児監督「連係が取れているチーム」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260302-OHT1T51333.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】伏見寅威が“虎初打点”「積極的にスイングすることを意識した」…才木浩人とのバッテリーも「信頼関係築き上げたい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603020001061.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ラグズデール３日教育Ｌ登板、才木＆ドリスの助言受けフォーク完全習得も目指す</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603020001287.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中川勇斗ら若虎が韓国代表から連打　藤川監督「足りなさに気付けば。収穫は選手たちに」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603020001054.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】３日先発伊藤将司、侍大谷翔平との対戦に「低めに丁寧に」新加入ルーカス「興奮する」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260303-74MAXRN6JFKTJEWMWUZECTFGNE/" target="_blank" rel="nofollow">【サンスポ】阪神・伊藤将司「対戦できる機会も、滅多にない」「ゴロ打たせて取れたら」3日侍戦先発予定</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260303-7V2FSQE76NMD3I3UMZIJJZIBW4/" target="_blank" rel="nofollow">【サンスポ】阪神・ルーカス、大谷と対戦すれば「興奮して投げられる」3日侍戦で来日初登板予定</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260303-D5I6ODFMBVOAHNY4XQ5QDONKCU/" target="_blank" rel="nofollow">【サンスポ】阪神・ラグズデール、才木＆ドリスから教わったフォーク「自分の武器として増えれば」3日教育L登板有力</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260303-Q4HV3VYTSROUVAYRMVCSWDZH6E/" target="_blank" rel="nofollow">【サンスポ】阪神の左翼争い、韓国撃ちで若虎アピール合戦！　藤川球児監督「いいパフォーマンス」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260302s00001000375000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　「積極的にスイングできた」中堅への適時二塁打で“虎初打点”</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260302s00001000372000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人　新フォーク脅威！韓国から3回5K「だいぶイメージ通り」　初回失点も修正力見せた</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260302s00001000404000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・岩崎優　上々の今年初実戦 1回2奪三振無失点「まだ先は長い。開幕までしっかり調整したい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260302s00001000406000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・モレッタ　 1回ピシャリ「チームのためになることが一番。しっかりやっていきたい」石井の穴埋める</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260302s00001000411000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊原陵人　大谷の同僚・金慧成を三振斬り　好調なスタートも「もう少し精度を高めていく」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260302s00001000397000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊藤将司　大谷斬り意欲「低めに丁寧に投げていけたら」3日の侍ジャパン戦に先発へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260303s00001000008000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】韓国の李政厚に「打球音はさすが。うちの打者も見習うべきところが多い」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260303s00001000012000c.html" target="_blank" rel="nofollow">【スポニチ】藤川阪神　韓国とドローで海外勢に3戦無敗　前川、中川、高寺が活躍「いいパフォーマンス見せた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260303s00001000013000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ2・谷端将伍 レジェンド左腕撃ち!メジャー78勝の柳賢振から中前打「1本出たのでホッとした」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/03/kiji/20260303s00001000020000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中川勇斗　“コリアン・エクスプレス”撃ち「いい感じに打てた」最速159キロ郭彬からチーム初安打</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/03/0020079580.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　キャンプＭＶＰ若手トリオ躍動　中川＆高寺＆小野寺が一挙３点韓国撃ち　藤川監督「素晴らしい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/03/0020079591.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伏見　韓国代表から吸収　マスク越し＆打席からもインプット　二回左中間タイムリーで移籍後初打点</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/03/0020079603.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原　大谷同僚・金慧成斬り！韓国代表戦１回ピシャリ　中継ぎもイケる！対外試合３戦５回０封</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/03/0020079596.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・才木　フォークに収穫　３回２失点も５Ｋは全て落ち球　あとは「真っすぐの微調整」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/03/0020079585.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ２谷端　対外試合１５打席目で初安打「本当にホッとした」藤川監督の直接指導で原点回帰</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/03/0020079578.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「ありがたいゲーム」ＷＢＣ韓国代表に３－３「見習うべきところが多い打者」に言及【一問一答】</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
