@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/03/05</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260304-OHT1T51299.html" target="_blank" rel="nofollow">【スポーツ報知】侍ジャパン・阪神の佐藤輝明が米メディアの直撃取材で明かす…子供の頃の自分に伝えたいメジャーへの思い</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260304-OHT1T51279.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】開幕Ｇ倒ローテ見えた！　村上頌樹、高橋遥人、大竹耕太郎でスタートダッシュへ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260304-OHT1T51261.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】大竹耕太郎、初の著書「覆す」２１日発売　「前向きになれない人に読んでもらいたい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603040000993.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎「シンプルにそれだけ」開幕ローテ入りへのテーマは？次回は古巣の鷹戦か</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603040000569.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人「直球は一番投げるボール。簡単だけど、難しい」高い精度求め開幕ローテ入りへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603040001005.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎が初の自著を発売へ　タイトルの「覆す」に込めた意図は…</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603040000997.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】開幕内定の村上頌樹６日ソフトバンク戦へ　金曜日調整スタート「いい相手なので自信に」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603040000996.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】新外国人ダウリ・モレッタ「投げられるのは楽しみだよ」本拠地甲子園での初登板心待ち</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260305-42I5YEU7WZOY3KGA6HYWF5YUUY/" target="_blank" rel="nofollow">【サンスポ】阪神・村上頌樹、甲子園に「村上シート」設置　故郷・南あわじ市からプロ野球選手出てきて！　6日ソフトバンク戦先発有力</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260305-6TDQYYDLNVISXBAURMVYZRCUX4/" target="_blank" rel="nofollow">【サンスポ】阪神・及川雅貴、キャッチボールから「質のいい強いボールを」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260305-6UUWQ4RH2VNCBOHJ4SNXCQ2OGA/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎、6日からのソフトバンク2連戦で登板へ　自著「覆す」への思いも…</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260305-AENOFJG37VOFLHDSNWQBTU5TVA/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋遥人、7日ソフトバンク戦が有力「結果も内容も両方大事」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260305-EZRJOCKGNRJI7NPFXOPPYH3MDY/" target="_blank" rel="nofollow">【サンスポ】阪神の新外国人右腕・モレッタ、本拠地初登板へ「万全の準備をして結果を出す」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173307000c.html" target="_blank" rel="nofollow">【スポニチ】阪神に満塁男健在！木浪聖也がハヤテ戦で2点二塁打「チャンスで打てて良かった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173315000c.html" target="_blank" rel="nofollow">【スポニチ】阪神育成ドラフト2位・山崎照英「初球から行くつもりだった」初盗塁＆実戦初打席で安打　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173380000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　中学生の軟式野球大会を甲子園で　野球振興プロジェクト「TRIAL　BASEBALL」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173381000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　初めての著書「覆す」21日発売　「卒論ぶりの文字数になった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173385000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　佐野大陽が静岡で“里帰りタイムリー”「自信になった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173396000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　及川雅貴「質の良い強いボール」を求め開幕までに150キロ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173401000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　巨人との開幕カード3連勝した04年の再現へ、高橋遥人と大竹耕太郎を投入</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173407000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　村上頌樹が「村上シート」で甲子園10勝!!淡路っ子の声援を力に変えて</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173414000c.html" target="_blank" rel="nofollow">【スポニチ】関本賢太郎氏　阪神、開幕左翼の争いは中川勇斗が現状では一歩リード</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/05/kiji/20260304s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　伊原陵人「競争に勝たなければ」開幕ローテ入りへ左腕サバイバルを勝ち抜く</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087342.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原　２年目ジンクス打破へ　中継ぎもＯＫ！フル回転誓い「いつ投げる時も結果を出せるように準備」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087340.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１立石　屋外で打撃練習　ショートゲームで柵越え２発逆方向へ　本格復帰へペースアップ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087344.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・モレッタ　甲子園デビュー「楽しみ」６日から３連戦　寒さの不安一蹴「適応していくべき」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087346.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・木浪　満塁男健在！フルスイング２点二塁打　開幕１軍に向け「やれることをしっかりやる」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087350.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　野球振興プロジェクト開始で夢プラン　西宮市の中学軟式チームで大会、決勝は甲子園で</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087352.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人　直球「最大値はまだある」さらなる向上求める　７日登板予定、開幕ローテ入りへ万全アピる</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087356.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹　初の自叙伝「覆す」に込めた思い「優勝旅行の往復の機内でもずっと書いてました」２１日販売予定</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/05/0020087361.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　甲子園に「村上シート」設置　故郷・南あわじ市に恩返し「何かを始めるきっかけになれば良いなと思って」</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
