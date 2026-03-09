@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/03/10</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260309-OHT1T51366.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】新外国人・ルーカスが甲子園デビューへ「気持ちの面で理解してくれるのが大きい」アスリート妻の存在が支え</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260309-OHT1T51273.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督、６月下旬のナイター開催直訴「暑くなる時期が早くなっている」ファームでも練習中のＴシャツ、ハーフパンツ着用求める</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603090001522.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「６月後半ぐらいからナイターができれば」暑さ対策でアイデア「時代とともに」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603090001208.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹「近々大暴れしてくれる」智弁学園先輩の侍ジャパン岡本和真へにやりエール</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603090001182.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】元アスリートの新妻が来日、ルーカスが開幕へ加速「仕事を理解してくれる」とデレデレ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603090001207.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】「火曜の男」筆頭の才木浩人、花粉症は「気合と根性で」直球に磨きをかけ開幕ローテへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202603090001205.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】開幕投手の村上頌樹「いい球を連続で」球質こだわり調整　WBC出場の同僚らにエールも</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260310-LBYSDW34EBPDPAADEGWPADAOZM/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人「あとは真っすぐの感覚だけ」　開幕2カード目の3・31DeNA戦に準備着々</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260310-UDFSKL2HFRNBZITPV32KYAY4JU/" target="_blank" rel="nofollow">【サンスポ】阪神・ルーカスが10日の西武戦で本拠地デビュー　愛妻・ブルックさんも観戦予定「早く投げたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260310-XSKC4Q4WJ5N2RGUAR7KAGQJXYA/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川監督、6月後半から週末ナイター開催を訴え　アイデアマンは酷暑対策に歩みを止めず</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260310-ZEW6MIBYZZJKFPRRJZYZPEWQ7A/" target="_blank" rel="nofollow">【サンスポ】阪神・村上頌樹、次回登板の課題は「ボール先行や球質が悪くなったりしないように」3・27開幕投手</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/10/kiji/20260309s00001173344000c.html" target="_blank" rel="nofollow">【スポニチ】【虎番リポート】阪神・伊原陵人　フル回転へ新マットレス導入「寝ることが一番リカバリーにつながる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/10/kiji/20260309s00001173347000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ルーカス、愛妻パワーで“圧投”誓う！春季C後に来日「助かっている」甲子園デビュー戦も観戦予定</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/10/kiji/20260310s00001173028000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　開幕戦の巨人を警戒　「岡本さんが抜けて競争も激しい」　新戦力をしっかりチェックだ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/10/kiji/20260310s00001173021000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人「気合と根性でいきます」今がピークの花粉症も快投で吹き飛ばす　10日西武戦で先発予定　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/10/kiji/20260310s00001173031000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督　「1軍だけの“サービス”は時代錯誤」酷暑対策で2軍への「短パン」導入構想明かす</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/03/10/kiji/20260310s00001173034000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　31日本拠地開幕戦で藤川監督、選手らにチャンピオンリング贈呈　小柳ゆきが国歌独唱</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/10/0020107206.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督“球児改革”の提言　未来へ野球を紡ぐ３プラン「夏の暑さは本当に年々、厳しくなっています」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/10/0020107209.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「服装の乱れではないと認知いただき進めていかなければ」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/10/0020107211.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神新助っ人ルーカス　いざ甲子園見参　１０日の西武戦で本拠地初登板　愛妻来日で元気１００倍</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/10/0020107214.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・才木「気合と根性」で花粉に負けん　現在症状は「とんでもないです」１０日の西武戦先発予定　</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/03/10/0020107216.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上が予告　岡本先輩の「大暴れ」　ＷＢＣ出場中の高校先輩を「打ってほしいと思って見ています」　</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
