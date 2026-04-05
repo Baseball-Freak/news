@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/04/06</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260405-OHT1T51352.html" target="_blank" rel="nofollow">【スポーツ報知】福本豊氏、阪神打線は“ニュー栗林”の対策が急務「コントロール抜群。昨季とは印象が違うなと感じたはず」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202604050001918.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】日本ハム８試合で20本塁打…一方、阪神は「３」セ最少も　また火曜からだ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604050001910.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川球児監督、先発ローテーション変更を明言　２軍戦で好投の茨木秀俊が筆頭候補</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604050001741.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】モレッタ、来日２度目の連投で３ホールド目「１点もあげられない状況で仕事できた」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604050001881.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、粘り強く戦えていることに「常にそういう姿勢はありますね」／一問一答</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260406-5VWF3GO5OBMZBES4WHVJMJOAJE/" target="_blank" rel="nofollow">【サンスポ】【インフィールドメモ】阪神・福島圭音「大山さんは『全力疾走を怠らない』と常に言われていた」　渡辺記者が感じた大山イズム</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260406-ASUCVHIXQZNMPEZIANYFYFFAIQ/" target="_blank" rel="nofollow">【サンスポ】阪神・福島圭音「自信になる」　栗林打った打った初マルチ！　サヨナラ負けにも光明</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260406-FYXZNOHMDZIUNAUVFWUGOE6Y6E/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、政権初サヨナラ被弾も見せた粘力タクト　7日から甲子園！ヤクルトと首位攻防3連戦</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/06/0020209993.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　粘り強い戦い「常にそういう姿勢はありますね」「甲子園三つ、いい試合ができれば」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/06/0020209995.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・福島“新鮮力打”栗林撃ちプロ初マルチ　３戦連続左翼スタメン応えた！フルイニングで存在感</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/06/0020210001.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　広島・栗林に脱帽「素晴らしいピッチング」次戦甲子園で好調ヤクルト戦「いい試合ができれば」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/06/0020210007.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・近本　意地の同点犠打「なんとか粘れた」連続試合安打は６でストップ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/06/0020210012.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人　中７日手応え６回１失点　初回に今季初失点も粘投「強いボールいっていた」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/06/0020210018.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・今朝丸　収穫の７１球　今季最長５回２／３を１失点好投も六回途中降板は「反省点」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173386000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　9日ヤクルト戦で茨木秀俊プロ初先発有力　藤川監督抜てき！初のサヨナラ被弾もローテ再編で奪首へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173387000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・近本光司　難敵・栗林から犠飛で意地の1打点「抑えの時と印象は違いましたね」次回対戦での雪辱誓う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173394000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・モレッタ　フル回転で5試合連続無失点「1点もやれない状況で自分の仕事ができた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173399000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　今季初安打→近本犠飛でヘッスラ生還「やっと始まった。ここから積み重ねていきたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173411000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人　6回1失点の粘投も実らず　初回失点を反省「相手の投手に余裕を持たせてしまった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173416000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　森下翔太&佐藤輝明の主砲コンビ不発　先発で初対戦の栗林良吏に完敗…そろって4打数無安打</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/06/kiji/20260405s00001173426000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・福島圭音が初のマルチ安打!準完全男・栗林から快音「自信になる」　3戦連続先発で存在感</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
