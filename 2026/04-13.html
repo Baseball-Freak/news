@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/04/13</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260412-OHT1T51363.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】高橋遥人が３試合で２度目の完封「出来すぎっすけど、いっぱい投げられてうれしい」１０奪三振で中日戦は自身５連勝「骨で投げる」独自の感覚</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260412-OHT1T51302.html" target="_blank" rel="nofollow">【スポーツ報知】金村義明氏が阪神の８月独走優勝を予告「セ・リーグのなかではレベルが違う」「黄金期の西武をほうふつとさせる」高橋遥人の打席姿勢も称賛</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202604120001652.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】佐藤輝明が思い出させる「打率４割」の夢　バースのNPB記録にどこまで迫れるか</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260413-3NUH2VZKG5ILHFVRWU3JQHEGWU/" target="_blank" rel="nofollow">【サンスポ】阪神・中野拓夢、五回鮮やか先制打「守るもの、癒される家族が増えて、より一層…」　今月第１子長女誕生</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260413-JKS342YDKFIQLM6ZWTKSSYPTJ4/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋遥人、早くも今季2度目の完封!　虎左腕では江夏豊以来57年ぶり快投　チームも今季初4連勝</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260413-QGWYAD3IFVN2HDEY625XRYFRQM/" target="_blank" rel="nofollow">【サンスポ】【インフィールドメモ】阪神・高橋遥人　「大好きなコーラをやめた」　三木記者が明かす完全復活の秘話</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236817.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　高橋遥人「ずっとバランス良かった」今季初３タテ「また来週、甲子園で試合がありますので」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236819.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人２完封　４月達成は江夏以来５７年ぶり　チームは４連勝、カード一巡終え首位１１勝４敗</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236825.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　鬼門３連勝導く猛打賞！打率４割突破「集中して１打席、１打席いくだけ」　安打放てば１０勝１敗</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236831.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　高橋宏ＫＯ打「常に初球から打つ準備」ＷＢＣ同僚初球撃ち　４戦連続打点　</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236837.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・中野　打席も桜花賞も“読み”的中　五回先制打から一挙３点「つなぐ意識はより持ってやっていきたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236843.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・前川　難敵・高橋宏からマルチ「好投手から打てて良かった」日替わり左翼争いで結果</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236849.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・坂本が海外ＦＡ権取得「今のことに集中。今日の試合をどうやって勝つかしか考えてない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/13/0020236852.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ディベイニー　待望来日１号　２９歳誕生日前祝い　２打席以降は凡打「自分が目指す状態にはまだ遠い」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173467000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人　早くも2度目の完封！丁寧にコース突き10奪三振　宏斗との“高橋対決”2戦2勝</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173473000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　また完封演出!!球数少ない高橋遥人を絶賛「どんどん打者に勝負していける」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173402000c.html" target="_blank" rel="nofollow">【スポニチ】NPB現役選手に「高橋」は何人？一番勝った「高橋」は？　遥人と宏斗の「高橋対決」は遥人に軍配</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173477000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・坂本誠志郎　11年目で海外FA権取得　連覇へ「今できることに集中したい」4年契約の2年目</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173468000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】高橋遥人の次回登板について「あまり言えないですね…。あまり言う理由がないので」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173482000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　23年岡田前監督時代の“待ちの中野”から進化　「割り切った」打席で先制V撃</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260412s00001173489000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・前川右京　高校時代から相性抜群！高橋宏キラー本領の2安打「好投手から打てて良かった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260413s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　球団初3年連続の4戦連発ならずも4戦連続打点　中野拓夢の先制打に続く初球打ち</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/13/kiji/20260413s00001173008000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　3冠王夢じゃない！今季3度目3安打で打率・411　好不調の波消え2戦連続無安打なし</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
