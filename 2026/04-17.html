@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/04/17</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260417-OHT1T51001.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】嶋村麟士朗が１軍デビュー「元々緊張しないのかな」巨人の守護神と対戦も動じず</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260416-OHT1T51396.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明のマー君撃ちも空砲…チームは初の連敗＆カード負け越しも藤川球児監督「すべてを糧にして」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202604160001489.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】強い阪神のはずだが１点差試合は１勝４敗に…両軍締まった試合で初回失点悔やまれる</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260417-TAE6FKQZBNMEVAFBSS2KHYHUZ4/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、甲子園の空に豪快ムーンショット！　今季初連敗＆カード負け越しも虎党魅了</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/17/0020251726.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　マー君撃ち４号２ラン　ボール気味インハイをバックスクリーン右へ「いい風が吹いていた」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/17/0020251732.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　「特別」な宿敵に初連敗＆初カード負け越しも「全てを糧にして戦っていく。それがペナントレース」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/17/0020251738.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ルーカス　また初回失点、登板３戦で計７失点「二回以降はある程度できた」立ち上がり課題克服へ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/17/0020251744.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・嶋村がプロ初打席　いきなりＶＳマルティネスもフルスイングで左飛「良い方向に捉えて」次戦につなげる</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/17/0020251750.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　ジェット風船「楽しみ」七回ノルマ　１７日・中日戦先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/17/0020251755.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１立石　左翼で好守　ライナー性の打球をスライディングキャッチ「バリエーションを増やしていけたら」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173007000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　ドラ1・立石正広がプロ初の3番で3四球と好守備　平田2軍監督「球際が強い」フル出場</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260416s00001173456000c.html" target="_blank" rel="nofollow">【スポニチ】【赤星憲広氏　視点】後半3イニングに苦しむ阪神　岩崎へつなぐ形確立を　今年も巨人戦は接戦増えそう</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173018000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】プロ初打席の嶋村麟士朗について「ゲームが始まれば、個人のことはね」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173028000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　虎党に魅せた“3冠の夢”　バース彷彿のマー撃ち4号!打率&打点はリーグ首位独走</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173008000c.html" target="_blank" rel="nofollow">【スポニチ】阪神打線　「コーナーに来ていた」田中将を攻略できず　森下翔太は好機で三振、前川右京は無安打</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173025000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・小幡竜平　14試合ぶりスタメンで躍動！5回に田中将から左前打</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173033000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹「ジェット風船経験できるの楽しみ」　本拠の中日戦、7回まで投げ抜く決意</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173029000c.html" target="_blank" rel="nofollow">【スポニチ】阪神先発投手“かく乱調整”　大竹がブルペン入りで19日先発浮上も、伊原と茨木が同じルートで姿消す</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173015000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・嶋村麟士朗　代打でプロ初出場、プロ初安打はお預けも“いいね”初球からフルスイング</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/04/17/kiji/20260417s00001173031000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ルーカス　またも初回金縛りに猛省「早く問題を見つけて、初回からしっかり投げられるように」</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
