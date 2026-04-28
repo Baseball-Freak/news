@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/04/29</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260427-OHT1T51323.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】近本光司が死球をよけきれなかった一因「絶好調の時なら左手には当たらない」金村義明氏が指摘</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260427-OHT1T51297.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】才木浩人、同郷の先輩・近本光司の長期離脱に「軸が１人いなくなった」「ゼロで抑えることを第一に」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260427-OHT1T51268.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】門別啓人が５・２巨人２戦目に今季初先発有力　初戦が村上頌樹、３戦目が大竹耕太郎　藤川球児監督「いいゴールデンウィークに」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260427-OHT1T51254.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】森下翔太が中堅守備に自信「どこでもやる覚悟はしている」「主力がけがでいなくなっても勝てる強さがある」近本光司の骨折離脱もＷＢＣで経験</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260427-OHT1T51251.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ドラフト３位・岡城快生が１軍合流「ある意味チャンス」近本光司が左手首の骨折で出場選手登録抹消</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604270001264.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ3岡城快生が緊急昇格へ「１軍で求められるものがある」近本離脱でチャンス再来</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604270001256.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人９連戦先陣！兵庫県人会の近本離脱も「抜けた穴大きいけどカバーできるように」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604270001293.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太、不動のセンター近本の穴埋める覚悟「WBCでも経験しているのは糧になる」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202604270001064.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高寺望夢が遊撃の練習　近本光司離脱でオプションか　和田ヘッド「準備」多く語らず</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260428-SNW3KIUVE5MI3DZHFLQFOIQPAI/" target="_blank" rel="nofollow">【サンスポ】【虎、薫る】阪神・工藤泰成、3戦防御率0・00のウラに変化球の割合増</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260428-3A7P7HVJLFL2FDAQB756BLG5VY/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋遥人、中16日でやるぞ3完封　29日ヤクルト戦先発予定「先頭出さないように」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260428-7XBMSEVENJLQFGLHAQOXIHC3ZE/" target="_blank" rel="nofollow">【サンスポ】阪神D3位・岡城快生、28日に1軍合流「ある意味チャンスではある」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260428-BRYXSK4XSRM7FHD4R6HXNM4C2Y/" target="_blank" rel="nofollow">【サンスポ】阪神・ラグズデール、5月3日来日初登板初先発へ「楽しみ。レベルを上げていけるように」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260428-EUTBIHPLEZJNFMJPSLMOK3QX3I/" target="_blank" rel="nofollow">【サンスポ】阪神・西勇輝、燕斬り出番だ「丁寧にやっていくだけ」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/28/0020293254.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　近本代役センターに意欲　「ＷＢＣの経験糧に」穴埋める　打でも「引っ張れればなと思います」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/28/0020293256.shtml" target="_blank" rel="nofollow">【デイリースポーツ】近本離脱の阪神　代役中心は高寺＆福島に熊谷、小野寺、岡城らの併用か　森下も中堅守備に意欲</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/28/0020293262.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・才木　近本離脱ショックの一掃誓う　９連戦初戦の自覚「０点に抑える」「カバーできるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/28/0020293264.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝の打撃は「大谷くんクラス」　糸井嘉男氏が指名　３、４月ＭＶＰは森下！輝！遥人！</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/28/0020293268.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神「国産打線」で優勝なるか　いまだ外国人野手の出場なし　支配下契約外国人野手はディベイニーのみ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/04/28/0020293270.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・能登さんと仲良くなりたくて→話しかけて見つかった意外な共通点【コラム　若虎界隈】</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
