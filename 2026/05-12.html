@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/05/12</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260511-OHT1T51263.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】高橋遥人がセ・リーグ６１年ぶり４人目の４試合連続完封へ「圧倒できるように」５・１３ヤクルト戦で偉業目指す</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260511-OHT1T51227.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】西勇輝は相棒・伏見寅威の３６歳の誕生日に白星を「おいしいご飯でも食べに行きたい」５・１２ヤクルト戦で３００試合連続先発登板へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202605110001637.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹６試合ぶり勝利へ「まだまだ改善するところある」次回登板は15日広島戦が濃厚</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202605110001570.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】西勇輝がツバメ連倒狙う「チーム全体で束になって戦いたい」12日首位攻防初戦に登板</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202605110001586.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太「チャンスだと思う」12日からのヤクルト２連戦で４年連続２ケタ本塁打目指す</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202605110001329.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伏見寅威が36歳に「ゲームを作って個人的にもいい１日にしたい」5・12は勝って祝う</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202605110001447.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】無双の左腕で首位奪回へ　プロ史上初オール完封で４連勝中の高橋遥人が13日先発予定</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260512-IKJQKGXUARKI5OZHZRT3QXFGZU/" target="_blank" rel="nofollow">【サンスポ】【虎、薫る】阪神・嶋村麟士朗の野球観を変えたバイト代で米留学　現DeNA・レイノルズの練習量に驚き</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260512-6RZQFY2ZPVKMTK4TT44DBF5KAQ/" target="_blank" rel="nofollow">【サンスポ】阪神・西勇輝、5・12ヤクルト戦先発　2勝目挙げて伏見と祝宴！？</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260512-TYHSLGQCPRO6PPOP5LDODHLH5A/" target="_blank" rel="nofollow">【サンスポ】阪神・森下翔太、任せろヤクルト大好物弾　打者有利の神宮…「ホームランチャンス」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260512-TZU4PZGCRBNGVG7UAXJKQNYFKM/" target="_blank" rel="nofollow">【サンスポ】阪神・伏見寅威、36歳の誕生日にいい思い出を…</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260512-V3MBNE36MNLE5O2QU6QSPJ4VRM/" target="_blank" rel="nofollow">【サンスポ】阪神・村上頌樹、5・15広島戦へ　「この1週間で精度を上げる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260512s00001173035000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝、3冠王は？――田淵幸一氏　逆方向への打球続けば可能性十分　鍵は5番打者の“アシスト”</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260512s00001173036000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝、3冠王は？――槙原寛己氏　力が抜け「コツ」会得、バースの姿追うように成長</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173335000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　“故郷の先輩”早い復帰の願い込め…愛用の「KOJI打撃用手袋」で打つ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173342000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・西勇輝「相手を勢いづけないように」　前回登板に続き同学年の伏見寅威とのバッテリーで2勝目狙う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173325000c.html" target="_blank" rel="nofollow">【スポニチ】【秋山拓巳BAと対談（上）】阪神・高橋遥人　断コーラ継続中も意志強くないんで「どこかで飲んでやる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173331000c.html" target="_blank" rel="nofollow">【スポニチ】【秋山拓巳BAと対談（中）】阪神・高橋遥人　疲れは「まだ大丈夫」　初の開幕ローテで知った「凄い」こと</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173337000c.html" target="_blank" rel="nofollow">【スポニチ】【秋山拓巳BAと対談（下）】阪神・高橋遥人　ヒーローインタビューは「言葉選び過ぎなんですかね」　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173338000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太「甲子園以外はホームランチャンス」好相性のヤクルト山野撃ちへ気負いなし</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173340000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　元オリ戦士の盟友・西勇輝とのバッテリーで「5・12」初のバースデー星をつかみ取る</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/05/12/kiji/20260511s00001173326000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人　“無双状態”でも「ボール自体まだまだ」　4連続完封へ直球の質向上に余念なし</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/05/12/0020343780.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人　４連続完封なら小山以来６４年ぶり　１３日首位攻防ヤクルト戦「圧倒できるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/05/12/0020343788.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・今朝丸の度胸に感動　外国人選手相手に内角ズバッと　福原忍氏「先発投手として非常に面白い」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/05/12/0020343790.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　首位攻防２連戦　相手先発の吉村＆山野は４割以上の好相性も「いつも通り」カード初戦連敗止める</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/05/12/0020343793.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伏見　誕生日の苦い思い出「トータルで見て良くない」１２日、西勇とバッテリー濃厚　バースデー星目指す</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
