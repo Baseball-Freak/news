@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/06/03</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260602-OHT1T51240.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明が今季創設の「長嶋茂雄賞」受賞へ意欲「最終的に取れれば」　平良海馬とのメジャー志望対決は４日に仕切り直し「頑張って打ちたい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001109.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今朝丸裕喜「１歩ずつですけど」20歳誕生日に「１軍デビュー」へ青写真</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001111.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「一番ファームで経験ある方なので」百崎蒼生が初１軍合流／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001062.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎が４試合ぶり３勝目へ「真っすぐをしっかり投げて」西勇輝は４日先発見込み</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001054.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広「やっぱり負けたくない。同級生の活躍は刺激」西武小島大河＆岩城颯空に負けない！</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001006.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大山悠輔、背番号３の大先輩ミスターに今年も活躍届ける「頑張ります」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001098.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】百崎蒼生プロ初１軍「うれしい」　藤川球児監督「一番ファームで経験があるのは百崎」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001001.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】６月３日は野球界にとって特別な日　佐藤輝明＆森下翔太がミスターの命日に勇姿見せる</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606020001177.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太、６月３日長嶋茂雄さん一周忌「今年も良い姿を見せられれば」活躍誓う</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260603-7LGTPW6Q6BL4JNANI4NEEG6W64/" target="_blank" rel="nofollow">【サンスポ】阪神・大山悠輔、3日の長嶋茂雄氏の一周忌を前に「頑張ります」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260603-CQ54PXUJVVIRLKNKN3JY23SHYY/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎「自分の投球を見てどう反応されるか」3日西武戦先発</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260603-M3BEFVWT7NKVNOEZBFUIYJ4XZQ/" target="_blank" rel="nofollow">【サンスポ】阪神・西勇輝「言われたことに逆算して」4日西武戦先発見込み</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260603-NEOVBR27KVLZZBS4NQBW2IO3RU/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、ミスターの一周忌前に初代・長嶋茂雄賞の誓い「最後に取れれば」　同一シーズン11球団本塁打も視野に伝説的シーズンさらに加速！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260603-QREO7JY2YNOCZHQMU3EJ6Q2ZYE/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、台風接近での中止に「日本が無事なことを祈るだけ」木下起用法「各社さんで調べていただいた方が…」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173361000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】百崎蒼生に「経験が何よりも財産。チャンスが巡ってくるか、どうかは彼次第」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173363000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・今朝丸裕喜　二十歳の誓い「2軍で結果出して。1軍の舞台に上がれたらいいな」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173366000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　台風接近も「普通にやるだけ」3日先発、2日予定された西勇輝は4日に</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173368000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　同学年の「活躍は刺激になる」　西武・小島、岩城との初対決へ静かな闘志</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173372000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大山悠輔　“ミスターの日”へ「頑張ります」　同じ背番号3つながり、不思議と活躍する縁も　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173380000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　期待高まるシーズン「11球団制覇弾」　球団3人目の偉業へ残すは4チーム</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173388000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　今秋ドラフトで「バットマン」狙い　来季DH制導入で守備、足などに不安あるタイプでも候補に</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173391000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・百崎蒼生　不屈の男が挑む〝猛獣撃破〟　顔面死球からの過酷リハビリ乗り越え1軍合流</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173394000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　突き進む“ミスターへの道”　長嶋茂雄賞の初代候補「結果見て選んでくれたら」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/03/kiji/20260602s00001173397000c.html" target="_blank" rel="nofollow">【スポニチ】元阪神・益山性旭さん逝去　71歳　76年にドラフト1位で入団、85年日本一にも貢献</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429563.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　百崎が１軍合流「努力は非常にする選手ですから」抹消は投手のモレッタ「ベンチ入りのメンバーですね」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429565.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　ミスターへ届け！追悼試合のＶ弾再現へ　新設「長嶋茂雄賞」にも意欲「選んでくれたらうれしい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429571.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　ドラフト候補に桐蔭横浜大・渡辺夏一が急浮上　デビューは３年春、最速１５１キロ右腕　先発＆中継ぎ候補</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429573.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・今朝丸　１軍デビューへ二十歳の誓い　１０試合で３勝２敗、防御率２・４５「一歩ずつ舞台に近づけている」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429579.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１立石　大学日本代表で共闘の西武・小島、ドラ２・岩城との再会心待ち「活躍は刺激になる」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429585.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹　予定通り３日先発　西武戦は移籍後初「どう反応されるかしっかり見ていきながら投げたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429588.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　西武戦へ“秘密兵器”　百崎がプロ初１軍合流「うれしいですね」２軍＆フェニックスＬでの対戦経験生かす</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/03/0020429594.shtml" target="_blank" rel="nofollow">【デイリースポーツ】糸井嘉男氏＆能見篤史氏が生解説　１４日「関西ダービー」パブリックビューイングイベント</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
