@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/06/03</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+<ul class="newslist">
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001283.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001283-w200_0.jpg);" width="45" height="45">巨人田中将大、14年以来の同一球団２人が同じシーズンに全球団勝利達成なるか／見どころ<time>[7:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001582.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001582-w200_0.jpg);" width="45" height="45">藤井秀悟氏「１カ月決まらなかった」巨人FA移籍の真相を告白「ジャイアンツが拾ってくれて」<time>[7:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001289.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001289-w200_0.jpg);" width="45" height="45">日本ハム孫易磊、球団助っ人最年少勝利なるか／見どころ<time>[7:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001165.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001165-w200_0.jpg);" width="45" height="45">藤井秀悟氏「お父さんを喜ばせるためだけに野球をやってた」野球を続けた理由を告白<time>[6:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100002390.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100002390-w200_0.jpg);" width="45" height="45">【西武】渡辺勇太朗「力強くて、心強かった」母校の浦和学院の吹奏楽部の演奏を力に好投<time>[5:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100002158.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100002158-w200_0.jpg);" width="45" height="45">【阪神】就任後初退場の藤川監督「真剣にやっていますから、こういうことは代表として」一問一答<time>[5:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001210.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001210-w200_0.jpg);" width="45" height="45">月間MVP賞　セは阪神高橋遥人＆佐藤輝明が２カ月連続、パは日本ハム伊藤大海と西武ネビン<time>[5:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100002150.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100002150-w200_0.jpg);" width="45" height="45">【阪神】就任後初退場の藤川監督「冷静ではありましたけど」１つの勝利、１プレーにこだわり抗議<time>[5:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001298.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001298-w200_0.jpg);" width="45" height="45">【西武】山下美月がセレモニアルピッチでワンバウンド投球「楽しく投げられたなと思います」<time>[5:00]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100002098.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100002098-w200_0.jpg);" width="45" height="45">【ロッテ】10失点の毛利海大にサブロー監督「１回抹消」「彼らしくないフォアボールが多い」<time>[4:55]</time></a></li>
+<li><a href="https://www.nikkansports.com/baseball/news/202606100001305.html" onclick="dataLayer.push({'event':'ichiranHLclick','eventLabel':'リニューアルクリックテスト'});"><img src="https://cache2.nipc.jp/mod2015/img/common/blank.gif" style="background-image: url(https://www.nikkansports.com/baseball/news/img/202606100001305-w200_0.jpg);" width="45" height="45">【ヤクルト】下川隼佑が11日オリックス戦で今季先発　池山監督「なんとか…」連敗ストップ期待<time>[4:55]</time></a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
