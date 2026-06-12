@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/06/13</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260613-OHT1T51000.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】村上頌樹が初回２者連続被弾も粘投「切り替えてなんとか粘れれば」チームはリーグワーストの５２被弾で昨季の１２球団最少５３被弾に迫る多さ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260612-OHT1T51435.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】&quot;一発病&quot;で今季初４連敗…村上頌樹が７回２失点も初回に痛恨の２者連続被弾　被本塁打５２はリーグ最悪　３位ヤクルトにゲーム差なしの２位</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202606120002148.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】“強メンタル”森下の１発で流れを変えろ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606120002426.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、打線の奮起を期待「パッと明ける時を待つというか」／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606120002190.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】４連敗に藤川監督「勝ちにいく執念を示さなければ」連敗ストップへ力を込める</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606130000005.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】平田２軍監督、下村海翔の初打席に「代走でも使える。いいもの持っとるよ」／一問一答</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260613-LEHWJCHLSFKYRNMSNVKBE7JPPY/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督「執念を示さなければ」　あぁ貧打、今季ワースト4連敗…勝ちにいく「つもり」ではダメ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/13/0020470444.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「仕掛けていくことが重要」　今季ワースト４連敗で交流戦負け越し決定　「相手に上回られている」あと１本出ず</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/13/0020470447.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　初回２者連続被弾も粘投７回２失点　二回以降意地の０封　藤川監督も称賛「十分な役割」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/13/0020470453.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋　チーム救って！今季無敗の連敗ストッパー　中７日で今季初京セラドーム登板「いつも通りストライク先行で」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/13/0020470456.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・下村　収穫の３失点　２度目先発で最長５回　立ち上がり４連打浴びるも平田２軍監督「良い勉強になった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173466000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】4連敗も「勝ちにいく執念は常にあるつもり。勝ちにいくというのは凄く重要なこと」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173473000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・湯浅京己　前半戦の復帰は絶望的…11日ソフトバンク戦で右足首捻挫　出場選手登録抹消</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173477000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　ブルペンデーにやられた…わずか5安打　押し出し1点のみ　今季初4連敗で4年連続交流戦負け越し</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173496000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　快調マルチ安打!交流戦打率チームトップ・302　「いい打席が送れている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173486000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　森下翔太　3試合ぶり19度目のマルチ安打「勝敗は仕方ない。切り替えてやっていきます」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173505000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・木下里都　2試合連続の3人斬り　1番から始まる打順も「落ち着いていけたんで良かった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260613s00001173009000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　登板12試合中11試合でクオリティースタート　初回2被弾も「すぐに切り替えて」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260613s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人「回の先頭バッターを斬るのが大事」13日オリックス戦で今季4度目の連敗ストッパー期待</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/13/kiji/20260612s00001173480000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・下村海翔　初被弾もプロ入り最長の5回73球で5安打3失点　低めの精度は失わず</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
