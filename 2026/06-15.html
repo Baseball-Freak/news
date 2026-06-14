@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/06/15</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260614-OHT1T51271.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ＤＨ打率・１１１と低迷し交流戦ビジター３勝６敗　藤川球児監督「明らかに…」今季２度目のサヨナラ負け</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260614-OHT1T51187.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神評論】金村義明氏「立石正広を辛抱強く使ってほしい」“危険”な代打の１打席　佐藤輝明は成績以上に成長を証明する犠飛</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202606140001396.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】下位打線まで気を抜けないパとの差　週明けラスト２試合、阪神が「セ」の意地見せろ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606140001632.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、打線はあと１本が出ずも「いいリズムで継投に入れたとは思う」／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606140001607.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「明らかに必要だろうと」交流戦中の「DH」は９試合で１打点　課題を口に</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260615-36LKPUUN2BIKBA7OCBR6EU7HYI/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、関西ダービーサヨナラ負けで2年ぶり負け越し　DH打率・111と課題浮き彫り</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/15/0020477589.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　「しのぎあいになっていきましたけど、いいリズムで継投に入れたと思いますけど」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/15/0020477591.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　猛打賞で打率３割到達　４戦連続安打＆３戦連続マルチ「自分のやってきたことをやりたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/15/0020477597.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　課題「明確」１２球団ワーストＤＨ打率・１１１　嶋村「自分の技術不足を感じました」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/15/0020477601.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　九里から右前打＆左犠飛「悪くない」５戦連続安打＆２戦連続打点　リーグ３冠ぶっちぎり</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/15/0020477607.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・木下　プロ初３連投もリード守れず　１点差の難しさ痛感「頑張ります」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/15/0020477611.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・小幡　三塁打＆犠飛「当然頭に入れて臨んだ」上沢撃ち　３試合連続安打「今はとにかくレベルアップ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173459000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　全て僅差で3連投の木下里都に救援陣の“救世主”と期待「きっかけ得ることができた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173458000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・西勇輝が粘投4回5安打1失点　古巣・オリックス相手の2年ぶり白星はならず</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173463000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　交流戦残り2試合も攻撃起点に徹する「もっといい出塁を意識したい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173451000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・工藤泰成　4試合連続無失点　「1点差だったけど、いつも通りを意識した。仕事はできたかな」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173433000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　打席の感覚「悪くない」　交流戦負け越し決定も残り2戦意地見せる</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173443000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　死球のち不屈の猛打賞　京セラ男がオリックス先発の九里撃ち　1カ月ぶり打率3割復帰</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173436000c.html" target="_blank" rel="nofollow">【スポニチ】T―岡田氏　昨年より一段レベルアップした阪神・佐藤輝明の「準備」　残りのシーズンも楽しみでしかない</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173442000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】DHに課題「小技、走力、守備力の汎用性、スイングの強さは今後、明らかに必要」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/15/kiji/20260614s00001173453000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ドリス　状態は「悪くなかった」が14試合ぶり失点　延長10回サヨナラ負け喫す</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
