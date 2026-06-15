@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/06/16</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260615-OHT1T51282.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】才木浩人、好相性の西武戦で胴上げ阻止「ゼロでいけるように」２年前は８回１死まで無安打投球　このカードは１４イニング連続無失点</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260615-OHT1T51204.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】立石正広が１６試合の西武戦で３試合ぶりのスタメン復帰有力「しっかり準備していくだけ」交流戦Ｖかかる西武の胴上げ阻止へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606150001282.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎「自分のイメージと実際が合致」17日楽天戦で先発、６試合ぶりの白星目指す</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606150001352.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ１立石正広２試合連続スタメン落ちも「自分がしっかり準備していくだけ」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606150001370.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】交流戦ラスト２試合へ中野拓夢「隙のないように」森下翔太「ケガなく最後まで」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606150001302.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】西勇輝が抹消　14日オリックス戦４回１失点　ここ３試合は勝ち星なし</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606150001272.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人に迷いなし　鷹に３被弾も切り替え　交流戦男の本領へ「プロとして結果を出す」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606150001258.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】MLBスカウトが佐藤輝明に熱視線　パ豪腕投手との対戦が対応力はかる指針に</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260616-6OB6FDNB7JIUXEQE63Z2UPF4B4/" target="_blank" rel="nofollow">【サンスポ】阪神・森下翔太、交流戦首位打者あるぞ　残り2試合8打数5安打なら逆転！？</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260616-O3M5IEUQI5O3NDX43XB25S4GHE/" target="_blank" rel="nofollow">【サンスポ】阪神D1位・立石正広、交流戦ラスト2試合「結果を残したい」　12打席連続無安打…6・16西武戦でスタメン復帰も</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260616-QNKVZFAMQNORZLLFSIMI66L4WM/" target="_blank" rel="nofollow">【サンスポ】阪神・中野拓夢、交流戦残り2試合「自分が納得いく打席を」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260616-QUAU2YQ6PRNVBAQKOVQMEYFKFU/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人、見せます〝心化〟の獅子狩り　交流戦眼前V阻止へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260616-XNVYWPMO3BIXDIPE5I6V45CBDE/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎、6・17楽天戦へ「イメージと実際が合致してきた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173409000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・熊谷敬宥の超美技“忍者守備”　「絶対に捕るしかない」状況で瞬時に導き出した最適解とは</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173412000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人　三度目の正直で狙う今季交流戦初勝利　データも味方！西武とは過去2度対戦し14回無失点</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173413000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹、優勝に必要なのは団結力！森保ジャパンに負けない粘り強さ大事「全員が力合わせて」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】阪神、リーグ戦再開時にローテ再編！DeNA3連戦先発、3戦目に伊藤将司で今季開幕カードと同じに</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173414000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　16日西武戦で3試合ぶり先発復帰濃厚「結果を残したい」　好相性の左腕撃ちで再浮上だ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173416000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　好相性の17日楽天戦でトンネル脱出や！目下5連敗中も「どんどん良くなっている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173422000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太、チームメートに「ノーモア故障」の訴え　「交流戦、タフな部分多いんで」自身も細心の注意</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173420000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　交流戦チーム2位の打率・302と打撃好調　残り2試合フォア・ザ・チームで必勝誓う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/16/kiji/20260615s00001173419000c.html" target="_blank" rel="nofollow">【スポニチ】阪神タイガースWomen　女子野球W杯メンバーに星川あかりら3選手が選出　木戸克彦監督が団長に</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480712.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１立石　一戦必勝の覚悟「自分たちは勝たないといけない」西武胴上げ阻止へ“ドラ１対決”武内撃つ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480714.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・才木「ゼロ」封宣言　前戦２日スライド３回５失点も「切り替え」交流戦ラス投、西武胴上げ阻止へ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480718.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹　交流戦白星締めへ　自身５連敗も悲観せず「イメージと実際が合致してきた」１７日・楽天戦先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480723.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・嶋村の良さは思い切り　代打で結果「今はベンチに座っている時間もいい勉強」狩野恵輔氏が期待</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480721.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・下村　交流戦明け初昇格も　トレーナーから動きの制限解除　前回登板で最長５回、最多７５球</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480725.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ２谷端“らしさ”戻った精神面の成長「切り替え甘かった」立石＆岡城を「追い越せるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480727.shtml" target="_blank" rel="nofollow">【デイリースポーツ】さらば「松とら屋」元デイリースポーツ・松下雄一郎さん死去　名物コラム２３１５回＋α貫いた書き屋の本懐</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/16/0020480731.shtml" target="_blank" rel="nofollow">【デイリースポーツ】「トップ会談」で残したトンカツ２切れ「松とら屋」松下雄一郎さん悼む　コンテンツ局次長・岩田卓士</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
