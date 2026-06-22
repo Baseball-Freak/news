@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/06/23</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/23/0020507210.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　常勝支える猛虎の方程式とは　創設１００周年も「黄金期」で　粟井球団社長が語った理念　金本政権が転機</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/23/0020507212.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・粟井球団社長　何度も繰り返した「役割」　ファンと一体になってチームを支えること【取材後記】</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260622-OHT1T51280.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】才木浩人、Ｗ杯チュニジア戦観戦で刺激「サッカーめっちゃ面白い」…ＦＷ上田綺世に「あのえぐい人、同い年なんすか！」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260622-OHT1T51093.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】福島圭音が休養日では異例の指名練習「もう起こらないように」前夜のＤｅＮＡ戦は送球ミスで懲罰交代</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001083.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】熊谷敬宥「できることをやる」13試合連続スタメンも足元見つめる　W杯は「日本人として誇り」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001094.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今朝丸裕喜「プロのマウンドはまた違う。早く立ってみたい」甲子園でのプロ初登板心待ち</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001090.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎「失敗とかいろいろメモしている」ローテ再編でも泰然自若の調整で次回登板へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001095.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明「１試合１試合頑張ります」首位を取り合うヤクルト３連戦に平常心でGO</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001054.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】涙の福島圭音、汚名返上の特守「もう起こらないように」筒井コーチ「練習するしかない」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001043.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人、サッカーＷ杯刺激「ファンが一緒に熱くなれるのが醍醐味」虎党熱狂の快投誓う</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001107.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太「余計なことは考えていない」首位攻防のヤクルト戦へ一戦必勝</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202606220001128.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢が一意専心でヤクルト３連戦へ「目の前の試合を勝つことだけ…」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260623-7UUVWAPBUNOVZEDBBQSODC65PE/" target="_blank" rel="nofollow">【サンスポ】【虎、薫る】阪神・佐藤輝明〝振り返る〟から成長できた　甲子園で毎打席ビジョンで見つめ直す</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260623-3W3CDDPXIFNOZJSLFC57KE7HQA/" target="_blank" rel="nofollow">【サンスポ】阪神・福島、帰阪即！守備練習　前日ミス直後交代「もう起こらないように」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260623-4LHAVJFJ2RN2PAHBRBMDD5BANE/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹、昨年と同ペースも「うまくいっていないような感覚…自分たちに求める基準が上がっているのかな」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260623-EEU2XKXEUJPV7EBVCYO6R2L76E/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人、サッカーW杯に燃えた！熱投誓った！「自分のプレーでファンを熱狂させる」　同学年・上田綺世の「えぐい」プレー刺激</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260623-IW2DISBB6RIMFKOY6OK6PMDLQY/" target="_blank" rel="nofollow">【サンスポ】阪神・今朝丸、デビューのときをブルペンで待つ「早く立ってみたい気持ちはあります」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260622s00001173372000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神先発マッチアップ】才木→大竹→伊藤将にヤクルトは山野、奥川のダブルエース、助っ人右腕を投入</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260622s00001173337000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　最速キングへ追い続ける“輝の背中”　肌で感じ取る技術的な差と飛躍へのヒント</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260622s00001173355000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　28日が30歳バースデー　9試合連続安打中の記録伸ばしてキャリアハイ狙う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260622s00001173358000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・福島圭音　悔し涙流した痛恨のミス「もう同じこと起こさない」　甲子園で約1時間30分守備練習</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260623s00001173006000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人　防御率1.10の聖地で“W杯級”熱投魅せる　同学年・上田綺世らの活躍が刺激に</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260622s00001173371000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　リーグ戦再開後初の本拠地ゲームへ気合十分　勝利打点10は両リーグトップ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260622s00001173363000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・嶋村麟士朗に聞く　仲のいい選手いますか？　オフの日の過ごし方は？</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260623s00001173010000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・今朝丸裕喜　待ち遠しいプロでの甲子園デビュー　ヤクルト3連戦へ「早く立ってみたい。投げたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260623s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・下村海翔　23日ヤクルト戦から1軍本格合流へ　ファーム通算防御率2.25</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/06/23/kiji/20260623s00001173012000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎「数字にとらわれると失速する経験ある」 防御率2.18の安定感も目の前の一戦に集中</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/23/0020507214.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・才木　Ｗ杯「めっちゃ面白い」同学年・上田綺世らに刺激「自分も熱くなってやれる」野球も盛り上げる　２３日先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/06/23/0020507220.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・福島　涙の送球エラー一夜明け「ああいうプレーが起きないように」甲子園で指名練習、５０分間みっちり汗</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260622-OHT1T51145.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】２３年ドラフト１位の下村海翔が２８日の広島戦で１軍デビューの可能性浮上！　２３日に１軍再合流　最速１５５キロを誇る秘密兵器</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
