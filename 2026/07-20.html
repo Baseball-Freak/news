@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/07/20</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260720-GQHGGKZEUVMWVI6NOLWUII2PVQ/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】「みなさん、すごい体格の方ばかりで…」　新人記者が〝未知との遭遇〟に興味津々</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260720-KEBA5OB4ZVKXTHF6UMBCVSLUPE/" target="_blank" rel="nofollow">【サンスポ】【ダンカン】『プロ野球はケンカ』や！　前日のサトテルちゃんのバットを持たないケンカが本日の勝利を導いたのだ！</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260719s00001173425000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神見どころ　20日】立石正広、1軍復帰後初の甲子園で出るか「ウル虎弾」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202607190002281.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】激勝阪神　次はDeNAエンカーナシオンに気をつけろ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260720-CFT7KIUAWRN35A5ZYCWJHMUDHI/" target="_blank" rel="nofollow">【サンスポ】阪神・坂本誠志郎「やるかやられるかでやっている。チームを守るためにもみんなで戦っていかないと」1週間ぶりスタメンマスクで主将の一撃、値千金同点弾！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260720-RFKPPZICUBJEPCC3HTM3RAZWTI/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明「もう勝って黙らせるしかないのでね」燃えた！叫んだ！！　中心選手としての自覚にじむ、やり返しV撃</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260720-W4U7ZJUDANPTVK2S5R3BZIIBWM/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、気迫！結束！「自分の中ではベストゲーム」　荒れた3連戦終えても視線は野球界に「グラウンド上では熱いけれども、離れればみんな新たに、前向きに進む」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610816.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「村上と坂本がよく粘った」「九回の守備でも攻めた球が多かった。攻め込んでいくということができた」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610818.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　因縁ハーン撃ち「やり返せて良かった」八回勝ち越し２点二塁打　４カード連続勝ち越し貯金１０</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610824.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・坂本　今季２号「流れを持ってきてくれている」村上粘投に応えた起死回生の同点ソロ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610830.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１立石　再昇格後初タイムリー「冷静に、欲を出さずに良い打席が送れた」“左キラー”だ打率・３６７</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610842.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・工藤　流れ呼ぶ３人斬り「変わらずいつも通りに」１回２Ｋ　プロ初勝利から１週間で２勝目マーク</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610836.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「ベストゲーム」逆転勝ち　大山死球でベンチ飛び出し一触即発も「野球界をいかに長く残していけるかが問われている」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/20/0020610844.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神ローテ再編　大竹→下村→高橋でＤｅＮＡ３連倒へ　球宴出場の高橋は巨人戦回避</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260719s00001173452000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明が怒りの倍返し!前夜内角球に一触即発だった広島・ハーン撃ち決勝二塁打「もう最高」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260719s00001173459000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　対左腕&ビジターでの好相性証明　再昇格後初打点「欲を出さずに良い打席を送れた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260719s00001173467000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・坂本誠志郎　千金同点弾で流れ変えた！　一触即発の事態には冷静「次またやるときはフラットに」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260719s00001173468000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　一丸星を強調「結束力をここで発揮できた」　8回大山への死球で乱闘騒ぎも“手打ち宣言”</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260720s00001173004000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・工藤泰成　プロ2勝目!!　159キロ3人斬りに貫禄と風格出てきた「いつも通り投げました」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260719s00001173469000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢が美技で勝利に貢献　8回には2死から好機演出&好走塁　2試合ぶり先発復帰で存在感</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/20/kiji/20260720s00001173011000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　ファビアン&モンテロに連続被弾もピンチで鮮やか連続三振斬り「丁寧に行けば大丈夫」</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
