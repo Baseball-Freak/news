@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/07/28</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260727-OHT1T51146.html" target="_blank" rel="nofollow">【スポーツ報知】掛布雅之氏　阪神・森下翔太の不振の理由を指摘　藤浪との対戦から「攻撃的なリズム」失った</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260727-OHT1T51366.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】名手の証！中野拓夢は偉大なレジェンドの復刻ロゴ仕様グラブで６年連続の球宴「シンプルでかっこいい」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260727-OHT1T51219.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】坂本誠志郎、酷暑対策のグレー×富山県旗にちなんだグリーンを用いた防具一式で２年連続の球宴へ「負担軽減できたら確かに大きい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607270001330.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】球宴は用具もお祭り仕様！佐藤輝明らは「翡翠」カラー、坂本誠志郎は富山県旗の緑が差し色</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607270001444.html" target="_blank" rel="nofollow">【日刊スポーツ】【オールスター】阪神森下翔太、２分間の本塁打競争で「１秒に１本打ちます」目標は120本</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607270001364.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人、球宴も無双？第２戦の富山で先発「普通にしっかり投げられるように」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607270001335.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】フロントで活躍した室山皓之助氏死去、86歳　85年は広報部長として吉田監督支える</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607270000851.html" target="_blank" rel="nofollow">【日刊スポーツ】【独占手記】阪神中野拓夢が虎中軸を語る　同期・佐藤輝明の激昂に感じたことは…ともに球宴へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260728-GWLWFVS3IBJN3LNG5YU2HBFBQE/" target="_blank" rel="nofollow">【サンスポ】阪神・森下翔太が豪語「1秒に1本打ちます」　同学年・万波と本塁打競争いきなり激突！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260728-2U5NHNIAKNOYRJS4RMPAKMNL7M/" target="_blank" rel="nofollow">【サンスポ】阪神・中野、伝統のグラブで6度目の球宴に「シンプルでかっこいい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260728-7EPHWZC4NNJ7LC625Q624Q7MKM/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川球児監督、セ・リーグ率いて最高のゲームを「オールスターというのは普段見られない景色を見る。学ぶものも、ものすごく大きい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260728-AI7G3PTAB5KMRKI5EGFFA7QFK4/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、選手のための球宴で伝説つくる　オーダーは巨人・坂本と中日・大野に</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260728-AQCSTJNMAZI6VMBP6JN5WCD64M/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋、大山、佐藤、森下が鮮やかなカラーのミズノ社の道具を使用</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260728s00001173008000c.html" target="_blank" rel="nofollow">【スポニチ】スポニチ独自視点「阪神タイガース相関図」最新版！選手の関係性から知られざるプライベート交流まで　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260727s00001173407000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　“弾”言！球宴第1戦「予告ホームラン」　2年連続最多得票の御礼「一番喜んでもらえる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260727s00001173411000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太がホームランダービーで120発宣言「1秒に1本、弾丸でぶち込みます！」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260727s00001173406000c.html" target="_blank" rel="nofollow">【スポニチ】阪神OBバース氏　佐藤輝に3冠王への心構え伝授「何が起こっても自分のペースで」森下との相乗効果も期待</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260728s00001173040000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　球宴ホームランダービー1回戦は昨年敗れた“宿敵”日本ハム・清宮幸と</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260727s00001173410000c.html" target="_blank" rel="nofollow">【スポニチ】阪神、今年の「ファン感謝デー」はほっともっと神戸で11月21日開催　甲子園工事期間中のため</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260727s00001173409000c.html" target="_blank" rel="nofollow">【スポニチ】猛虎戦士が特注ギアで球宴参戦　坂本誠志郎はグレー基調で暑熱対策「負担軽減できたら大きい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260728s00001173020000c.html" target="_blank" rel="nofollow">【スポニチ】全セの指揮執る阪神・藤川監督　88年組2人と“共同采配プラン”　G坂本「冗談やろ、ホンマかな」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/28/0020640832.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下“キング”のプライド　ＨＲダービー万波「１０本」に応戦「じゃあ１秒に１本（笑）」球宴本番でも初アーチ打つ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/28/0020640802.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　球宴初指揮で仰天プラン　巨人・坂本＆中日・大野に選手起用一任「最高のゲームをファンの方に届ける」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/28/0020640806.shtml" target="_blank" rel="nofollow">【デイリースポーツ】ランディ・バース氏　森下＆佐藤輝の本塁打王争いで阪神の連覇確信「４０本くらいで争いを繰り広げてくれたら」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/28/0020640804.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人　球宴感謝のマウンドへ　３０年ぶり富山開催「雰囲気を感じながら投げたい」第２戦先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/28/0020640808.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドリス　藤川監督は「一番大きい存在」野球への取り組み方、メンタルの重要性学んだ　初選出「楽しみたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/28/0020640811.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ３岡城　フレッシュ球宴「いつも通りに積極的」１安打１盗塁　後半戦へ「自分らしさを変えずに」１軍定着目指す</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260728-M2UPF2VHKRBA3OTIAZPOWKZUYA/" target="_blank" rel="nofollow">【サンスポ】【トーナメント表】オールスター本塁打競争、ルールは…　28日は阪神・佐藤輝明らが出場</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260727s00001173415000c.html" target="_blank" rel="nofollow">【スポニチ】【フレッシュ球宴】阪神・茨木秀俊「自分のボールは投げられた」　“第二の故郷”で腕振り2回2失点</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/28/kiji/20260728s00001173002000c.html" target="_blank" rel="nofollow">【スポニチ】【フレッシュ球宴】阪神・岡城快生「のびのびできた。いつもこれくらい振っていきたい」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
