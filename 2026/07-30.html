@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/07/30</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648297.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「セ・リーグ、実際の野球もまた引き上げることになる」全セの連敗を４で止め【一問一答】</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260729-OHT1T51356.html" target="_blank" rel="nofollow">【スポーツ報知】【球宴】全セの阪神・佐藤輝明がご当地ラーメンの力で球宴３試合連続アーチ「富山ブラックを…」１６、１７年の筒香嘉智以来の快挙　巨人とデッドヒートの後半戦に弾み</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260729-OHT1T51312.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】立石正広が兄貴分・森下翔太の有事に備える「みんなでカバーしていきたい。全部の試合で少しでも力に」三塁でノック受け「右翼・佐藤」のオプションも</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260729-OHT1T51277.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】森下翔太は後半戦開幕が不透明に…７・３１ヤクルト戦　下半身のコンディション不良で球宴第２戦を欠場　長引けば痛手に</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260729-OHT1T51273.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】熊本市南区出身の大竹耕太郎が帰省中に被災　爆発事故のイオンモール熊本は「親が毎日買い物をしているようなところ」後半戦へ故郷に勇気を届ける</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001632.html" target="_blank" rel="nofollow">【日刊スポーツ】【球宴】阪神大山悠輔２安打　熊本の地震に触れ「プレーすることで力になれることがあれば」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001394.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎「熊本にいました」帰阪直前に被災「現状できることはチームに貢献すること」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001650.html" target="_blank" rel="nofollow">【日刊スポーツ】【球宴】阪神高橋遥人「学生の頃、入学した後を思い出す」初出場で忘れられない２日間に</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001708.html" target="_blank" rel="nofollow">【日刊スポーツ】【球宴】阪神藤川監督「セ・リーグの面目を保つことができました！」全セ２年ぶりの勝利に導く</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001894.html" target="_blank" rel="nofollow">【日刊スポーツ】【球宴】阪神中野拓夢が代打で安打「しっかり楽しんでできました」６年連続出場の球宴終え充実感</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001615.html" target="_blank" rel="nofollow">【日刊スポーツ】【球宴】阪神史上初　全セ佐藤輝明が３戦連発「エグいっすねえ…」ギータ弾には惚れ惚れ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001103.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広が逆襲誓う「森下不在」シフト内外野任せろ「違う動きになる可能性もある」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001170.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】熊本地震で宇土市にある実家が被災　島田海吏は「心が痛い」「家の中はぐちゃぐちゃ」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290001641.html" target="_blank" rel="nofollow">【日刊スポーツ】【球宴】阪神高橋遥人「変化球のサイン出たけど、首振りました」全23球直球勝負で２回無失点</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290000812.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】岩貞祐太の実家とイオンモール熊本は車で５分の距離「心配ですよね。無事を祈るばかり」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202607290000814.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】神宮僚介＆早川太貴が紅白戦で好投　平田２軍監督は「落ち着いて投げていたよ」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260730-JOLUOQL245L5XCXIAMYVYOBI3U/" target="_blank" rel="nofollow">【サンスポ】阪神D1位・立石正広、三塁でノック「みんなでカバーしてやっていきたい」　森下が下半身のコンディション不良で球宴2戦目を欠場</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260730-UVXJYJSMRVM55DHXBCS46BPHEY/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎、帰省中に熊本地震で被災「あんまり寝れなかった」　倒壊イオンモールは「（中学時代）チャリで行っていた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173020000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　熊本帰省中に“被災”チーム練習参加も「自分に貢献できるのは何か考えたい」　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260729s00001173391000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・早川太貴　2軍紅白戦で2回完全　刺激受けたルーキー神宮も1回3人斬りでアピール</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173004000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ガルシア　守備力向上へ「筒井塾」入門　「基本的なこと、ステップとかを教わっていました」　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173011000c.html" target="_blank" rel="nofollow">【スポニチ】阪神、森下翔太の“離脱想定シフト”を準備　チーム全体でカバーへ立石は三塁、高寺は右翼で守備練習</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260729s00001173187000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　島田海吏「家具が落ちて、テレビも壊れて。熱帯魚も死んで」熊本地震で被災した実家の状況明かす</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648284.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　球団初の球宴３試合連続本塁打　逆方向弾に「うまく乗せました。満足です」　初回は二塁打、後半戦へアクセル全開</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648292.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹　帰省中に被災「あまり寝られなかった」　島田は実家が断水「今すぐ持って行ってあげたいけど…」　熊本地震発生から一夜明けて沈痛な思い</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648287.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋　オール直球勝負　初の球宴で魂の２３球「全球ストレートなら印象に残るかな」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648290.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・坂本「楽しかった」充実の球宴フル回転　ホームランダービーでは打撃投手「テルを勝たせてやりたかった」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648295.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　後半戦開幕ピンチ　「下半身コンディション不良」で球宴欠場　有事に備えて高寺が右翼で守備練習</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648300.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「セ・リーグの面目保てた」　能登半島地震復興支援試合「生活できることに感謝しながら元気に明日を迎えたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/07/30/0020648302.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高寺　有事に備え右翼で守備練習「準備はどこでもします」　森下が不透明な状況で</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】【球宴】阪神・森下翔太、31日の後半戦初戦出場へ暗雲　「下半身のコンディション不良」で第2戦欠場　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173010000c.html" target="_blank" rel="nofollow">【スポニチ】【球宴】全セ・大山悠輔「凄くいい2日間だった」　4番でマルチ安打と存在感　中野拓夢も代打で快音</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173017000c.html" target="_blank" rel="nofollow">【スポニチ】【球宴】全セ・藤川監督「セ・リーグの面目を保つことができました」24年第1戦以来の勝利に安ど</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173024000c.html" target="_blank" rel="nofollow">【スポニチ】【球宴】全セ・高橋遥人　オール直球勝負で2回無失点　坂本のサインに首振った　「印象に残るかなって」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173015000c.html" target="_blank" rel="nofollow">【スポニチ】【球宴】全セ・佐藤輝明　“富山ブラック”パワーで球団初の球宴3戦連発！王、清原に並んだ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/07/30/kiji/20260730s00001173030000c.html" target="_blank" rel="nofollow">【スポニチ】【球宴】全セ・坂本誠志郎　独占手記　「最高に楽しかった。プロを目指す子供が一人でも増えれば…」</a></li>
+</ul>
+
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
