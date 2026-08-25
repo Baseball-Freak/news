@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/08/26</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260825-OHT1T51342.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】中日・大野雄大を打ち崩せず連勝ストップ　藤川球児監督は脱帽「簡単ではない投手。相手が上回った」　最短での優勝マジック点灯は２７日に　</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202608250001495.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】虎党・大野雄大にやられたが収穫もある敗戦だ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202608250001497.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】連勝ストップでＭ点灯は最短27日…藤川監督「相手が上回った」大野の投球術に脱帽</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202608250001508.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、粘投の西勇輝に「まあ十分な仕事だと思っています」／一問一答</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260826-PFCY46WYVVPAVFP6HUHFTUI5SA/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、中日・大野雄大に脱帽「簡単ではないというのは数字にもきっちりと出ていますから」と受け止めるも、九回の反撃には手応え</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260826-PWZFSGOORBMTRMCOGZDG4ZYIQU/" target="_blank" rel="nofollow">【サンスポ】阪神・大山悠輔、意地の15号「あした頑張ります」　41年ぶり佐藤輝明、森下翔太と20発超トリオ見えた！</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746849.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大山　Ｍ灯お預けも３年ぶり１５号　３連勝ならず巨人と２・５差「明日また頑張ります」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746857.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　今季３４度目マルチ「また明日」　得意バンテリンで打率・３２０に上昇　</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746865.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川球児監督「やることやっています」　マジック点灯ならずも逆転好機つくった土壇場の攻撃評価</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746872.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・神宮　８戦目で痛恨のプロ初被弾「あの１球が全て」　“右キラー”が右打者に初めて安打許した</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746876.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・西勇輝　粘り見せるも一発に泣く　７２日ぶりの１軍マウンド「１軍いいなと思いました」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746885.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊藤将　一発厳禁で快投誓う ２６日先発でホームランウイング新設後初登板「しっかり低めに」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746888.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・糸原２軍戦でＶ弾　１軍切り札へベテラン一振り　平田２軍監督「さすが。若い子も見習って」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/08/26/0020746890.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伊原　２軍残留練習に参加　女性トラブル報道で２０日に１軍登録抹消</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260826s00001173007000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】先頭打者への四球に「どれだけ経験があっても起こること。今日はそういう日だった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260826s00001173004000c.html" target="_blank" rel="nofollow">【スポニチ】矢野燿大氏　打たれた阪神・神宮僚介は悲観する内容ではなかった　独特なツーシームの精度UPを</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260826s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　中日先発・大野の投球術に脱帽「相手が上回った」　マジック点灯かかったゲームで連敗</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260826s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊藤将司　一発を警戒!!“ホームランウイング”設置後初の敵地登板「低めに投げたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260825s00001173475000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　バットも折られた…得意の竜投攻略ならず悔し無安打　連続試合安打「5」でストップ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260825s00001173468000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大山悠輔　熟練左腕の中日・大野撃ちで3年ぶりの15号アーチも好機での併殺打に悔しさ露わ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/08/26/kiji/20260825s00001173467000c.html" target="_blank" rel="nofollow">【スポニチ】阪神が止まっても佐藤輝明は止まらない!!　近本級170安打ペースで打率急上昇も「気にしない」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
