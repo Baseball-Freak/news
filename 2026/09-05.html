@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/09/05</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-6Q4G4YFPQJISXCSJXTTKOE7PFE/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】ネズミ年記者が馬券好調な理由は…　ウマ年が裏干支、お互いの能力補い合う関係</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-Y6ACTQ5IA5LNRKECYYZNBGTQ4A/" target="_blank" rel="nofollow">【サンスポ】【予想スタメン】阪神の5日のDeNA戦予想スタメン＆2連戦の予想ローテ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173378000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神見どころ　5日】村上頌樹、2度目の防御率タイトルへ　天敵・宮崎封じに挑む</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/09/05/post2012488/" target="_blank" rel="nofollow">【Full-count】故障の連鎖で狂った歯車　阪神主砲が失った“感覚”…1軍昇格を阻んだ指揮官の判断</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/05/0020784279.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・近本　打撃好調の理由が判明　構えだけじゃない！相棒のバットも変更　操作性重視型でヒット量産</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260904-OHT1T51240.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】石井大智、５日の１軍合流決定！　左アキレス腱断裂からリハビリ乗り越え…球団初のセ・リーグ連覇へ最後のピースがそろう　</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609040001229.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太が得意の甲子園で本塁打キングへ巻き返し！「ホームランもうちょっと打ちたい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609040001228.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】村上頌樹、優勝へ向け５日DeNA戦に先発「マジックを１つでも減らせられるように」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609040001227.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】近本光司の夢がまた拡大　アスリート同士のコラボも実現「思いがリンクした」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609040001232.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎は泰然自若で次回登板へ「臨機応変。鈍感力」6日先発可能性も降雨予報</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-DS35TU2RONO6NINT4HIZ7M4TCM/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、メジャーでも高評価　アストロズスカウト断言「みんなが欲しがる選手」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-K23HOVZXQROI7LESKPE7GXYDZQ/" target="_blank" rel="nofollow">【サンスポ】阪神・村上頌樹、打撃好調の投手陣に刺激「自分もヒットを打って終わりたい」　5日のDeNA戦先発</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-NQ2X5U7KCROEVMLY3WJ6QLGXPM/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎、引退発表した石川雅規との縁を明かす　6日のDeNA戦先発予定</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-OXDGZBS2TRNGZHNOUHOR3HKSRI/" target="_blank" rel="nofollow">【サンスポ】阪神・石井大智、早ければ5日に1軍昇格へ　セ・リーグ連覇に向けた〝新戦力〟</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260905-VKEO2PDZY5JWTORMOZMTBHOZIE/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人、8日の広島戦先発が有力</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神先発マッチアップ】マジックはいくつ減るか…村上→大竹で週末2連戦を制す　才木は次週に回る見込み</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260905s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　「ダブル長嶋超え」で初代「長嶋茂雄賞」獲り　「最後に獲れればいいかなと思います」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173437000c.html" target="_blank" rel="nofollow">【スポニチ】【虎番リポート】阪神・大竹耕太郎　“師匠”ヤクルト・石川の「柔軟力」手本に40歳超え現役目指す</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173424000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人は8日広島戦先発へ「チームのために投げたい」　右腕2枚看板・村上と「分散ローテ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173421000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　防御率と優勝マジック両方減らす！「一つでも減らせるように…」5日DeNA戦先発</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173413000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　ホームランキング再奪取へ「もうちょい打ちたいな」大好き甲子園でアーチ量産だ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/05/0020784282.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上「マジックを一つでも減らせるように」　個人タイトルよりチーム最優先　５日ＤｅＮＡ戦に先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/05/0020784288.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　自身初の甲子園２桁弾あと１「もうちょっと打ちたい」　輝とは３差「まずは自分のスイング」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/05/0020784290.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・下村　ヤクルト石川の金言を胸に　青学大の大先輩「スーパースター」から「この言葉は意外でした」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/05/0020784295.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹“石川イズム”でＤｅＮＡ斬る　「４０歳を過ぎてもできるように、２００勝まで頑張れ」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/05/0020784298.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・石井　５日いよいよ１軍昇格　左アキレス腱の断裂から２０６日　時折笑顔で軽快な足どり披露</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/05/kiji/20260904s00001173411000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智　5日DeNA戦で1軍昇格決定!「リーグ連覇」&「日本一」へラストピース埋まった</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
