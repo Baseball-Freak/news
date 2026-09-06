@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/09/07</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260906-OHT1T51388.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】痛恨連敗で２位・巨人と２・５ゲーム差　藤川球児監督「常に前向きにやり続ける」日曜日の連勝も１１でストップ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260906-OHT1T51374.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神評論】掛布雅之氏、巨人との２・５ゲーム差は「近そうで遠い」「大逆転された２００８年とは状況が違う」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202609060002081.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】森下翔太、佐藤輝明の連日空砲はセ相手では初　甲子園で苦しい連敗</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609060002130.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「勝っている場面では精度が高い必要が」「ゲームは常に生きています」一問一答</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260907-XT6Z476GXVOERCXC2F6UKUIH64/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、磨き続ける〝備える力〟「こっちも準備していけばいい話」　両リーグ単独トップ35号で自己最多41本塁打ペース　バース＆田淵に並ぶ2年連続40発みえた！</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/07/0020791695.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　大竹「攻略されましたね。相手が上回りました」神宮「十分、ゲームを立て直すところでやってくれました」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/07/0020791702.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　バース以来２年連続３５号　自己最多４１発ペース　ア西地区首位アストロズ熱視線「アルバレスに次ぐ長打力ある左打者が必要」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/07/0020791731.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岩崎　江夏超え球団最長１０年連続４０試合登板「１年でも長く１登板でも多く投げていけるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/07/0020791741.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・神宮 自己最長３回０封「場面に応じた投球ができた」　藤川監督「十分、ゲームを立て直してくれた」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/07/0020791753.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　連敗で巨人２・５差接近　連覇へ試練も「常に前向きに。変わらずやり続けること」マジック２日連続「１８」停滞</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/07/0020791759.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石「走ることは当たり前」全力疾走の執念打＆二盗　直近９試合で安打、打率４２１好調</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260907s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・岡留英貴「野手に助けてもらって、なんとかっていう感じだった」　5試合連続無失点も反省</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260906s00001173444000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】大竹耕太郎の降板「仕掛けられていたので、こちらも手を打たなければいけなかった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260906s00001173440000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　移籍後最短2回0/3KO　藤川監督「攻略されましたね。相手が上回っている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260906s00001173437000c.html" target="_blank" rel="nofollow">【スポニチ】なぜ?甲子園で打線つながらない阪神　今季平均2.9得点　3点以上リードを許すと苦しい</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260906s00001173434000c.html" target="_blank" rel="nofollow">【スポニチ】能見篤史氏　中継ぎ3連投を解禁しないといけない時期　阪神は“ジョーカー”石井大智を7回起用で繋げ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260906s00001173439000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　球団最多タイ17個目死球も「多いことには何も思ってない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260906s00001173433000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・神宮僚介　万感の初聖地マウンド「すごい感慨深い」　ロングリリーフいける!!猛アピール3回零封</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/07/kiji/20260907s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　「サンデー輝」の35号　「あした（月曜日）休みだから打てるわけじゃないです（笑い）」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
