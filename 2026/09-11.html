@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/09/11</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260910-OHT1T51309.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明、張本勲さんの遺志を継ぐ「みなさんに惜しまれるようなプロ野球人生を送れるように」次戦は好相性の伝統の一戦へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202609100001369.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】張本さん死去で思い浮かべた前川右京　東京ドームは４割超えだ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609100001570.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明、張本勲さん死去に「皆さんに惜しまれるようなプロ野球人生を」12日は巨人戦</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609100001597.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「『喝』『アッパレ』のフレーズで野球界を守ってくださった」張本勲さん悼む</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609100001582.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「負荷はかかっている」左アキレス腱断裂から復帰登板した石井大智に言及</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609100001584.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、救援陣の起用法に「劣勢だから登板したくないなんていう選手は…」／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609100001487.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢「楽しみながらやりたい」巨人との激しいＶ争いにも前向き　</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260911-AWTKTPNHSBIH7CGLN34UJGKOSU/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督「負けが続いているような錯覚を起こさないように」中止続きの状況で〝3連敗しているだけ〟と強調　結束し「スカッと」切り替えて12日の巨人戦へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260911-FJCMLBNXZRKJPGUJFAW2XPRMZM/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、今季15度目の雨天中止「もう雨については聞くことないんじゃないですか」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260911-PQ75DXM7NFJE7NJJHYCG7KJFSU/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、張本勲さんを悼む「皆さんに惜しまれるようなプロ野球人生を、僕も送れるように」三冠王と優勝目指し、現代の球界けん引する</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260911-XIH5LGSBUNLUXEENEZAHG7J2ZE/" target="_blank" rel="nofollow">【サンスポ】阪神・中野拓夢、巨人との一騎打ち「楽しみながらやりたい」残り20試合「一丸となって」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173488000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　張本勲さんに追悼の誓い「皆さんに惜しまれるようなプロ野球人生を送りたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173512000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　球団初リーグ連覇へ一丸強調「巨人も気になるけど、目の前の試合に勝つことだけを考えて」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173515000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・坂本誠志郎　V争い佳境も“普段着野球”の必要性を訴え　「急激に技術が上がることはない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173518000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　今季15度目中止　藤川監督は12日巨人戦へ前向き「気持ちがスカッと切り替えられる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173510000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】「負けが続いているような錯覚を起こさないように、気をつけてないといけない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173514000c.html" target="_blank" rel="nofollow">【スポニチ】原口文仁氏　巨人との優勝争いで最後に必ず生きてくる「昨年のリーグ優勝と23年日本一の経験」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/11/kiji/20260910s00001173522000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　ブルペン総動員宣言「使う選手のレベルが高いと戦いやすい」石井の復帰で柔軟な運用可能に</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/11/0020806442.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　石井は初登板で負荷も「かかるものですから」救援陣の起用法「狭まらないようにしなければいけません」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/11/0020806444.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　期待かけてくれた天国の張本さんへ三冠届ける「皆さんに惜しまれるようなプロ野球人生を僕も送れるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/11/0020806450.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　なるか５冠　残りは２０試合、安打数＆出塁率も現在トップ　史上５人目、球団バース以来の偉業に挑む</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/11/0020806455.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　今季１５度目中止「スカッと切り替えて」練習日を挟んで１２日巨人戦「結束力は高まると思います」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/11/0020806461.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　張本勲さん悼む「『喝！』や『あっぱれ』のフレーズで野球界を守ってくださっていた」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
