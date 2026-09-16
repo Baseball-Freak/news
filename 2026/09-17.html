@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/09/17</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20260916-OHT1T51305.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】秦雅夫オーナーが必勝の大号令！７連敗中も「相応に評価している」「地に足をつけて戦い抜いてシーズンを勝ち切ってもらいたい」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260916-OHT1T51157.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】高橋遥人が１７日の広島戦に先発　７連敗中の７連戦先陣に「勝ちを意識して投げられれば」９人目の野手としても存在示す</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609170000005.html" target="_blank" rel="nofollow">【日刊スポーツ】【データ】ソフトバンクは急速にマジック減らし、かたや阪神はＭ減らしに苦戦中</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001479.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】７連敗も…秦オーナー「相応に評価」「結果を恐れず開き直って」苦しむチームの背中押す</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001394.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢「なんとか辛抱しながら…」７連戦７連勝へ「チーム一丸」を強調</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001517.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】木浪聖也、17日広島戦から１軍昇格濃厚　得点力不足に苦しむチームの起爆剤となるか</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001406.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎「しっかり相手と向かい合って勝負」　18日広島戦先発有力</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001560.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】チーム苦境も…村上頌樹「去年も交流戦で7連敗…それで優勝」どっしり構える大黒柱</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001530.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】CSチケット、一般発売は10・７正午からインターネットで</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001361.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】小谷野栄一コーチ「８度Ｖ」のキャリアで得た絶対的な方程式「ここでぶれるのは違う」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001275.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】連敗ストップ頼むぞ！高橋遥人が7連戦初戦に先発「いつもより勝ちを意識して」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260917-6KKGOZOUAVCBFBQKHDOA6NYFAY/" target="_blank" rel="nofollow">【サンスポ】【2軍虎将トーク】阪神・平田勝男2軍監督「ちょっとでもレベルアップしてやらなあかんやん。そういうことやで」ファーム・リーグ西地区はソフトバンクの優勝が決定</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260917-B5SGBZQ63FNSXNBY447BLSMWYE/" target="_blank" rel="nofollow">【サンスポ】阪神・中野拓夢「兆しも少しずつ見えてきていると思う」17日からの7連戦を一丸で戦い抜くと誓う</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260917-DXOTCEM3MNOLVMJP4RHAWPFZJM/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎「どんな不安や期待感が出てこようが、仕事をするだけ」先発見込みの18日広島戦へ、自身と向き合い挑む</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260917-DYB3VDZVZNIR5JGWMLTBYVWWEM/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋遥人「ボールはへぼくてもいいんで、しっかり勝てるように」虎が誇る連敗ストッパーが負の連鎖断ち切る！　仲間たちへの感謝と勝利への執念</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20260917-ISRJUJEM3NJENDE3DVK7NVADZA/" target="_blank" rel="nofollow">【サンスポ】阪神・村上頌樹「いいんじゃないですか、気にしなくて」19日の広島戦登板へ、チームが連敗中でも平常心強調</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260916s00001173383000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神先発マッチアップ】高橋→村上→大竹で連敗ストップしVロード加速…難敵・床田、栗林が立ちはだかる</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260917s00001173013000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　鯉キラー復権へ「求められる役割を全うしたい」今季苦戦の広島戦　19日先発予定</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260917s00001173007000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人　最多失点の“鬼門”7回突破で連敗止める　「終盤こそ先頭を斬ることが大事」7連戦先陣</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260917s00001173015000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太&佐藤輝明&中野拓夢が大脱出再現を誓う「兆しも少しずつ見えてきている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260917s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・村上頌樹　苦境7連敗中も「悲観しない」選手会長はポジティブ「うまく切り替えてやることが大事」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/17/0020827723.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・秦オーナー　７連敗中のチームに大号令「勝ち切ってもらいたい」　球団初の連覇へ２つのポイント提言　「信じて見守り続ける」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/17/0020827729.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人　連敗ストップへ決意の先陣「ボールがヘボくても良いのでしっかり勝てるように」１７日先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/17/0020827735.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上「去年も交流戦で７連敗。悲観することなく」１９日広島戦先発「イニングの先頭を大事に」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/17/0020827740.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹　前回悪夢から中１１日「普段通り」Ｖ争いマウンド「緊張も結果を出すために必要」１８日先発</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/17/0020827745.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・中野　７連敗も「兆しも少しずつ見えてきた」１７日から７連戦「全部勝つくらいのつもりで」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/09/17/0020827747.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・平田２軍監督　若虎の奮起求む　神宮、岡留１軍奮投“刺激”にして「残りゲームで見せてほしい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260917s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・木浪聖也が17日広島戦で1軍昇格へ　7連敗で沈む空気をチームの「ムードメーカー」が変える</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/09/17/kiji/20260916s00001173431000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・秦雅夫オーナー　苦しむチームに大号令「開き直って戦うのも」「お客さんの期待に応えて」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202609160001974.html" target="_blank" rel="nofollow">【日刊スポーツ】【動くグラフ】セ・リーグ９月以降の貯金推移　阪神失速、DeNA猛追！</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
