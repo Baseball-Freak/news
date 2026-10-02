@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/03</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261002-OHT1T51371.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】きょう決める！才木浩人「まあラッキーだな…くらい」広島戦に先発　球団初セ・リーグ連覇へ　昨年は決定日で５回に危険球退場</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000775.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】連覇は自力で！藤川監督、巨人の結果は「全く考えていません」締まった表情で広島入り</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000784.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】“コイキラー”の高寺望夢「最後いい形で終われるように。優勝できれば最高なので」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000994.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】森下翔太「優勝できればなんでもいい」歓喜のゴールテープに闘志</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000778.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】小幡竜平と島田海吏が全体練習参加　昇格は３日以降判断　藤川監督「彼らにも可能性」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000734.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明はリーグ連覇へ平常心「あとはやるだけ」長打数81でレジェンドOBバース超え</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000790.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人が自身３度目のリーグＶ決定戦登板「自分の投球をするだけ」歓喜の瞬間へと導く</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000752.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ビジターで27試合連続無失点中の工藤泰成　Ｖ目前も「変わらない」３日敵地で広島戦　</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610020000741.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】23年ぶりの「待ち」シチュエーションなら…ホテル内で巨人戦「PV」会場設定へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261003-67KXKP3BZ5KVPDGWFL3LT2Q3MY/" target="_blank" rel="nofollow">【サンスポ】阪神・高寺望夢、左手甲は「大丈夫」　前日に投球直撃</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261003-CEJR6XA3DNM53CKPR332IDQTS4/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人「しっかり投げきれるように」V腕の仕事果たす！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261003-EDL7T646WJL45ITIX5QTH7WMDY/" target="_blank" rel="nofollow">【サンスポ】阪神・工藤泰成、胴上げ投手の可能性大も平常心「いつも通り」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261003-GJXYWM6U7BJZRK4IR4SZYXPCII/" target="_blank" rel="nofollow">【サンスポ】阪神・小幡竜平＆島田海吏が全体練習参加　島田「1軍で結果を出さないと意味がない」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261003-KG7SG7SN6RISBAAJKRUJE6726A/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、連覇へ凡事徹底　M1も「（阪神の）ゲームのことしか考えていない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人　自身3度目の“V試合先発”完投での胴上げ投手狙う「しっかり投げ切れるように」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173427000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・工藤泰成　死角なしや!!　“ビジター&昼”は防御率0・00　遠征続くもきっぱり「疲れはない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173422000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・中野拓夢　初の3割へ「誰もが目指している数字だけど、勝利のためにやった結果としてついてくれば」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173426000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川球児監督はリスク管理完璧　ファーム調整続く小幡＆島田の状態チェック</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173433000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大山悠輔が自身初の4戦連発でVに導く　甲子園球場で汗「全員で一丸となってやる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173416000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　巨人がコケてマジック1!史上初の「40本塁打＆40二塁打」で球団初の連覇に花を添える</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261002s00001173424000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太がリーグ優勝へ「つなぎ」意識　佐藤輝超え出塁率.394トップ君臨</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/03/kiji/20261003s00001173007000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智　「もう超人で鉄人」同郷秋田出身の大先輩・ヤクルト石川雅規のイズム継承を誓う</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/10/03/post2025229/" target="_blank" rel="nofollow">【Full-count】虎党女優が甲子園出没「いらしてたんですね」　一般客に紛れ…5時間超の“ガチ応援”</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886511.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督（健康診断を行い）「きれいな血が採れた」「野球の試合も生きてますからね」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886514.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神Ｍ１　佐藤輝が打って連覇決める　王手でも“普段着野球”継続「『勝つ』今までずっとやってきたこと」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886520.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川球児監督　Ｖ目前でも一戦必勝　目の前の試合に「集中」　島田と小幡の起用「可能性があるというサイン」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886524.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神Ｖに吉兆！才木が３回連続Ｖ決定日登板へ「勝てば良いだけ」　巡り合わせ「ラッキーだな、くらいですね」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886527.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高寺　前夜に左手負傷も「大丈夫」　周囲の心配一掃「残りの試合で全部打てるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886530.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・工藤「０」でフィニッシュへ　敵地２４戦＆昼８戦で連続無失点中　Ｖ争い「本当に幸せなこと」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886536.shtml" target="_blank" rel="nofollow">【デイリースポーツ】大山「一丸となって」全員野球で連覇へ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/03/0020886538.shtml" target="_blank" rel="nofollow">【デイリースポーツ】森下泰然自若「優勝できれば何でも」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
