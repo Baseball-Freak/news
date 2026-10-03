@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/04</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261002-OHT1T51038.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】坂本誠志郎、シーズン中に選手間ミーティングを何度も実施「何か感じた時に確認する」「つなぎ止めるというぐらいの感覚」【優勝インタビュー後編】</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261002-OHT1T51033.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】坂本誠志郎「今までにない感覚ではありました」８月打撃絶好調でチームけん引【優勝インタビュー前編】</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610040000186.html" target="_blank" rel="nofollow">【日刊スポーツ】【セ５球団　敗軍の将語る】巨人橋上監督代行「何度か肩を並べる所まではいったが…」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610030001328.html" target="_blank" rel="nofollow">【日刊スポーツ】阪神佐藤輝明２年連続40発なら球団ではバース以来もDeNA平良には今季10の０／見どころ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610040000181.html" target="_blank" rel="nofollow">【日刊スポーツ】【独占手記】坂本誠志郎「厳しい戦いでしたがプロとしての醍醐味でありやりがいでもありました」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261004-447RJ2MIYBIPJBX5OWT2HK3V6A/" target="_blank" rel="nofollow">【サンスポ】【土井正博の豪傑球論】阪神、史上最強の5人のおかげで連覇</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261004-5TT3QHMGUNP4TOI5ZV6IMUMOQA/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】歴史作った「おとなのチーム」　サンスポ初の栄光を手にした虎番キャップの見立て</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261004-W3BU4HAVO5LXBJZW734VJSO224/" target="_blank" rel="nofollow">【サンスポ】【ダンカン】今年も虎は強かった！！　『新・火の玉勝利の方程式』作り上げた藤川監督に最大の評価をするべき！</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261003s00001173410000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神見どころ　4日】日曜日にシーズン20勝なら直近50年で2度目のレアケース</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173093000c.html" target="_blank" rel="nofollow">【スポニチ】【内田雅也の追球（上）】それを果たせば、彼らは来る――本懐を遂げた歴史的快挙　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173094000c.html" target="_blank" rel="nofollow">【スポニチ】【内田雅也の追球（下）】藤村、村山、江夏……先人の「痛み」をいやした</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173043000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神連覇】佐藤輝明　2年連続40発王手！分岐点は師事するトレーナーと話した絶不調時の一本の電話</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173061000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神連覇】村上頌樹　忘れられない春季Cの1分スピーチ　「本当に大変でした」選手会長の献身的1年</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173060000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神連覇】藤川監督　苦しみ抜いて歓喜の涙…「やってきたことが間違いではないと証明できた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173070000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神連覇】陰の奮闘でV2呼び込んだ大山悠輔「すごく大きい」　立石の心も救った頼もしい「兄貴分」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173074000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神連覇】森下翔太「輝さんの高い壁があったけどそれで良かった」「いつか超えたい、いや超えないと」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173077000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】リーグ連覇に感慨「巨人にだけは絶対負けてはいけないというものがある」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/04/kiji/20261004s00001173068000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神連覇　高橋遥人　独占手記】開幕10連勝から始まった1年…ケガにも見えない敵にも勝った</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/708828/" target="_blank" rel="nofollow">【ベースボールキング】坂口氏が挙げた阪神の野手のMVPはもちろん「佐藤選手になります」</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/708821/" target="_blank" rel="nofollow">【ベースボールキング】阪神がリーグ連覇　大矢氏が選んだ投手MVPは「僕は…」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/04/0020890861.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・坂本「何かが変わった」７連敗した日、ミーティングで伝えた思い　苦しさの中から「また違った優勝を味わえた」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/04/0020890863.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神連覇の立役者“ハルトラ”バッテリー　伏見寅威「おかげで試合出れている」高橋遥人「めっちゃ引き出してくれる」語った全幅の信頼関係</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/04/0020890867.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　退場に死球…感情について注目された１年「プロ野球もタイガースも信頼あってこそ。信頼される人でありたい」【独占手記】</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20260929-OHT1T51034.html" target="_blank" rel="nofollow">【スポーツ報知】阪神連覇支えた１６０キロコンビ　工藤泰成＆木下里都ブレイクの裏側　畑山統括スカウト「自信はチャンスをもらわないとつかない」　藤川球児監督とフロント一体の補強戦略</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261002-OHT1T51095.html" target="_blank" rel="nofollow">【スポーツ報知】阪神・佐藤輝明との約束胸に全力尽くす仁川学院後輩「いつか俺の体を見てよ」急性骨髄性白血病を乗り越えた槙原葵人さん…理学療法士として新たなスタート</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261003-OHT1T51547.html" target="_blank" rel="nofollow">【スポーツ報知】【独占手記】阪神・才木浩人、変わらぬ志と高みを目指し続ける理由は…１１連勝のＧキラー＆３年連続２ケタ勝利＆１７５Ｋタイトル確実</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261003-OHT1T51543.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明「形はどうであれ…めちゃくちゃ最高」あるぞ！長嶋茂雄賞の有力候補　ゴジラ打法を徹底研究して暫定３冠王　２月に松井秀喜氏と対面で迷いが消えた</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261003-OHT1T51533.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督が「命を削った」連覇の舞台裏「監督を辞めたらみんな付き合ってくれないかな…」空中分解寸前の苦悩と葛藤…虎番キャップが見た</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261003-OHT1T51532.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】森下翔太「ほっとしている」心身ともに悩んだ末の悲願の歓喜「自分はまだ未熟」６月には判定巡って退場処分「後輩たちには反面教師にしてもらえれば」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261003-OHT1T51384.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】「命を削ってやっている」藤川球児監督の心身を支えた英子夫人のお手製鍋料理「今年は妻に去年以上に迷惑をかけた」水炊き、寄せ鍋、豆乳、モツ味噌…</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261002-OHT1T51110.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】「はるとら」バッテリー推しの番記者が選ぶ名コンビ事件簿…えっ？　高橋遥人が伏見寅威に打撃指導！？　インスタフォローは１か月後…胸キュンエピソードも</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261002-OHT1T51106.html" target="_blank" rel="nofollow">【スポーツ報知】「はるとら」バッテリー　高橋遥人＆伏見寅威、優勝特別対談　「キャッチャーの人」発言のその後　えっ？「連絡先を知らない」連絡手段は…</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610030002404.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】「野球の神様」は見ていたのか　球児の覚悟を</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610030002713.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「史上１回もなかったことですから、それを追いかけ続けた」／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610040000066.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「これだけしんどいのかと。プレーヤーの時は楽だった」監督業に思い吐露</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/analyst/news/202610030000994.html" target="_blank" rel="nofollow">【日刊スポーツ】【鳥谷敬】阪神優勝への最大要因は”苦労人”高橋遥人　前半戦の貢献度は言葉では表現できない</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610040000022.html" target="_blank" rel="nofollow">【日刊スポーツ】阪神タイガースのリーグ連覇記念グラフ　10月６日から発売します</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610030002194.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】粟井社長、藤川監督の手腕に敬意「一生懸命準備をして試合に臨んでくれている」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610030002700.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「苦しかった…。良かったです…」涙のＶ　“共通のルール”で球団史上初の連覇</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261004-LDXP7LBA7FLXZB7RFXVS6Y6ZKQ/" target="_blank" rel="nofollow">【サンスポ】阪神・木下里都、ともに160キロ超「KKコンビ」でフル回転　今季の献身あらわすように広島戦でも2回0封</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
