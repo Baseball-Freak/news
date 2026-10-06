@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/07</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901237.shtml" target="_blank" rel="nofollow">【デイリースポーツ】後輩に受け継がれる阪神・岩貞の生きざま　若虎の活躍に見せた表情</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261006-OHT1T51342.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明、球団初の２年連続２０度目の勝利打点　優勝セレモニーで藤川監督の後に胴上げで３度宙に舞う「初めてでした。いやあ、良かったですよ」３冠王もほぼ手中</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261006-OHT1T51316.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】湯浅京己、２度目の内視鏡下胸椎黄色靭帯骨化切除術を受け退院　「サダさんの分も…」岩貞の引退試合に駆けつけ涙で復活誓う</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610060001560.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】「80勝到達＆完全優勝」でセ・リーグ代表として日本シリーズに挑んでほしい</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610060001278.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】湯浅京己、前例ない２度目の手術　前回は岩貞の一言で決断「サダさんの分も」涙で復活誓う</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610060000967.html" target="_blank" rel="nofollow">【日刊スポーツ】【とっておきメモ】阪神岩貞祐太が感じた盟友のすごさ「やっぱりすごい。チーム背負っている」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610060001559.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、本拠地凱旋試合で白星「慣れてる人に上げて貰おうと」７度宙に舞う／一問一答</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261007-HEQ3EVIIWBJLREQQK2WIIRJD44/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、ダブルピースで宙に舞う「何事にも代えがたい」　凱旋勝利に導いた佐藤輝明も初胴上げ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901218.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神連覇から３日　藤川監督聖地で舞う「約束事」両手で「２」のポーズで７度宙に「まだ先で胴上げを」日本Ｓへ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901224.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・小幡　久々スタメンで勝利に貢献　ＣＳへアピール「一日一日、頑張りたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901228.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・梅野「忘れられない一日に」７・２４以来安打＆同期岩貞と最後のコンビ　天国の横田さんに「上を向いて報告」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901232.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岩貞　現役ラス投は梅野とＫ斬り→岩崎にリレー　横田さんに向けて「これで終わりだよ」タテジマ１３年有終の美</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901240.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・湯浅　再手術していた「内視鏡下胸椎黄色靱帯骨化切除術」異例再びメス「夏頃から違和感」藤川監督に背中押され決断</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/07/0020901243.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・平田２軍監督　ＣＳ、日本Ｓ「いつ呼ばれてもいいように」若虎にハッパ　フェニックスＬへ出発</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
