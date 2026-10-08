@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/09</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261008-OHT1T51407.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明が偉業！「大いにヒントを得ている」ドジャース・大谷の打撃から学んで史上９人目の３冠王　２年連続４０発は逃すも最多安打を含めて４部門トップ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261008-OHT1T51398.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神評論】掛布雅之氏が３冠王・佐藤輝明の進化を分析「年を追うごとに無駄を省いている」精神面での成長も指摘「なお完成形でないと感じさせられる恐ろしい打者」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261008-OHT1T51307.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】タイガース×ＬＩＮＫ　ＵＰで野球振興プロジェクト始動！理事の近本光司「子供たちの人生の大きなきっかけになる」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610080001751.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】「秋の大運動会」から「大勝負」へ　指揮官・球児は燃えている</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610080001002.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】野球振興で近本光司理事のLINK UPとコラボ　11月に低学年向け野球教室共催</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610080001749.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「苦しめば必ず最後にいいことあると信じ続けた」143試合振り返り／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610080001710.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督　最終戦セレモニーで「すべてが一つになって戦う要素が必要」ファンに訴える</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261009-6EUGPYQKQVOT3HV3KIZV5TTMHM/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、球団40年ぶり三冠王「誇りに思う」　打率・306、39本塁打、106打点</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261009-WIOA75QJB5IF3HS6Z6EZU6RGAU/" target="_blank" rel="nofollow">【サンスポ】阪神と近本が理事の「LINK UP」がコラボ　今オフ兵庫県内3カ所でイベント開催</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261009-2ZQ6P5UNTBM7XBU4P33CYUJPEM/" target="_blank" rel="nofollow">【サンスポ】【虎番が見た】阪神・村上頌樹、最優秀防御率につながった戦友との会話</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261009-S7GSTTAM75I4VONV6I3KI4FZ5E/" target="_blank" rel="nofollow">【サンスポ】【虎番が見た】阪神・高橋遥人、最多勝利、勝率第1位を獲得しても満足しない</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261009-Y5XVPURI6JJVHNMVZQRMFJ4U6I/" target="_blank" rel="nofollow">【サンスポ】【虎番が見た】阪神・才木浩人、最多奪三振は強力なライバルで仲間のおかげ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908910.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　佐藤輝「一番、責任感というのが大きかった。本当に大黒柱」「苦しめば必ず最後にいいことがと信じ続けた」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908912.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝３冠王！史上９人目、バース以来球団４０年ぶり快挙　「本当に成長できたと思う。積み重ねてこれたので誇りに思います」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908918.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝「いいところ悪いところを客観的に見ることが、年々成長できてる」甲子園の左打者で「本当に価値があると」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908924.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　初タイトル最高出塁率・３９４「イメージしてなかったんで。けど、うれしいです」自己最多３５号で２位、打率＆打点で３位</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908930.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岩崎「焦った時期もあった」球団史上初６年連続５０試合登板「本当にありがたく思います」藤川監督の計らいに感謝</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908934.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　昨年の雪辱「皆さんで晴らしましょう」悲願の日本一奪回へファンに決意</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908940.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・近本「ＬＩＮＫ　ＵＰ」とトライアルベースボールがコラボ「子どもたちにとって人生の大きなきっかけに」淡路で野球教室</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/09/0020908945.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋遥人　最多勝＆最高勝率で２冠「イニングをこれだけ投げられると思ってなかった」初のシーズン完走に喜び</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
