@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/10</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261009-OHT1T51316.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ラファエル・ドリスに残留要請　球団助っ人５２年ぶりの３９歳シーズン迎える…３連覇に欠かせぬ１９セーブ＆１９ホールドのタフネスリリーバー</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261009-OHT1T51298.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ＣＳ最終ステージに村上頌樹、高橋遥人、才木浩人が先発へ　タイトルホルダートリオで日本シリーズ進出決める…藤川球児監督は近本光司をキーマンに指名「連動性を出せる」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261009-OHT1T51269.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】史上最強助っ人・バース氏が３冠王・佐藤輝明を祝福「絶対に取れると確信していた」「もっと成熟していい打者になれる」同じ３月１３日生まれ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610090001380.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中野拓夢「日本一奪還という目標がある」一息ついて調整し、すぐに次の戦いへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610090001314.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、CSキーマンに近本光司を指名「リードオフマンとしての役割に期待」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610090001354.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】CSファイナル初戦先発濃厚の村上頌樹「連覇した勢いをそのままに頑張っていきたい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610090001222.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】TERUおめでとう！伝説の最強打者が後輩・佐藤輝明を祝福、昨年７月には金言授ける</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261010-4KFMCLNASNMNPGVTK3H5DWVDVE/" target="_blank" rel="nofollow">【サンスポ】阪神・中野拓夢、CSファイナルへ「いい入りができるように」「日本一奪還という目標がある」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261010-CBX6AWAJARLANKEW7ZNTFGPEEE/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、昨季のCSファイナルとは「全く違いますね」2025年は「仕込み直せた」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261010-DF22OOWSDNIR3GVAO2A3ZCZQRU/" target="_blank" rel="nofollow">【サンスポ】阪神・立石正広「僕も輝さんのようになれたら」いつか三冠先輩の領域に…フェニックスリーグで打率・538！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261010-FANBW7IBXROTLDVFTAJZVFFMUY/" target="_blank" rel="nofollow">【サンスポ】阪神、青学大・渡部海のドラフト1位指名決定的に　常勝目指し坂本誠志郎らの後継捕手に　球団首脳も出席しスカウト会議実施</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261010-FWMUUWXKFFOY7GS6JNHSG5CIZI/" target="_blank" rel="nofollow">【サンスポ】バース氏、三冠王佐藤輝明に「大いに胸を張っていい」「阪神のファンは次も待っているよ」2人とも3月13日がバースデー</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/10/10/post2028646/" target="_blank" rel="nofollow">【Full-count】「どこの美少女かと」　ショーパン投球にゴクリ…透明感抜群、可憐な21歳の「ビジュ1000点」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912235.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　ＣＳ突破キーマンに近本指名「戻ってきてから勢いが増した」　「全開でいける」中野と１＆２番「連動性出せる」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912238.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・中野　ＣＳファイナルＳ“初戦必勝”の構え　日本一奪還宣言「いい入りができるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912240.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　今年もＣＳファイナルＳ開幕投手へ「初戦を取れれば、チームの勢いつく」　ダルベック＆牧両軍主砲警戒</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912245.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神ＣＳローテ　エース村上→高橋→才木が有力　４戦目以降は大竹＆ルーカス＆伊藤将の左腕トリオが待機で盤石布陣</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912247.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　ドラフト１位は即戦力捕手に照準　青学大・渡部最有力も競合必至　外れ１位候補に亜大・前嶋</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912252.shtml" target="_blank" rel="nofollow">【デイリースポーツ】三冠王の阪神・佐藤輝をバース氏が祝福「私にとっても特別なこと」「絶対取れると確信していた」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912255.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神育成・山崎　来季こそ足で魅せる　今季３６試合わずか３盗塁　悔い残る１年「何とか取り返す」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/10/0020912257.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　３戦連続マルチで開花の兆し　三冠王・佐藤輝から刺激「僕も輝さんのようになれたら」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
