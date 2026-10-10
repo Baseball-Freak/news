@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/11</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261010-OHT1T51244.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督、原点回帰の青空ミーティング「基本の『キ』を大事にして、一からやっていこう」就任当初から凡事徹底が屋台骨…１４日からＣＳファイナル</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261010-OHT1T51220.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】森下翔太、ＣＳ史上初の新人から３年連続本塁打をマーク中も「普通にやるしかない」平常心強調　最終ステージ１４日開幕</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610100001300.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】ライデル打たれて思い出すあの二塁打　中野拓夢は甲子園最強打者だ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610100001486.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「基本の『キ』を大事に」CSファイナルＳへ訓示「いい練習ができていますね」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610100001514.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「ただ打っているだけではもったいない」みやざきフェニックス・リーグ組へゲキ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610100001502.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ポストシーズンも淡々と締めるで～クローザー工藤泰成「いつも通り」初のCSへ泰然自若</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610100001516.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】CSのキーマン近本光司「やるべきことは変わらない」大山悠輔は「頑張ります！」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610100001331.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明「いつも通りやるのが大事」三冠王が昨年CS以上の大暴れへ　泰然自若で準備</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261011-AMV53IP3EFIW5P2C3T3ZIZDUSY/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、円陣からCSへ「技術をしっかり基本に立ち返れば、心は後からついてくる」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261011-EZV7SDUPOJIQZL2W6KBRC7LTYI/" target="_blank" rel="nofollow">【サンスポ】阪神・工藤泰成、初のCSへ泰然自若「普通にやっていければ」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261011-FYGHEDZ3MZMZ3OZEWFVQOIPPMM/" target="_blank" rel="nofollow">【サンスポ】阪神・佐藤輝明、先手必勝「短期決戦なので1戦目は大事」　CSファイナルステージも三冠王が暴れる！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261011-L5CA4TDV6RLXBCPYCRLABLTVVM/" target="_blank" rel="nofollow">【サンスポ】阪神・大山悠輔がCSのMVP！？　藤川監督の〝予言〟に「頑張ります」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261011-M47ZB7OQBZPAVIAQEMOUT54QII/" target="_blank" rel="nofollow">【サンスポ】阪神・元山飛優、虎での初ポストシーズンも「短期決戦でも変えないように…」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261011s00001000008000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・石井大智　CSへ覚悟「打たれても抑えても受け止める」直近4試合連続無失点…さあ完全復活</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261011s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人「楽しみとか1ミリもない」CSファイナルS第2戦先発濃厚　“天敵封じ”に全力</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261010s00001173353000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・工藤泰成　自身初のCSへ戦闘モード「一球一球が勝負なんで、丁寧に投げていければ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261010s00001000347000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・近本光司　「短期決戦は結果を気にせず思い切ってプレーすることが大事」藤川監督がCSキーマン指名</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261011s00001000031000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　短期決戦のポイントは「主力打者に仕事をさせないこと」CSライバルの徹底分析を開始</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261010s00001173333000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　“3冠打法”でPSけん引「いつも通りやる」昨年は大暴れ打率4割　バース氏から快挙祝福</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261011s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】【虎番リポート】阪神に欠かせない「声番長」元山飛優　藤川監督もベタ褒め「若い選手も見習わなければ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261010s00001000351000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】若虎の成長のために「指導者の指導の仕方も考えないといけない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261011s00001173034000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・球児監督　昨年のCS不調だった大山悠輔に期待　「やってくれると思う」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/11/kiji/20261010s00001173337000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・球児監督が1分の“訓示”でCSへ再スタート「基本の“き”を大事にして一からやっていこう」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/11/0020915853.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝「光栄」バース氏の祝福に感謝　「短期決戦。１戦目大事かな」三冠王の先輩に感謝のアーチを</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/11/0020915859.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・工藤 球団育成初のＣＳセーブへ　強心臓で挑む「一球一球が勝負なんで、変わらず丁寧に」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/11/0020915862.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・桐敷　ＣＳの切り札となるか　８月以降１、２軍で１３戦連続無失点「ゾーンで勝負できるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/11/0020915864.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・近本「思い切って」短期決戦に挑む　指揮官からキーマン指名に「やることは変わらない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/11/0020915866.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川球児監督　再始動でナインに訓示「“基本のき”を大事に」　不敵に予告「大山がやってくれると」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/11/0020915869.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「気持ちは自然と高ぶってきますから」　「フェニックス・リーグも見ています」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
