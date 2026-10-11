@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/12</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261011-OHT1T51315.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】坂本誠志郎、突破請負人だ！　ＣＳ最終Ｓは先発マスクをかぶって６連勝中…短期決戦を知り尽くす経験豊富な主将</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610110001558.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】今回もDeNAが相手だ　度会隆輝は要警戒だ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110000814.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高寺望夢「気持ちで頑張ります」負けられない短期決戦へ気合</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110000810.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】桐敷拓馬がシート打撃登板「少しでも戦力になれるように」短期決戦に向けてスタンバイ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110001316.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】決戦へCSメンバー最終選考　フェニックスL参加中の立石正広、前川右京が１軍合流へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110000972.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】才木浩人がCSモード「ゼロでいければ」イニングよりも無失点重視</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110000845.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中継ぎの軸ドリスは柔軟復帰へ　藤川監督が明かしたCS登録の時期「いろんな可能性」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110001037.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今年もCS男頼むぞ！森下翔太「いつも通りやること」昨年DeNA相手に打率6割超え</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110001227.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】短期決戦でも威力発揮する無形の走塁力　良質な「オフ・ザ・ボール」でDeNA封じへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610110000800.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伊藤将司がCSファイナル向けシート打撃登板「ミスとかいらない四球を減らすのが一番」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261012-2B4CMAPUANKWPAYSETYGDS7QAU/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人「内容より結果」DeNAとのCSファイナル第3戦先発有力「5回100球でもゼロでいければ」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261012-EWSKMUUJWRLXPIG3BEOH5VKS7Y/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、CSファイナルは「いろんな可能性を投手コーチと考えています」救援陣の総動員プラン</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261012-OTWUTTDHHFKY3LUC4WBTSGL2ZQ/" target="_blank" rel="nofollow">【サンスポ】阪神・高寺望夢、CSファイナル前に「優勝できたんですけど、恥ずかしいシーズン」自己最多出場経て「最終的に日本一になれれば」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261012-OXPJSRERKRKMFD5GZMWFLRSHWY/" target="_blank" rel="nofollow">【サンスポ】阪神・ドリス「戦いは続いている」久々実戦で打者4人に1安打1四球「しっかり準備」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261012-QIKNQBONNZNYXPN6QWSDFW47A4/" target="_blank" rel="nofollow">【サンスポ】阪神・伊藤将司、シート打撃で12人に2安打3四球「ラインにはしっかりいった」CSファイナルで先発見込み</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261012s00001173006000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　頼むぞ!!印象的な一打　現在上り調子…日本一へ気合「出たところで結果を残す」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173449000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊藤将司　DeNA封じへ意気込む「準備をしっかりしたい。勝たないと」　シート打撃で好投</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173448000c.html" target="_blank" rel="nofollow">【スポニチ】阪神優勝記念グッズが直営店などで販売開始　ビールかけ時着用のTシャツが人気</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173450000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・ドリス　充電期間を終えてシート打撃に登板「リフレッシュできた」　今季はチーム2位53試合登板</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173442000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・桐敷拓馬　短期決戦どこでも投げる「いろんな状況を考えて準備できれば」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261012s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】セ・パともに僅差が多いCS「普通のゲームとは違う見方をしなければいけない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173440000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・神宮僚介＆岡留英貴　任せろ右打者・牧、宮崎封じ!!　低い被打率まさに“必殺仕事人”だ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173435000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　ファイナルSは“日替わり”ブルペン「コンディションのいい順番に」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173439000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　史上初4年連続CS本拠弾でファイナルS突破導く!　MVP獲った昨年と同じDeNA相手</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/12/kiji/20261011s00001173430000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・才木浩人　6連勝中ベイ斬り任せろ「イメージ？たぶん大丈夫」ファイナルS第3戦先発有力</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/12/0020919055.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　ＭＶＰ再び！突破へ打ちまくる　ＣＳファイナルＳ相手ＤｅＮＡに決定　中５日も歓迎「出ずっぱりだったので休養したかった」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/12/0020919061.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・坂本　ＣＳファイナルＳ突破へ３つのポイントとは？主将＆女房役目線でＤｅＮＡ分析　直近２度のファイナルＳは条件クリア</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/12/0020919067.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岡留　牧＆宮崎斬りだ　今季奪三振率１１・７７　８・２７から９戦連続０封　フォーム変更奏功「いい面が出てきている」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/12/0020919071.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・及川　ＣＳフル回転へ気合　昨年ファイナルＳで２勝の経験生かす「先発投手の交わるタイミングが大きなポイント」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/12/0020919074.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　ドリス「コンディションの、いい順番にはなります」「状態がありますからね。選手個々の見極めも必要」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/12/0020919076.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　アジア・ウインターリーグに井坪＆育成の山崎、川崎を派遣へ　１１月中旬から台湾で</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
