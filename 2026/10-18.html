@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/18</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941096.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　佐藤輝と森下復帰「難しいことを本人たちから聞き全員で判断して」「全力でやってくれた」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51361.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】「あと１球」から壮絶逆転負けで３年ぶり日本一ならず　藤川球児監督「応援していただいたみなさんに申し訳ない」…イニングまたぎの守護神・工藤泰成にも「本当にこちらの責任」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51065.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ディベイニー、ラグズデール、モレッタが今季限りで退団見通し　ルーカス、セベリーノ、ガルシアは流動的…ＤＨ制導入で打力に秀でた助っ人砲獲得へ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51063.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】伏見寅威に複数年契約を提示へ　海外ＦＡ権を保有　日本ハムから今季加入でリーグ優勝に貢献　来季３７歳シーズン　チームに欠かせないベテラン</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610170001668.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】悔しいCS敗退　来季はさらに厳しくなる</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610170002123.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明のポスティング移籍容認を検討　終戦で本格的な話し合いへ　三冠王の夢後押しも</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610170002134.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明、メジャー移籍なら争奪戦も　米球団関係者「村上の獲得に動かなかった球団が…」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610170001772.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ラファエル・ドリスは来季残留へ　フル回転の最年長右腕　セベリーノ、ルーカスらは流動的</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610170002033.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】FA戦線に参戦へ　広島床田寛樹が権利行使なら獲得調査　</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610170002075.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明は２年前にメジャー希望を公言　今オフは12球団大トリ更改／これまでの歩み</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261018-2SG6AUTZXVMK3KMH37TEVTF6KI/" target="_blank" rel="nofollow">【サンスポ】【甘口辛口】阪神敗退受けてCS廃止論再燃だけは…野球愛する者に〝理性〟求めたい</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261018-C4QA2A7YPROEVOE4ZNXDZNYK5M/" target="_blank" rel="nofollow">【サンスポ】阪神・ドリス、セベリーノ、ガルシアに残留要請へ　ラグズデール、ディベイニーは退団の見込み</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261018-PV7GZ723NVKXJDL3JA2YLA5SFY/" target="_blank" rel="nofollow">【サンスポ】阪神・梅野隆太郎、残留基本線もFA塾考　嶌村本部長「当然残っていただきたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261018-QBBBKJWFI5JOXBRXCKNVLBQNRI/" target="_blank" rel="nofollow">【サンスポ】阪神・才木浩人、今オフのポスティングシステムでの米大リーグ移籍は断念へ</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/10/18/post2031402/" target="_blank" rel="nofollow">【Full-count】ヤンキース、佐藤輝明と「契約を目指す可能性」　米報道…取り損ねた村上宗隆の「過ち」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/10/18/post2032612/" target="_blank" rel="nofollow">【Full-count】阪神の敗戦直後…敵味方関係なしの2人が「胸熱」　突然ダッシュで「ハグするのかと」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941098.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝　メジャー挑戦今オフにもポスティング容認も　球団関係者「本人のためにも速やかに結論を」　復帰２安打も４連敗終戦</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941104.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・森下　メジャーへ準備　代理人契約済み判明　「高いところでやりたいっていう気持ちはある」今オフにも意向伝達か</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941110.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大山　意地の４安打も悔し終戦「まだまだ強くなれるってこと。きょうが来年のスタート」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941116.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　あと１球から悪夢　４連敗で終戦「この経験を球団の財産に」３連覇へリスタート</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941122.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　ＦＡ権取得の木浪、熊谷、伏見、岩崎に残留要請へ　嶌村本部長「当然残っていただきたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941124.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　広島・床田＆太田を獲得調査へ　西勇以来の８年ぶりＦＡ補強</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941126.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・小谷野打撃チーフコーチ退団意向　他コーチ陣は全員残留方針　平田２軍監督も留任へ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/18/0020941128.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　投打の新助っ人補強へ　ディベイニー、モレッタ、ラグズデールは退団する方向</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51061.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】８年ぶりのＦＡ補強へ　オリックス・中川圭太＆中日・上林誠知を調査　海外ＦＡ権保有の伏見寅威は複数年契約提示で全力慰留</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51059.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明のメジャー移籍容認へ　嶌村本部長「きょうの時点でコメントは…」も球団は前向きに検討　ポスティング申請開始は１１・１　史上９人目の３冠王</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51062.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】今オフも才木浩人のメジャー挑戦を認めず…１０年目で２年連続２ケタ勝利　１７５奪三振で初タイトル獲得</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261017-OHT1T51064.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】小谷野栄一打撃チーフコーチが電撃退団「タイガースに縁もないなかで本当に感謝」ナインに寄り添う指導で連覇に貢献　福原忍氏、岡崎太一氏を招へい　和田豊ヘッドは巡回コーディネーターへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610170002207.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】連覇の攻撃力を支えた指導者が退団　小谷野コーチが退団申し入れ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261018-JL4CY6Y6H5OPDNKIAXJ7I6CD2U/" target="_blank" rel="nofollow">【サンスポ】藤川虎、首脳陣再編で立て直す　和田ヘッド配置転換を検討　福原忍氏招聘プランも</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
