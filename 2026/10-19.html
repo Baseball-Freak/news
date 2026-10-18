@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/19</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943865.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「投げ出すようなことはしてはいけない、失礼すぎて」リーグＶ「それでも苦しかった」【オーナー報告会見】</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261018-OHT1T51233.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】佐藤輝明のポスティング容認を否定せず　阪神・嶌村聡球団本部長「しかるべき時にお話をさせてもらう」４０年ぶりの３冠王の夢を後押しへ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261018-OHT1T51230.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督、リーグ３連覇＆４年ぶり日本一へナインに大号令　遥人級に「爆発しろ」「いきなり開花する選手も逃さない」…球団初のセ・リーグ連覇にも「これだけ苦しい」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261018-OHT1T51202.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】高橋遥人、ＣＳ敗退翌日に甲子園でジョギング「微糖のコーヒーを飲み始めてから終わったっす（笑）」コーラ断ちもシーズン中に４キロリバウンド</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/column/torada/news/202610180000852.html" target="_blank" rel="nofollow">【日刊スポーツ】【虎になれ】オレは辞めない、投げ出さない　球児の決意</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180000965.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】来季３年目の藤川監督　選手に「爆発しろ」指令！例として名前を挙げたのは…</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180001031.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「いきなり能力開花する選手、私は逃さないつもりです。年齢は関係ない」一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180001018.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広＆岡城快生が宮崎のファーム本隊に再合流　立石「来年への課題を明確に」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180000854.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今季限りで退団の小谷野打撃コーチが甲子園訪れ感謝「いろんなものを与えていただいた」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180000934.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人がダイエットで再始動「微糖コーヒー飲み始めてから…」20分ジョグで脂肪燃焼</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180001094.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】嶌村本部長「しかるべき時にお話を」米移籍検討の佐藤輝明について　才木浩人は残留へ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610180000986.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】秦オーナー、藤川体制バックアップを明言　任期は「色んな選択肢を考えていくことに」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261019-4WENVM3CSFMYPEESWI4OU4KIIQ/" target="_blank" rel="nofollow">【サンスポ】【八木裕　帰ってきた神眼スコープ】阪神は「積極的休養」ができていたのか？3連覇へレギュラーの体調維持がキー、そして「2番・森下」…</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261019-BEKJSPNVZVNTVLX5DLUBZ2M2HI/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋遥人、さらなる高みへ敗退翌日に即始動「球速は復帰したときより今年は遅い」「ウエートトレは、やってることに対して違うのかな」伸びしろ実感し〝探求の秋〟へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261019-D5K6SPUUTVMK5GVXNUSWIIZQDQ/" target="_blank" rel="nofollow">【サンスポ】阪神・粟井一夫球団社長、育成選手増構想披露「層を厚くするというより可能性を厚くする」虎将サポート約束「最初から選手を厚めに、スタートしたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261019-D5NA3UOAZRL4NNTJDKZMEAHE7Y/" target="_blank" rel="nofollow">【サンスポ】阪神・早瀬朔が〝由伸フォーム〟で自己最長7回投球、2年目の飛躍へ「この冬が本当の勝負」教育Lで89球ピッチ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261019-EHW5XMXNKZNTZHU76CHTVZJWEM/" target="_blank" rel="nofollow">【サンスポ】阪神・町田隼乙、教育Lで2安打3出塁「この期間を大事に」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173368000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督の“長期政権”にオーナー前向き「手腕高く評価」来季3年契約3年目も契約延長示唆</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173344000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　宮崎で飛躍のきっかけつかむ「来年への課題を明確にできたら」フェニックス・リーグ合流へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173360000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　国内FA権取得のオリックス・中川圭太を獲得調査へ　選手層の薄さ解消へ今オフは積極補強</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173353000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・小谷野栄一打撃チーフコーチ「球団には感謝しています」藤川監督らに退団あいさつ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173348000c.html" target="_blank" rel="nofollow">【スポニチ】阪神の外国人2選手が米国に帰国　ディベイニー「阪神でプレーできたことを誇りに思う」このまま退団へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173345000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督「いきなり能力を開花させる選手を私は逃さない。爆発しろ」競争激化で戦力底上げへ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173352000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】リーグ3連覇を狙う来季へ「一度壊す。今年より壊れると思う」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173350000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・早瀬朔　平田2軍監督に制球ほめられた「徳川吉宗じゃないでしょ？綱吉ぐらいやな」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261019s00001173009000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人の悩み「痩せたい…」　糖質制限密かに解禁しカルピス、ジンジャーエールを　ダイエット宣言</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943857.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督「爆発しろ」３連覇へ新戦力台頭促す「能力開花する選手を私は逃さない」村上＆才木にはさらなる奮起期待</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943859.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・小谷野打撃チーフコーチが退団正式表明　理由は一身上の都合　藤川監督「心に大きな穴が空いた」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943863.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　今秋テーマは守備力向上「考え直してやりたい」今季１軍定着ならず「来年への課題を明確に」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943861.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高橋　終戦翌日即始動も理由は「とりあえず痩せたい」今季２冠さらなるレベルアップへまずはダイエット</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943867.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・粟井社長「あらゆる手段を使って」積極的補強へ一致団結　フロントも全面バックアップ</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943869.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・早瀬　プロ最長７回４安打１失点　“由伸フォーム”に手応え　若虎１９歳の挑戦「１軍で戦えるような技術を」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261018-OHT1T51286.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤本敦士総合コーチも電撃退団　球団慰留も小谷野栄一打撃コーチに続いて藤川球児監督の腹心去る　筒井和也スカウトが２軍投手コーチで初入閣</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173362000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・佐藤輝明　11月中に渡米！球団軟化、ポスティング容認に備え早期に「メジャー移籍準備」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173364000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　町田隼乙と佐野大陽に育成契約打診へ　ともにプロ2年目、1軍出場なし、腰を据えて能力アップへ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173354000c.html" target="_blank" rel="nofollow">【スポニチ】阪神に激震！藤本敦士総合コーチが今季限りで退団　小谷野打撃チーフコーチに続き中心的存在が…</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/19/kiji/20261018s00001173367000c.html" target="_blank" rel="nofollow">【スポニチ】阪神に激震！島田海吏、豊田寛の外野手2人が戦力外　ともに今季1軍で結果残せず</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943975.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・豊田　来季構想外　本人は現役続行希望　５年目今季は１軍で４打席</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/19/0020943872.shtml" target="_blank" rel="nofollow">【デイリースポーツ】連覇の阪神に激震　藤本総合コーチが電撃退団　球団引き留めるも本人意思固く了承　３連覇狙い後任人事選定へ</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
