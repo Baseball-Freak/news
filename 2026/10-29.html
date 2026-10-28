@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/10/29</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977950.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・平田新ヘッド　約３分訓示「プロってすごいなと思うのが、子どもたちの夢や目標につながるやん」藤川監督のすごみにも言及</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977942.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　的場新コーチは「“出過ぎた杭は打たれない”ところまで行かせてあげることもできる」平田新ヘッドの訓示で「いい一日に」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261028-OHT1T51262.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】小谷野栄一前打撃チーフコーチがプロスカウト転身　藤本敦士前総合コーチはアカデミー部門のポストへ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261026-OHT1T51123.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】平田勝男ヘッドコーチが秋季練習に合流「腕で金を稼げ」日本シリーズは「見てちゃダメ。出るんだよ」自身４度目の参謀役に藤川監督「ウィットに富んだ平田語録がほしい」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610280001148.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】福島圭音が“実りの秋”誓う　平田ヘッドコーチの訓示に「身が引き締まる思い」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610280001178.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】育成出身の神宮僚介が秋に肉体改造へ　年間通して戦う体力に不安「まず体力作り」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610280001387.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】平田新ヘッドコーチは秋季練習合流初日から「勝男節」全開！／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610280001366.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】平田勝男新ヘッドコーチ「岡田さんの時と同じようにというわけに」藤川監督と強力タッグへ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261029-2RXQ3GBOZNI7XF4EKROTFECXLM/" target="_blank" rel="nofollow">【サンスポ】阪神・神宮僚介「秋季キャンプで追い込みまくる」平田イズムで2年目の飛躍へ</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261029-DKCZR2KG2BIJXJZRH5GNFNCGSY/" target="_blank" rel="nofollow">【サンスポ】阪神・高寺望夢、森下バットで長打増し増し　変身「打てる遊撃」や　フェニックス・リーグ2三塁打含む3安打締め</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261029-EHAXY226ZZN75GTF3ND73GL43Q/" target="_blank" rel="nofollow">【サンスポ】阪神・岡崎太一2軍バッテリーコーチ就任会見「腐らずやっていけばチャンスある」栄枝ら育てる</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261029-M7QYTT5WFJMRNEPVANVIMENI5U/" target="_blank" rel="nofollow">【サンスポ】阪神・福島圭音「育ててもらった方」平田ヘッドコーチ始動に燃えた</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261029-QWXRCZKJ4VMIXJGM5UQ7N72I6U/" target="_blank" rel="nofollow">【サンスポ】阪神FA補強へ　広島・床田、オリックス・中川、楽天・太田ら注視</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261029s00001173008000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・栄枝裕貴　“スラムダンク精神”で来季活躍必ず！「量も質も求めたい」平田勝男ヘッドの訓示に感銘</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261028s00001173471000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・福島圭音　平田ヘッド就任に決意新た「育ててもらった方なので身が引き締まる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261028s00001173475000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・神宮僚介　平田ヘッドから声をかけられ来季飛躍へ意欲　「まずは体力。追い込みまくりたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261029s00001173003000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・早瀬朔　2種類のフォークで熱投5回零封！「千賀さんが目標」“お化け”習得誓って秋季Cでも鍛錬へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261028s00001173484000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　“打てるショート”へ三塁打2本！「長打出て良かった」森下バット使って打撃好調実感</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261028s00001173479000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ7・石井康輝　“ご近所”西川きよし師匠の「小さなことからコツコツと」で成功掴みいつか大豪邸</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261028s00001173485000c.html" target="_blank" rel="nofollow">【スポニチ】阪神育成1位・山下謙信　同じ長身の才木へ弟子入り志願　「真っすぐも強いですし、奪三振率も高い」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261029s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神育成2位・荒木誠也　九産大時代の同学年、巨人・浦田と対戦を熱望「仲がいいので。負けてられない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261028s00001173470000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・岡崎太一コーチ　“勝てる捕手”育成誓った！「私も選手と一緒に考えたい」球団事務所で就任会見</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/10/29/kiji/20261029s00001173006000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・筒井2軍投手コーチ　スカウトで担当した四国・徳島の3投手に期待　“教育係”に「責任も感じる」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977944.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・平田新ヘッド“勝男節”全開「日本Ｓは見ていちゃダメ。出るんだよ！」秋季練習合流即うま味たっぷり熱血訓示</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977956.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・神宮“平田チルドレン”訓示に気合　今季プチブレーク！来季完走へ限界突破の秋に「追い込みまくりたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977960.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岡崎新２軍バッテリーコーチ　若手捕手の育成へ「みんなにチャンスある」日本海Ｌ石川での監督経験生かす</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977964.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　限界突破指令「“ギリギリの向こう側”を見た時にすごい集中力が生まれる」秋季練習第２クール開始</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977970.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ７石井康「腕で金を稼ぐ」夢は大豪邸！実家徒歩圏内に西川きよし邸　箕面市に新たなランドマーク建てる</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/10/29/0020977974.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・早瀬　フォークに手応え５回０封締め“由伸フォーム”定着で無四球の安定感「良い試合になった」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261028-OHT1T51328.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ロッテ・小島和哉を調査　オリックス・中川圭太、中日・上林誠知と球団初のＦＡトリプル獲得も</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202610280001868.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】オリックス中川圭太の獲得調査へ本腰　中日上林誠知、ロッテ小島和哉も調査　FA申請開始</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
