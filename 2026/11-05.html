@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/05</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611040001933.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督　４年ぶりのホーム開幕に「リーグ優勝したことを分かち合いながら…」／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611040001805.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「NO！投げすぎ」肘手術経験の神宮僚介に助言「キャンプを乗り切る方が大事」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611040001784.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督、初ホーム開幕戦＆注目の新監督との対決に「いい野球お見せできることが一番」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611040001715.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】新外国人を獲得調査　155キロ超のマーリンズ本格派右腕、将来有望26歳</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611040001654.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】木浪聖也、国内FA権を行使せず単年契約で合意「もう一度日本一を目指して戦いたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261105-64VMLWQOGNMFLCRZK5PSWCWNHM/" target="_blank" rel="nofollow">【サンスポ】阪神D2位指名の日体大・馬場拓海、6回11K取るネード　「途中からあまり気にせず」大雨でも乱れん！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261105-E22SAMVJURIPHCMGI4BTDXEIQU/" target="_blank" rel="nofollow">【サンスポ】阪神・木浪聖也、FAせず残留発表　遊撃争いへ、竹内球団副本部長「競争して勝ち取ってもらいたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261105-F3V2DZ4UY5NKFA5V64YDUHR7ZE/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督「いい野球をお見せできることが一番」　2カード目vs工藤竜、3カード目vs松井G　来季セ・リーグ日程発表</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261105-JJ3UVOUFSVMUXLLOXIXBRD2YLY/" target="_blank" rel="nofollow">【サンスポ】阪神、投打ダブル獲り本腰　オリックス・中川FA権行使へ　ロッテ・小島と合わせて16年ぶり大補強　ともに4年規模の大型契約検討</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001003410000c.html" target="_blank" rel="nofollow">【スポニチ】【日本選手権】阪神ドラ2 東京ガス・越川海翔“越キャノン”発動！二塁送球1・8秒前後の強肩で盗塁阻止</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173417000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・神宮僚介に藤川監督が“投げ込むな指令”　キャンプ完走を最優先「従おうと思います」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173413000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊原陵人　“投げ込み王”4日間で496球「シーズン中のしんどいイニング、しんどい時期に生きる」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173409000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ2・馬場拓海　“本家”ほうふつトルネード投法で11K　日体大を勝利に導く</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173422000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　初のホーム開幕戦に「ファンと戦える」　松井Gとは4・2が初戦「いい野球見せたい」　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173427000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　「今は自分の技術を上げること」　遊撃の守備課題消化した先にある開幕スタメン</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173429000c.html" target="_blank" rel="nofollow">【スポニチ】国内FA権行使せず残留の阪神・木浪聖也へ球団「老け込む年でもない。競争して勝ち取って」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173420000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】来春「宜野座キャンプでスタートできるな、という選手もいる。非常にいい状態」　</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/11/05/post2040546/" target="_blank" rel="nofollow">【Full-count】阪神3連覇への“決定的な課題”「-22.8」　サトテル流出だけじゃない…現状維持に潜む暗雲</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001382.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ６越川“越キャノン”披露　指名後初実戦「『見られてるからやらな』と力みがあった」無安打も九回四球でサヨナラ貢献　</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001374.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　「何人か（来春）宜野座のキャンプでスタートできるなと」「ルーキーは１年間走り切ったばかり」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001378.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・佐藤輝明　メジャーＦＡ選手ランク野手トップ、全体２位　米ＥＳＰＮ電子版「３０本以上期待」と紹介　契約予想５年総額１８２億円</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001376.shtml" target="_blank" rel="nofollow">【デイリースポーツ】正力賞の候補に阪神・佐藤輝明の名前も　三冠王での受賞例なし　選考委員「異常な熱気の甲子園で期待に応え続けた選手」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001380.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・木浪　国内ＦＡ権行使せず残留「もう一度、日本一を目指して戦いたい」　竹内球団副本部長「よかったです本当に」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001388.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ２馬場　奪三振ショー「いつものようにアバウトに」野茂ばりトルネードで圧巻６回１１Ｋ　神宮大会へ日体大また一歩前進</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001394.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　４年ぶりホーム開幕歓迎　中日・工藤新監督＆巨人・松井新監督との対戦にも「セ・リーグとしていい野球を」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001400.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神“鯉キラー”高寺に追い風　開幕広島戦、遊撃スタメン発進へ「戻すというよりは新しく」ゼロからの挑戦</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261104-OHT1T51324.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】新外国人補強第１弾！怪物ジャッジ斬り右腕・ブレイロック獲得へ　最速１５９キロ誇る２５歳の大器　先発候補で白羽の矢</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/05/kiji/20261104s00001173407000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　3連覇へメジャーの“ハイブリッド右腕”獲りへ　最速159キロ&多彩な変化球持つ25歳ブラロック</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/05/0021001406.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神補強第１弾！最速１５９キロ剛腕を獲得調査　前マーリンズのブラッドリー・ブラロック　７球種操る２５歳先発右腕</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
