@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/06</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261105-OHT1T51210.html" target="_blank" rel="nofollow">【スポーツ報知】【オリックス】中川圭太が国内ＦＡ権行使「選手生活を終えた後の自分を想像した時に、後悔のない決断をしたい」阪神が４年総額１０億円の大型契約で１１日に即日アタックへ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261105-OHT1T51170.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】高知・安芸キャンプで外国人４投手の入団テスト　ドミニカ共和国など中南米から来日　竹内球団副本部長「まずは育成契約を目指してもらう」藤川球児監督ら首脳陣が逸材発掘へ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261105-OHT1T51160.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】伏見寅威が海外ＦＡ権を行使せずに残留　トレード移籍１年目は「はるとら」バッテリーでリーグ制覇に貢献　得点圏打率３割５分９厘の野手最年長</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050001079.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広が休日返上で練習「休んでいる間、他の選手より動いてないので」体調不良から復帰</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050001077.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】栄枝裕貴が地元高知での優勝記念パレード参加へ「知り合いからも連絡が。胸張って行く」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050001114.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】木浪聖也「チームのためにもう一度貢献」　球団事務所で残留を表明</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050000981.html" target="_blank" rel="nofollow">【日刊スポーツ】【取材後記】阪神矢野打撃コーチのような「代打の神様」は生まれる？現代には最新鋭マシンがある</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050000980.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】矢野謙次打撃チーフコーチの指導理念「どう転んだって成功で成長」巨人から“異例移籍”</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050001067.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】国内FA宣言オリックス中川圭太に４年総額10億円用意　11日の交渉解禁即アタックへ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611050000992.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】15年ぶり入団テスト実施　魅惑の「金の卵」発掘へ安芸キャンプに外国人４選手参加</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261106-TJBWTFVQMRJ3VFOOD5GV3DWVFY/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、中南米4投手を自らテスト　ゴメススカウトが選んだ逸材を秋季キャンプで</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261106-AD4H7SXOWRJLZKHZPBEQNDQTXI/" target="_blank" rel="nofollow">【サンスポ】阪神・立石正広、休日返上トレも6日全体練習可否は「なんとも言えない」3日練習欠席、4日別メニュー…</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261106-FVGB755T4JKB5JR7CU3U4HQRRA/" target="_blank" rel="nofollow">【サンスポ】阪神・木浪聖也がFA権行使せず残留…球団から「勝ちに貢献するようにといわれた」「チームのために頑張りたい」1年契約、現状維持の推定年俸5500万円で合意</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261106-O6TBDUHSBNMXNJDLSBHM6G44SM/" target="_blank" rel="nofollow">【サンスポ】新連載【虎新コーチ　かく語りき】阪神・矢野謙次打撃チーフコーチ、巨人と比べ「熱量を感じます」勝負強さ伝授、選手の「帰れる家」「安心を作りたい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261106-QBSD3KWHAZLMPFWZ3BFXZGPEQM/" target="_blank" rel="nofollow">【サンスポ】阪神・栄枝裕貴、フレーミング習得「手応えは感じている」9日地元高知でのVパレード「胸を張っていきたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001003352000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ4　ヤマハ・相羽寛太　来季開幕戦“予行練習”京セラDで好守に躍動「満員を想像。すごく楽しみ」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173347000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　高知での優勝パレード　9日に藤川監督＆13選手参加し開催　地元出身の栄枝「胸張って行きたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173346000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広「総合的にレベルアップしたい」　体調不良も癒え秋季キャンプ第2クールから合流予定</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173343000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・木浪聖也　「一番の方法を選んで」妻の言葉で残留を決意　単年契約で来季復活を誓う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173349000c.html" target="_blank" rel="nofollow">【スポニチ】阪神が秋季キャンプで「育成助っ人オーディション」初開催へ　中南米から一次選考勝ち抜いた4投手を招待</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173339000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・矢野1軍打撃チーフコーチに聞く（上）】巨人より「勝負、アウト、勝つことを厳しくとらえている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173340000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・矢野1軍打撃チーフコーチに聞く（下）】選手が悩み吐ける場所、帰る家のような“安心”を作りたい</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/06/kiji/20261105s00001173337000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　海外FA権行使せず残留！高橋遥人との最強バッテリー“ハルトラ”で来季も頼むで</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/11/06/post2040911/" target="_blank" rel="nofollow">【Full-count】阪神発表にファン悲鳴「なんで平日」　集結する豪華13選手…人選は「くじで決めた？」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/06/0021004684.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　秋季Ｃで外国人入団テスト　異例国内１１年ぶり　ドミニカなど４投手、藤川監督ら首脳陣が生チェック</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/06/0021004686.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　オリックス・中川に即アタック　国内ＦＡ権行使、１１日交渉解禁　最大４年総額１０億円規模の大型契約を用意</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/06/0021004688.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・嶋村　正捕手奪取へ「自分で考え、自主性大事に」坪井コーチ直伝テニストレで打力アップ、岡崎コーチへ積極質問でスキル吸収</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/06/0021004691.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　休日返上　体調不良で前日別メニュー「ちゃんと万全の形で臨めるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/06/0021004697.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ４相羽　開幕レギュラー予行演習　京セラで“虎初安打＆初打点”「ここが満員を想像したらゾクゾクした」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/06/0021004703.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・木浪が残留会見　現状維持５５００万円で合意「結果が残らなかったのは全部自分のせい」来季巻き返しへ</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261106-OHT1T51006.html" target="_blank" rel="nofollow">【スポーツ報知】【番記者レコメンド～西の陣～】マウンドに足を運んだ回数は１２球団ＮＯ１！？　球団初のセ連覇に不可欠だった安藤優也投手チーフコーチの存在／阪神編</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261105-OHT1T51112.html" target="_blank" rel="nofollow">【スポーツ報知】【番記者レコメンド～西の陣～】マウンドに足を運んだ回数は１２球団ＮＯ１！？　球団初のセ連覇に不可欠だった安藤優也投手チーフコーチの存在／阪神編</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
