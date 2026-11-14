@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/15</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261115-N5376CXELVLTXOJI3RJZ27SJ4E/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】長く熱い歴史連ねる「学生野球の聖地」　30年前のプロアマ戦に今岡、井口、黒田ら…</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261115-YNMOJ2CRVJIXTLZZHNPCSW4ZAY/" target="_blank" rel="nofollow">【サンスポ】藪恵壹さんと日米ストーブリーグ談議　第7回交流ライブでは変化球の握り方まで伝授！</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261114-OHT1T51340.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ＦＡ戦線に藤川球児監督の出馬要請も　嶌村聡球団本部長　３人獲得を目指し「色々な選択肢の中でやりたい」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261114-OHT1T51317.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ＷＢＣブラジル代表らが育成外国人テストに参加　藤川球児監督「強さはあった」エリック・パルディーニョ投手らに熱視線</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611140001537.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督がFA交渉に直接出馬の可能性「その時々の状況で」嶌村本部長が語った誠意</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261115-6XOGZTHEJRIFZNWRXJCSZENVJU/" target="_blank" rel="nofollow">【サンスポ】阪神・嶌村聡本部長、FA交渉「一つ一つクリア」　藤川監督の出馬は「その時々の状況で」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261115-LQ7Y2OPH4NKDJNKOBY765WHZJA/" target="_blank" rel="nofollow">【サンスポ】阪神・嶌村聡球団本部長、入団テストのワールドワイド化に意欲　台湾も検討</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001173446000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伊原陵人　秘密兵器「スイーパー」習得だ！投球の幅広げて、来季目指すは2桁勝利&奪三振率アップ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001173449000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　20発打法に手応え　下村とフリー打撃“ドラ1対決”で「左方向に打球が飛んでくれた」　</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001089452000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ1の榊原七斗　プロ相手に無安打も収穫「変化球の質やまっすぐのスピード感」の違い“予習”できた</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001173453000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・下村海翔　悪癖改善のポイントは「骨盤」　藤川監督からの直接指導で「下だよと言われている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001173457000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督“お宝”見つけた!　外国人テスト生4投手チェック　154キロ出たパヤーノらに熱視線</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001173447000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】秋季キャンプ初のライブBPに「バッター相手に軽く投げてどれだけ出るか」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/15/kiji/20261114s00001173460000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・嶌村本部長　FA選手側との接触認める　長期戦も覚悟「できれば全てのことを済ませて年を越したい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035653.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　テスト生「みんなテスト生みたいなものです（笑）」「今のところは『謎の不気味なタイガー・ジェット・シン』」一問一答</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035655.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ１榊原“プロの洗礼”２打数無安打　村上宗隆のパンチ力「しっかり見習いたい」令和初三冠王から刺激</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035661.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　茨木、早川、富田に高評価「ブルペンでしてたものがどれだけ出せるか」直球のみのライブＢＰ熱視線</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035667.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　ＦＡロッテ・小島＆オリックス・中川＆中日・上林との交渉「すでに開始」　嶌村球団本部長が明かす　藤川監督の直接出馬も</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035669.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岩田稔ＣＡ　関大後輩のドラ６越川＆育成１位山下にエール　チームメイトに「どんどんコミュニケーションを」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035672.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　テスト生の外国人４投手が合流　複数選手が１５０キロ超　藤川監督「今のところは謎の覆面タイガー・ジェット・シンで」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/15/0021035677.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ７石井康　工藤＆木下と“１００マイルトリオ”結成へ　最速１５４キロからの大台到達に意欲「スピードで覚えてもらえる存在に」</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
