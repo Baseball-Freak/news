@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/17</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="teams-icon teams-t"><a href="https://hanshintigers.jp/news/topics/info_11410.html" target="_blank" rel="nofollow">【公式サイト】12/18(金)公開決定！公式ドキュメンタリー映画 『阪神タイガース THE OFFICIAL MOVIE 2026 ―熱覇(ねっぱ)の記憶―』</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261116-OHT1T51228.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】藤川球児監督、１５０キロ超連発のテスト生にテンション爆上がり！「ブラジルの皆さん聞こえますか？」サバンナ八木になる</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611160001745.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広２年目は“主演級”活躍へ「出られたらうれしい」12月に公式映画公開</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611160001646.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】これは金の卵かも…藤川監督「いい。かなり」鮮烈デビューのテスト生パヤノが打者４人3K</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611160001519.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】球団初のリーグ連覇の舞台裏に迫るドキュメンタリー映画「熱覇の記憶」12・18公開</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611160001518.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】伏見寅威「運があるんですよ、僕」菅野、由伸、大海、高橋ら“沢村賞請負人”の秘訣</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611160001430.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ベテランの岩崎優が新人９人へメッセージ「厳しい環境だと思って、震えながら練習して」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261117-GBQNFNUUFFJIRJVUBIIFZXGJ3I/" target="_blank" rel="nofollow">【サンスポ】阪神・岩崎優、「震えながら練習してもらって（笑）」　経験交えルーキーへ金言</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261117-ILCSUZZESNPDHGLHKEE7HIOTNE/" target="_blank" rel="nofollow">【サンスポ】阪神・伏見寅威、3年連続沢村賞アシストだ「彼らのタイトルにつながるなら喜んで」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173326000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】テスト生の合否はすぐには出せず「まだ今のところは謎の覆面ですね」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173324000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　映像分析「トライ・チェック」は年明けまで封印　秋季キャンプは若虎との意思疎通重視</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173323000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・神宮僚介　“エグり王子”襲名だ　苦手の左打者対策に「内角カット」習得へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173321000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　外国人テスト生2投手から快音「練習でやっていることが実戦形式で出せて、対応できた」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173319000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・岩崎優　新人に愛ある“鬼指令”　遊びは厳禁「震えながら練習してもらいたい」自身の経験ふまえ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173322000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　27年猛虎の「主演男優賞」はオレだ！V2密着映画12月公開決定で「来年は…」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/17/kiji/20261116s00001173317000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督ご満悦　外国人入団テストに“ダイヤの原石”　WBC代表に最速157キロも…掘り出し物か</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042407.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・テスト生パヤノ　虎戦士４人相手に３奪三振、最速１５７キロ　藤川監督も絶賛「かなりいい」「実戦に向いている」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042412.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　テスト生４人に高評価　パルディーニョのナックルカーブ「少し見てみたかった」　</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042427.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　テスト生「謎の覆面ですね。ブラジルの皆さん聞こえますか？」映画公開決定「試写会も行っていませんから」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042417.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　来季は主演“弾”優賞だ　ドキュメンタリー映画今年も公開決定　テスト生と真剣勝負で確かな収穫</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042421.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・岩崎　新人投手の相棒役引き受ける　今季は工藤サポート「いろんな人とできたらいい」キャッチボール相手歓迎</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042423.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・伏見　フィードバック年内封印　過去にとらわれずアップデート　投手の成長も考慮「絶対この期間でまた変わる」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/17/0021042425.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・神宮　左打者封じへ内角高めカット習得だ　新球チェンジアップと並行して「一つの手数として使えたら」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261116-OHT1T51246.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】２年連続となるドキュメンタリー映画が公開決定　激動のシーズンの舞台裏に迫る　１２月１８日より全国で</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261117-AMUXSF2E3FJTXASR7AKKFLZSEU/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、テスト生のパヤノは「かなりいい」　パルディーニョも高評価「ブラジルの皆さん聞こえますか？」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261117-VOLOK2UXWJPZVMXGRD2E3F7ENY/" target="_blank" rel="nofollow">【サンスポ】阪神のドキュメンタリー映画12.18公開　連覇の裏側明かす</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
