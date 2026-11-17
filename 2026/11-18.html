@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/18</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045955.shtml" target="_blank" rel="nofollow">【デイリースポーツ】ソフトバンク・王会長　江夏豊さん追悼「うらやましく思ったこともありました」「これほどてこずらされたピッチャーはいません」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045957.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　江夏豊さん悼む「自分も姿を重ねてアメリカで苦労した瞬間も」「野球を離れた時は優しさを感じました」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261117-OHT1T51370.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】「叱咤激励が大好き」藤川球児監督　江夏豊さんへの思い継承「阪神タイガースを大切に育てたい」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261117-OHT1T51369.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】育成外国人テスト４投手が当確　２６年ＷＢＣブラジル代表の日系３世は今年だけで４か国プレーの苦労人「甲子園に行きたかった」と憧れも</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611170001719.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】藤川監督「本当に叱咤激励が大好きで…」「すごく残念」レジェンドOB江夏豊さんを悼む</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611170001660.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】野村克則コーチ「小さいころ家に遊びに行ったり、娘さんと遊んだり」江夏豊さん悼む</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611170001769.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】テスト生４人は入団内定「『おっ！』と思うような４選手。段階踏んで」嶌村本部長が示唆</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611170001773.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】嶌村本部長がFA戦線に一定の手応え「熱意は伝えていきたい」トライアウトにも言及</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261118-BJVBETIMNNMARAHG3BXITWNUD4/" target="_blank" rel="nofollow">【サンスポ】阪神・平田勝男ヘッドコーチ、江夏豊さんの訃報に接し「またタイガースのスターが亡くなって、寂しい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261118-E5XQNJHD5VKYHGOJAUJITSZ6N4/" target="_blank" rel="nofollow">【サンスポ】【悼む】司馬遼太郎作品を愛した江夏豊さん　〝文学愛好家〟の一面に驚かされた</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261118-K4OLLHA3X5J2LIFSY3OKINY56A/" target="_blank" rel="nofollow">【サンスポ】阪神・野村克則作戦統括コーチ、江夏豊さんには「父のつながりで小さい頃からお世話になった」「娘さんと遊んだりした」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261118-S4QEFMTJ5BPVHBWXSTR5BMC2A4/" target="_blank" rel="nofollow">【サンスポ】阪神・藤川球児監督、江夏豊さんは「会うことに緊張感を覚える先輩」タイガースに厳しい評論「この叱咤激励が大好きでした」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261118-VOVURDMUSRLTPOG52PU3A6EB7U/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、江夏豊さんの「車椅子から立ち上がって、投球しようとした姿は忘れることがない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173277000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　ブラジル人テスト生は今年4カ国目の苦労人「子どもの頃から甲子園に」日系3世、高評価で吉報待つ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173398000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　西武戦力外の糸川亮太を獲得へ　シンカーが武器の右腕に育成契約提示へ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173396000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　ライナー性の打球連発！納得の柵越え7本「なあなあに過ごさないように」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173394000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・工藤泰成　投げ納めに今秋最多82球「締めにふさわしいように、今年の集大成にしようと」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173391000c.html" target="_blank" rel="nofollow">【スポニチ】阪神　外国人テスト生4投手全員合格へ　嶌村球団本部長「4人とも“おっ”と思う選手だった」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173366000c.html" target="_blank" rel="nofollow">【スポニチ】【江夏豊さんを悼む】晩年「弱い江夏」を見せず　不屈の精神で生涯を全うした　最も野球を愛した男</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173390000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督　尊敬する江夏さんの猛虎魂受け継ぐ　「叱咤激励が大好きだった」天国に誓う弔い3連覇</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173395000c.html" target="_blank" rel="nofollow">【スポニチ】輝き続ける「江夏豊伝説」　球宴で9者全員三振、首脳陣と確執・トレード…色あせぬ「記録」と「記憶」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173399000c.html" target="_blank" rel="nofollow">【スポニチ】【江夏豊の記録アラカルト】不滅のシーズン401奪三振、通算206勝も唯一阪神相手だけ0勝</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/18/kiji/20261117s00001173402000c.html" target="_blank" rel="nofollow">【スポニチ】江夏豊さん　強い巨人＆ON斬りが「青春だった」　打者一巡“わざと”打たせて王からシーズン最多奪三振</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045962.shtml" target="_blank" rel="nofollow">【デイリースポーツ】江夏豊さん死す　忘れない「タテジマの２８番」さらば伝説の左腕　阪神・南海・広島など５球団渡り歩いた「優勝請負人」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045971.shtml" target="_blank" rel="nofollow">【デイリースポーツ】藤田平氏　江夏豊さん追悼「『５年ぐらい留年していたんちゃうか…』と思わせるような」雰囲気、オーラが違った衝撃の高校時代</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045965.shtml" target="_blank" rel="nofollow">【デイリースポーツ】江夏豊さん死去　沖田総司に憧れ長嶋や王、斬り倒した姿は孤高の剣士　元担当記者が悼む</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045959.shtml" target="_blank" rel="nofollow">【デイリースポーツ】田淵幸一氏　盟友・江夏豊さん悼む「黄金バッテリーと呼んでもらったのは彼のおかげ」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045978.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　江夏豊さん追悼「タイガースの選手には特に厳しかった」昨年４月車椅子でマウンド「立ち上がって投球しようとした姿いまだに忘れることない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045982.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神　テスト生外国人４投手とも育成契約有力　全日程終え嶌村球団本部長高評価「非常にハイクオリティー」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045967.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【佐藤義則氏】江夏豊さんから助言で「４４歳まで現役を続けられた」自身の通算１７５５奪三振も「到底及ばない。その偉大さを身をもって感じている」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/18/0021045969.shtml" target="_blank" rel="nofollow">【デイリースポーツ】【中田良弘氏】江夏さんから受け継いだ「２８」の重圧　入団から１４年間「背中を目指して自らを追い込むことができた」</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261117-OHT1T51333.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】徹底補強！日本ハムから自由契約の福田俊と西武戦力外の糸川亮太を獲得へ　左右の一芸投手で課題の戦力層の底上げ図る</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
