@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/20</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261119-OHT1T51242.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】神宮僚介、入団時から４・７倍の１４２０万円でサイン「ご褒美を１つくらいは買ってもいいのかな」育成ドラフト出身選手では中日・松山に次ぐ大幅昇給</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611190001644.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広、手本は佐藤輝明と森下翔太「２桁本塁打絶対に達成したい」1800万円で更改</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611190001506.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】下村海翔　1450万円で更改「10勝以上したい」最多勝の高橋遥人から刺激「すごい人」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611190001517.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】TJ手術の下村海翔が来季完全復活に手応え「右ひじに移植した腱がなじんできている」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611190001661.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】工藤泰成「これからも賞を…」新設「HIKESHI」特別賞　夢膨らむ来季タイトルは</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611190001981.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ６東京ガス・越川海翔と仮契約　「走ってきた選手はみんな刺したい」と鼻息荒く</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611190001577.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広、来季三塁奪取＆２桁本塁打へ佐藤輝＆森下に学ぶ！オフは森下塾に弟子入り</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261120-6VRBQTD2QNNWPO5H4MGZEJLHWA/" target="_blank" rel="nofollow">【サンスポ】阪神D6位・越川海翔が合意「トランキーロでいきたいですけど…最初は飛ばしていこうと」好きなレスラー・内藤哲也の名言借りて決意表明</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261120-FUFNWA3VAVMQ3HUJ547FJJKT2Y/" target="_blank" rel="nofollow">【サンスポ】阪神・立石正広「甲子園でホームランを打って活躍している姿を」200万円増でサイン、オフは森下に密着！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261120-NLWLUZLUA5PUTKOHJLXW5E7PT4/" target="_blank" rel="nofollow">【サンスポ】阪神・下村海翔「投げられていることに満足しちゃっていた自分が本当に情けなくなって」高橋遥人の悔しがり方みて己の甘さ知った！　投げられる喜びから、悔しがれるエースへ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261119s00001173382000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・神宮僚介　年俸大幅増勝ち取るもおごらず　50試合登板へ「どれだけ追い込めるかやってみたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261119s00001173378000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・森下翔太　“色々”悩んでます…　「子供が憧れる存在」へカラーバット検討　ネックは国際大会ルール</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261119s00001173381000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　“輝森イズム”で甲子園のため息を歓声に変える!!　来季2桁本塁打「絶対に達成する」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261120s00001173005000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・下村海翔　来季は10勝目標「それぐらいやらないと…」　師匠・高橋遥人を手本に能力全開誓う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261120s00001173001000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・工藤泰成　新設の救援投手表彰で特別賞　「たくさんの賞をいただけるように」来季さらなる飛躍誓う</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261119s00001173384000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ6・越川海翔　“脱トランキーロ”精神で強肩アピールだ　「最初は飛ばしてもいいんじゃないかと」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/20/kiji/20261120s00001173007000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・富田蓮　来季こそV貢献…決意の“ぼっち”宣言　自主トレは「自分自身を見つめ、1人で」　</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/11/20/post2047465/" target="_blank" rel="nofollow">【Full-count】江夏豊さん「401奪三振」の価値　記録更新は“不可能”…「31.9％」×「329」の両立</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/20/0021052979.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・工藤が「ＨＩＫＥＳＨＩ賞」特別賞受賞　２５歳誓い「これからもたくさんの賞をいただけるように」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/20/0021052985.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　虎の顔になる！佐藤輝＆森下イズム継承　球団「主力という自覚を」期待に応える　２００万円増でサイン</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/20/0021052989.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　昇給のご褒美「おいしいものでも」開幕三塁が目標「スタメンで出たい」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/20/0021052993.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ６越川「焦っていい」“ＮＯＴ　トランキーロ”で早期アピールへ　契約金４０００万円、年俸８００万円で仮契約</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/20/0021052999.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・下村　来季目標「１０勝以上」初昇給３５０万増１４５０万円「危機感を持ってやらないといけない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/20/0021053005.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・神宮「想像よりも上がった」１０００万増１４２０万円で更改　育成→１年目支配下選手では虎史上最高昇給</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
