@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/23</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-huc"><a href="https://hochi.news/articles/20261122-OHT1T51254.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】大竹耕太郎、ＦＡ宣言したロッテ・小島和哉にラブコール！？「人にかまっている余裕はない」も「一緒に頑張れる関係になる」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611220001812.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高寺望夢が社会貢献活動に意欲「人を助けたい」過去にはOB鳥谷敬氏らと小児病棟訪問</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611220001639.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広が森下翔太とのホームランパフォーマンスに名乗り　新たな相棒役に意欲</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611220001819.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】坂本誠志郎が2026年度「若林忠志賞」を受賞、社会貢献活動に込めた思い</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611220001726.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】甲子園に黄色い「Ｖ」今季のリーグ優勝記念パネル追加　村上頌樹「来年も刻めるように」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611220001809.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大竹耕太郎、早大の後輩・ロッテ小島和哉を歓迎「一緒に頑張れる関係にはなるとは思う」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261123-5O6BJCTIHRJUTKF5PEFFYQEZKA/" target="_blank" rel="nofollow">【サンスポ】阪神リーグ優勝ロゴが甲子園に設置…今季は黄色、選手会長村上頌樹「赤は日本一なので、来年はその色に」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261123-OVG6TRUDWBPV3FIWUW7MPDTWUQ/" target="_blank" rel="nofollow">【サンスポ】阪神・高寺望夢「慈善活動ができるように頑張る」若林忠志賞受賞の坂本誠志郎に共感</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261123-VL73IHYERZJSXGZAJCZK2QZJ3A/" target="_blank" rel="nofollow">【サンスポ】阪神・大竹耕太郎、早大の後輩でロッテFA小島は「一緒に頑張れる関係」も「自分のことで精いっぱい」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261123-YNN2RHCGCBJHPJVBEU6FYQMAFE/" target="_blank" rel="nofollow">【サンスポ】阪神・立石正広「頑張ってその場にいくしかない」森下からのパフォーマンスコンビ結成呼びかけに…</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/23/kiji/20261122s00001173381000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・大竹耕太郎　FA去就注目の後輩、ロッテ・小島と一緒に行う自主トレ中も「そういう会話はしない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/23/kiji/20261123s00001173002000c.html" target="_blank" rel="nofollow">【スポニチ】阪神選手会長・村上頌樹の思い　甲子園に初の2年連続セ優勝パネル掲示も「来年は日本一の赤色」必ず</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/23/kiji/20261123s00001173006000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　森下の“パフォ新相棒”指名に気合　まず定位置奪取へ「自分がその場にいくしかない」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/23/kiji/20261122s00001173382000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・坂本誠志郎　若林忠志賞受賞　故郷への社会貢献評価　小中学生との交流や寄付「続けることが大事」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/23/kiji/20261122s00001173390000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高寺望夢　「人助けをしたい」社会貢献活動に意欲　まず来季は規定打席到達して実績つくる</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/11/23/post2048471/" target="_blank" rel="nofollow">【Full-count】阪神が匂わせ投稿「絶妙な公開の仕方」　150万回再生…演出に「え、パドレス？」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063698.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・大竹「来たら一緒に頑張れる」　ＦＡ宣言の小島に言及　自主トレ仲間＆早大１学年先輩としての思い</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063695.shtml" target="_blank" rel="nofollow">【デイリースポーツ】ロッテＦＡ小島「考えさせて」　近日中に阪神と面談へ　宣言後初肉声「必要としてくれてるチームで投げたい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063708.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・的場２軍打撃コーチ　悔いだらけだった阪神人生“しくじり先生”として伝えたい　「人生変えてほしい」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063700.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・村上　３連覇、日本一への覚悟「来年は赤色に」　甲子園に２６年優勝ロゴ掲出で来季への思い吐露</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063711.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・立石　森下からＨＲパフォ相棒指名→「頑張ります」「自分が頑張ってその場に行くしかない」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063716.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・高寺　活躍して慈善活動を　坂本の「若林忠志賞」受賞に刺激　「僕こう見えて人を助けたいんです」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/23/0021063714.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・坂本に「若林忠志賞」　養父市の小中学生に夢を与える活動が評価「野球人としても人としても成長していけたら」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/23/kiji/20261122s00001173397000c.html" target="_blank" rel="nofollow">【スポニチ】佐藤輝明　米7球団と面談済み　フィリーズとメッツはすでにオファーか　早ければ27日感謝祭前に決着</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
