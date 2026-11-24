@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Page</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      padding: 2em;
+      position: relative;
+      /* 本文も少し明るいグレーにして沈まないようにします */
+      color: #ddd; 
+    }
+
+    /* リンク色の強化（白・黒背景両対応） */
+    a {
+      color: #3b82f6; /* ダークモードでより映える明るめの青 */
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    a:visited {
+      color: #a78bfa; /* 訪問済みは少し薄い紫に */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+    }
+    .nav-buttons button {
+      width: 80px;
+      height: 30px;
+      font-size: 0.7em;
+      padding: 0;
+      border: 1px solid #666;
+      border-radius: 4px;
+      background-color: #333; /* ボタンもダークモードに合わせました */
+      color: #eee;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+    .box1 {
+      margin-left: -1em;
+      margin-top: 3em;
+    }
+    
+    /* ▼▼▼ 日付（左上）の色の修正箇所 ▼▼▼ */
+    h3.bar3 {
+      font-size: 1.2em;
+      margin-left: 1em;
+      color: #eee; /* 黒背景で見えるように明るい色に指定 */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* 文字の縁取り */
+    }
+    /* ▲▲▲ 修正ここまで ▲▲▲ */
+
+    .nb-list {
+      list-style-type: disc;
+      margin-left: 2em;
+    }
+    .nb-list li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const getCurrentDateFromURL = () => {
+      const path = location.pathname;
+      const match = path.match(/\/(\d{4})\/(\d{2})-(\d{2})\.html$/);
+      if (!match) return null;
+      const [_, yyyy, mm, dd] = match;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    };
+
+    const goToRelativeDay = async (offset) => {
+      const baseDate = getCurrentDateFromURL();
+      if (!baseDate) {
+        location.href = "../pending.html"; 
+        return;
+      }
+      baseDate.setDate(baseDate.getDate() + offset);
+      const nextY = baseDate.getFullYear();
+      const nextM = pad(baseDate.getMonth() + 1);
+      const nextD = pad(baseDate.getDate());
+      const target = `../${nextY}/${nextM}-${nextD}.html`;
+      const pendingUrl = "../pending.html"; 
+
+      try {
+        const res = await fetch(target, { method: 'HEAD' });
+        if (res.ok) {
+          location.href = target;
+        } else {
+          location.href = pendingUrl;
+        }
+      } catch (error) {
+        location.href = pendingUrl;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const pathMatch = location.pathname.match(/(\d{2})-(\d{2})\.html$/);
+      if (!pathMatch) return;
+
+      const fileMM = pathMatch[1];
+      const fileDD = pathMatch[2];
+      const h3Element = document.querySelector('h3.bar3');
+      
+      if (h3Element) {
+        const textContent = h3Element.textContent;
+        const contentMatch = textContent.match(/(\d{4})\/(\d{2})\/(\d{2})/);
+
+        if (contentMatch) {
+          const [fullDate, year, contentMM, contentDD] = contentMatch;
+          if (contentMM !== fileMM || contentDD !== fileDD) {
+            location.href = "../blank.html";
+            return;
+          }
+          document.title = `${fullDate} プロ野球ニュースまとめ`;
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goToRelativeDay(-1)">Previous</button>
+    <button onclick="goToRelativeDay(1)">Next</button>
+  </div>
+<div class="box1">
+
+  <!-- 当日日付け入力　ここから -->
+
+  
+<h3 class='bar3'><i class="fas fa-calendar-check"></i>2026/11/26</h3>
+
+
+　<!-- 当日日付け入力　ここまで -->
+
+ <!-- 当日News入力　ここから -->
+  
+
+<ul class="nb-list"><li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-F53NNBJS3NO3TA4SYCW463XT5U/" target="_blank" rel="nofollow">【サンスポ】【虎のソナタ】サンスポも包み込まれた伏見の優しさ　ご本人購入！「はるとらモバイルバッテリー」</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/11/25/post2049929/" target="_blank" rel="nofollow">【Full-count】ミスする子どもにも「言い続ける」　“指導者”になった元阪神・原口氏、伝える寄り添い方</a></li>
+<li class="news-icon news-bbk"><a href="https://baseballking.jp/ns/713422/" target="_blank" rel="nofollow">【ベースボールキング】阪神、上林をFAで獲得　若手中堅外野陣のチャンスは減少の可能性！？</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261124-OHT1T51293.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】ＦＡ補強第１弾！藤川球児監督「非常に大きな力に」中日・上林誠知を獲得　３年総額４億円規模＆背番号５１　昨季１７発の外野手</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261124-OHT1T51292.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】“はるとら”が最優秀バッテリー賞！沢村賞・高橋遥人「お母さんみたい」伏見寅威は史上初の両リーグ受賞　おそろいネクタイで表彰式出席</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261124-OHT1T51286.html" target="_blank" rel="nofollow">【スポーツ報知】【阪神】熊谷敬宥が中日・上林誠知の加入を喜ぶ　仙台育英で同期「慣れるまではしっかり付きっきりで」全力サポート宣言</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202611250000047.html" target="_blank" rel="nofollow">【日刊スポーツ】佐藤輝明がカブス合意　ペラルタはオリオールズと合意報道　日本の深夜に衝撃ニュース連発</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611240001858.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人＆伏見寅威が最優秀バッテリー賞受賞　お互いの良いところは？／一問一答</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611240001731.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】立石正広「打撃もですけど足にもすごい魅力がある」FA上林誠知と大学以来の再会楽しみ</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611240001591.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】ドラ３常深颯太「全てにおいて一級品」セ最多勝＆沢村賞の高橋遥人に“弟子入り”志望</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611240001912.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】今年の「タイガース杯ゴルフ大会」優勝は梅野隆太郎、２位は伊藤将司　降雨も無事終了</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611240001683.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】高橋遥人、伏見寅威は「お母さんみたい」来季の目標は「はるとら」でお立ち台！</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611240001677.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】中日上林誠知がFA加入　トリプル補強へ第１歩オリ中川圭太、ロッテ小島和哉も好感触か</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611250000021.html" target="_blank" rel="nofollow">【日刊スポーツ】【解説】阪神への譲渡金は約32億円　計算式は意外とシンプル？　佐藤輝明がカブス入り合意報道</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611250000022.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】大補強に追い風　佐藤輝明カブス合意報道で譲渡金32億　FA補強＆新助っ人獲得資金に</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202611250000023.html" target="_blank" rel="nofollow">【日刊スポーツ】カブス合意の佐藤輝明の起用は外野？　両翼の鈴木誠也、ハップがFA　三塁はブレグマン？</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-6JW72KHKHRIQZN5YGRUZQFTRVE/" target="_blank" rel="nofollow">【サンスポ】阪神・立石正広、〝縁〟ある上林のFA加入に「盗塁とかも聞けたら…」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-EATZQADJCVJM3C6QVFJCYAWPB4/" target="_blank" rel="nofollow">【サンスポ】阪神・高橋遥人＆伏見寅威、最優秀バッテリー賞表彰式で語った〝はるとら〟の秘話…固い絆で来季は20勝！</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-K2NRDTYBPZOGNEQP2DSOU3XL7M/" target="_blank" rel="nofollow">【サンスポ】【虎将トーク】阪神・藤川監督、中日からFAの上林誠知と契約合意に「恐れずに仕掛けていく非常にいいプレーヤー」「タイガースにとって大きな力に変わる」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-Q7AJHH2VBJPXFJAA3TIZST525Q/" target="_blank" rel="nofollow">【サンスポ】阪神・熊谷敬宥、仙台育英高の同級生・上林を全力サポート「慣れるまでは付きっきりで…」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-UPHF5EWJXRM7NCLHTH5FHR3H4Q/" target="_blank" rel="nofollow">【サンスポ】阪神が上林誠知を獲得　8年ぶりFA補強第1号　藤川球児監督「恐れず仕掛ける非常にいいプレーヤー」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261124s00001173359000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・伏見寅威　「遥人のおかげ」両リーグで最優秀バッテリー賞　来年3年連続受賞でレジェンド仲間入りだ</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261124s00001173368000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・高橋遥人　来季も二人三脚…“女房指令”20勝へ「もっと練習。寅威さんのミットに投げ込みます」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261124s00001173371000c.html" target="_blank" rel="nofollow">【スポニチ】【阪神・藤川監督語録】今の戦力外の解釈は「ほとんどFAと一緒。能力があれば、どこにいても見ている」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261124s00001173375000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・立石正広　“トレーニング仲間”上林加入にワクワク「天才的な打撃、盗塁とか聞いてみたい」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261124s00001173373000c.html" target="_blank" rel="nofollow">【スポニチ】阪神ドラ3・常深颯大の野望　1年後は新人王&御堂筋優勝パレード！そのためにも「1日1日を大切に」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261125s00001173002000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・藤川監督「チームをさらにレベルアップさせる」　FA上林誠知との契約合意に喜び隠せず</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261125s00001173004000c.html" target="_blank" rel="nofollow">【スポニチ】阪神・熊谷敬宥　仙台育英の同級生・上林の加入に「また同じチームでうれしい。慣れるまではつきっきりで」</a></li>
+<li class="news-icon news-snc"><a href="http://www.sponichi.co.jp/baseball/news/2026/11/25/kiji/20261125s00001173039000c.html" target="_blank" rel="nofollow">【スポニチ】MLB挑戦日本人選手、大型契約相次ぐ　カブス佐藤輝明6年191億円　Bジェイズ平良海馬5年127億円</a></li>
+<li class="news-icon news-fct"><a href="https://full-count.jp/2026/11/25/post2049773/" target="_blank" rel="nofollow">【Full-count】ファン感にいた美女の正体「可愛すぎ」「反則です」　“初体験”にご満悦「かなりいい席」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/25/0021069667.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　ＦＡ上林獲得「チームをさらにレベルアップした形で」「環境を変えることによって、こちらがしっかり見て」【一問一答】</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/25/0021069669.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・藤川監督　ＦＡ上林獲得「非常に大きな力に変わると確信」　大けが経験も昨季１７発２７盗塁「恐れずにプレーを仕掛けていく」</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/25/0021069674.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・熊谷　新加入の上林は仙台育英の同期「ずっと僕に付きっきりでくると思う」サポート約束</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/25/0021069679.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神・ドラ３常深　思い出の御堂筋で「パレードに参加できる一員になりたい」契約金６０００万円、年俸９６０万円で仮契約</a></li>
+<li class="news-icon news-dly"><a href="http://www.daily.co.jp/tigers/2026/11/25/0021069685.shtml" target="_blank" rel="nofollow">【デイリースポーツ】阪神「ハルトラ」高橋＆伏見　来季２０勝達成＆そろってお立ち台　高橋「『あ、この人だ』って」　最優秀バッテリー賞表彰式</a></li>
+<li class="news-icon news-huc"><a href="https://hochi.news/articles/20261125-OHT1T51002.html" target="_blank" rel="nofollow">【スポーツ報知】佐藤輝明移籍で阪神への譲渡金は約３２億円か　カブスと６年１９１億円で合意と米報道、日本人野手最高額を更新</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/news/202611250000017.html" target="_blank" rel="nofollow">【日刊スポーツ】佐藤輝明のカブス入り報道に深夜のSNS大盛況「とんでもなくデカイ契約」「阪神も安心して…」</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202611250000010.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】佐藤輝明が合意報道のカブスとは？　ホームユニホームは阪神と同じ縦じまで運命的</a></li>
+<li class="news-icon news-nsp"><a href="https://www.nikkansports.com/baseball/mlb/news/202611250000009.html" target="_blank" rel="nofollow">【日刊スポーツ】【阪神】深夜に飛び込んだ衝撃ニュースに阪神ファンが大興奮「PCAの新たな相棒はサトテルか」</a></li>
+<li class="news-icon news-ssp"><a href="http://www.sanspo.com//article/20261125-2N7MSDU6PZMCDB6PA4HLHQ3DXI/" target="_blank" rel="nofollow">【サンスポ】【MLB】佐藤輝明、カブスと契約合意　米メディア報じる　6年約191億円</a></li>
+</ul>
+  
+ <!-- 当日News入力　ここまで -->
+  
+</div>
+</body>
+</html>
